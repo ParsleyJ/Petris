@@ -124,8 +124,8 @@ public class Game implements ActionListener{
 		
 		nextPiece = new ClassicPiece();
 	    nextPiece.setRandomShape();
-	    nextPiece.setX(tetriGrid.BoardWidth / 2 - 3);
-        nextPiece.setY(tetriGrid.BoardHeight - 5 );
+	    nextPiece.setX(tetriGrid.columns / 2 - 3);
+        nextPiece.setY(tetriGrid.rows - 5 );
 		
 		fallLayer = new PieceLayer(tetriGrid,curPiece);
 		render.addLayer(fallLayer);
@@ -258,8 +258,8 @@ public class Game implements ActionListener{
     	//nextPiece = new Piece();
     	nextPiece.setRandomShape();
         //curPiece.setRandomShape();
-        curPiece.setX(tetriGrid.BoardWidth / 2);
-        curPiece.setY(tetriGrid.BoardHeight - 1 + curPiece.minY());
+        curPiece.setX(tetriGrid.columns / 2);
+        curPiece.setY(tetriGrid.rows - 1 + curPiece.minY());
 
         if (!tryMove(curPiece, curPiece.x(), curPiece.y())) {
             gameOver();
@@ -365,7 +365,7 @@ public class Game implements ActionListener{
         for (int i = 0; i < 4; ++i) {
             int x = newX + newPiece.x(i);
             int y = newY - newPiece.y(i);
-            if (x < 0 || x >= tetriGrid.BoardWidth || y < 0 || y >= tetriGrid.BoardHeight)
+            if (x < 0 || x >= tetriGrid.columns || y < 0 || y >= tetriGrid.rows)
             {
         		return false;
             }
@@ -389,7 +389,7 @@ public class Game implements ActionListener{
     	for (int i = 0; i < 4; ++i) {
             int x = newX + newPiece.x(i);
             int y = newY - newPiece.y(i);
-            if (x < 0 || x >= tetriGrid.BoardWidth || y < 0 || y >= tetriGrid.BoardHeight)
+            if (x < 0 || x >= tetriGrid.columns || y < 0 || y >= tetriGrid.rows)
             {
         		return false;
             }
@@ -535,8 +535,8 @@ public class Game implements ActionListener{
 			//ok
 			nextPiece = new ClassicPiece(tempPiece);
 			fallLayer.setPiece(curPiece);
-			nextPiece.setX(tetriGrid.BoardWidth / 2 - 3);
-	        nextPiece.setY(tetriGrid.BoardHeight - 5 );
+			nextPiece.setX(tetriGrid.columns / 2 - 3);
+	        nextPiece.setY(tetriGrid.rows - 5 );
 			nextLayer.setPiece(nextPiece);
 			ghostGrid.clear();
 			ghostGrid.setGhost(curPiece);
@@ -552,8 +552,8 @@ public class Game implements ActionListener{
 		if (curPower!="RELAUNCH") return; 
 		if (powerAmmo <= 0 && !infiniteAmmo)
 			return;
-		int coordX = tetriGrid.BoardWidth / 2;
-		int coordY = tetriGrid.BoardHeight - 1 + curPiece.minY();
+		int coordX = tetriGrid.columns / 2;
+		int coordY = tetriGrid.rows - 1 + curPiece.minY();
 		if (canBeMoved(curPiece, coordX, coordY))
 			{
 				tryMove(curPiece,coordX,coordY);
@@ -567,6 +567,8 @@ public class Game implements ActionListener{
 	public void tryMirror() 
 	{
 		if (curPower!="MIRROR") return; 
+		if (powerAmmo <= 0 && !infiniteAmmo)
+			return;
 		curPiece.mirror();
 		if(!canBeMoved(curPiece,curPiece.x(),curPiece.y()))
 			curPiece.mirror();
@@ -582,9 +584,32 @@ public class Game implements ActionListener{
 		}
 	}
 	
+	public void tryErosion()
+	{
+		if (curPower!="EROSION") return;
+		if (powerAmmo <= 0 && !infiniteAmmo)
+			return;
+		try
+		{
+			int gridX = tetriGrid.getTopLine() - 1;
+			//System.out.println("Erode line:" + gridX);
+			tetriGrid.removeLineAt(gridX);
+			render.repaint();
+			messageBox.show("Erosion!", Color.green, 300, 200);
+			removeLineAnimation.show(gridX, Color.white, 20, 300);
+			flashColor.flash(Color.blue);
+			powerAmmo-=1;
+			updateGui();
+		}
+		catch (RuntimeException e)
+		{
+			//just do nothing. 
+		}
+	}
+	
 	public double getHeightAverage()
 	{
-		int[] heights = tetriGrid.maxHeights();
+		int[] heights = tetriGrid.getMaxHeights();
 		int sum = 0;
 		for (int i = 0; i < heights.length; ++i)
 			sum += heights[i];
@@ -594,7 +619,7 @@ public class Game implements ActionListener{
 	public int getGravity()
 	{
 		//System.out.println(getHeightAverage() + " / " + tetriGrid.BoardHeight + " * 255 = " + (int) (getHeightAverage() / (tetriGrid.BoardHeight-5) * 255));
-		return (Math.min((int) (getHeightAverage() /(tetriGrid.BoardHeight - 5) * 510), 510));
+		return (Math.min((int) (getHeightAverage() /(tetriGrid.rows - 5) * 510), 510));
 	}
 
 	public void nextSquareStyle() {
@@ -636,9 +661,7 @@ public class Game implements ActionListener{
 		fallLayer.setSquareStyle(curStyle);
 		nextLayer.setSquareStyle(curStyle);
 		ghostLayer.setSquareStyle(curStyle);
-		render.repaint();
-		
-		
+		render.repaint();		
 	}
 	
 	public void nextPower(){
@@ -653,6 +676,10 @@ public class Game implements ActionListener{
 			powerMaxAmmo = 50;
 			break;
 		case "MIRROR":
+			curPower = "EROSION";
+			powerMaxAmmo = 10;
+			break;
+		case "EROSION":
 			curPower = "NO POWER";
 			powerMaxAmmo = -1;
 			break;
@@ -682,6 +709,9 @@ public class Game implements ActionListener{
 			break;
 		case "MIRROR":
 			tryMirror();
+			break;
+		case "EROSION":
+			tryErosion();
 			break;
 		}
 	}

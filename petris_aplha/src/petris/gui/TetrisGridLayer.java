@@ -22,12 +22,12 @@ public class TetrisGridLayer extends Layer {
        
 
         Dimension size = grid.getSize();
-        int boardTop = (int) size.getHeight() - grid.BoardHeight * grid.squareHeight();
+        int boardTop = (int) size.getHeight() - grid.rows * grid.squareHeight();
 
 
-        for (int i = 0; i < grid.BoardHeight; ++i) {
-            for (int j = 0; j < grid.BoardWidth; ++j) {
-                ClassicPiece pc = grid.pieceAt(j, grid.BoardHeight - i - 1);
+        for (int i = 0; i < grid.rows; ++i) {
+            for (int j = 0; j < grid.columns; ++j) {
+                ClassicPiece pc = grid.pieceAt(j, grid.rows - i - 1);
                 if (!(pc.isNoShape()))
                 {
                 	GraphicSquare sq = new GraphicSquare(0 + j * grid.squareWidth(),boardTop + i * grid.squareHeight(),grid.squareHeight(),grid.squareWidth(),

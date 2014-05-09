@@ -63,13 +63,13 @@ public class GhostLayer extends Layer implements ActionListener {
     { 
         
         Dimension size = grid.getSize();
-        int boardTop = (int) size.getHeight() - grid.BoardHeight * grid.squareHeight();
+        int boardTop = (int) size.getHeight() - grid.rows * grid.squareHeight();
         
-        for (int i = 0; i < grid.BoardHeight; ++i) 
+        for (int i = 0; i < grid.rows; ++i) 
         {
-            for (int j = 0; j < grid.BoardWidth; ++j) 
+            for (int j = 0; j < grid.columns; ++j) 
             {
-                ClassicPiece piece = grid.pieceAt(j, grid.BoardHeight - i - 1);
+                ClassicPiece piece = grid.pieceAt(j, grid.rows - i - 1);
                 if (!piece.isNoShape())
                 {
                 	Color bd = ClassicPiece.getColorFromShape(piece.getShape());

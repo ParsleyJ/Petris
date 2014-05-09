@@ -23,16 +23,16 @@ public class TetrisGrid extends Grid {
 	
    
 	
-	public ClassicPiece pieceAt(int x, int y) { return board[(y * BoardWidth) + x]; }
+	public ClassicPiece pieceAt(int x, int y) { return board[(y * columns) + x]; }
 	
 	private void removeFullLines()
     {
         int numFullLines = 0;
 
-        for (int i = BoardHeight - 1; i >= 0; --i) {
+        for (int i = rows - 1; i >= 0; --i) {
             boolean lineIsFull = true;
 
-            for (int j = 0; j < BoardWidth; ++j) {
+            for (int j = 0; j < columns; ++j) {
                 if (pieceAt(j, i).isNoShape()) {
                     lineIsFull = false;
                     break;
@@ -41,11 +41,8 @@ public class TetrisGrid extends Grid {
 
             if (lineIsFull) {
                 ++numFullLines;
+                removeLineAt(i);
                 currentGame.removedLineAt(i);
-                for (int k = i; k < BoardHeight - 1; ++k) {
-                    for (int j = 0; j < BoardWidth; ++j)
-                         board[(k * BoardWidth) + j] = pieceAt(j, k + 1);
-                }
             }
         }
 
@@ -64,8 +61,17 @@ public class TetrisGrid extends Grid {
         for (int i = 0; i < currentGame.curPiece.getNumberOfSquares(); ++i) {
         	int x = currentGame.curPiece.x() + currentGame.curPiece.x(i);
             int y = currentGame.curPiece.y() - currentGame.curPiece.y(i);
-            board[(y * BoardWidth) + x] = new ClassicPiece(currentGame.curPiece.getShape());
+            board[(y * columns) + x] = new ClassicPiece(currentGame.curPiece.getShape());
         }
         removeFullLines();
     }
+	
+	public void removeLineAt(int y)
+	{
+		if (y > rows - 1 || y < 0) throw new RuntimeException("Cannot remove line: " + y);
+		for (int k = y; k < rows - 1; ++k) {
+            for (int j = 0; j < columns; ++j)
+                 board[(k * columns) + j] = pieceAt(j, k + 1);
+        }
+	}
 }

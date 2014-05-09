@@ -56,7 +56,7 @@ public class PieceLayer extends Layer {
        
         
         Dimension size = grid.getSize();
-        int boardTop = (int) size.getHeight() - grid.BoardHeight * grid.squareHeight();
+        int boardTop = (int) size.getHeight() - grid.rows * grid.squareHeight();
 
 
         
@@ -66,7 +66,7 @@ public class PieceLayer extends Layer {
                 int y = curPiece.y() - curPiece.y(i);
                 Color c = ClassicPiece.getColorFromShape(curPiece.getShape());
                 Color c2 = new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
-                GraphicSquare sq = new GraphicSquare(ox + x * grid.squareWidth(),boardTop + oy + (grid.BoardHeight - y - 1) * grid.squareHeight(),
+                GraphicSquare sq = new GraphicSquare(ox + x * grid.squareWidth(),boardTop + oy + (grid.rows - y - 1) * grid.squareHeight(),
                 		grid.squareHeight(),grid.squareWidth(), c2, c2, border, style);
                 sq.paint(graphics);
                 

@@ -11,7 +11,7 @@ public class GhostGrid extends Grid {
 		curGhost = new ClassicPiece();
 	}
 	
-	public ClassicPiece pieceAt(int x, int y) { return board[(y * BoardWidth) + x]; }
+	public ClassicPiece pieceAt(int x, int y) { return board[(y * columns) + x]; }
 	
 	
 	private boolean tryMoveGhost(ClassicPiece newPiece, int newX, int newY)
@@ -19,7 +19,7 @@ public class GhostGrid extends Grid {
         for (int i = 0; i < 4; ++i) {
             int x = newX + newPiece.x(i);
             int y = newY - newPiece.y(i);
-            if (x < 0 || x >= BoardWidth || y < 0 || y >= BoardHeight)
+            if (x < 0 || x >= columns || y < 0 || y >= rows)
                 return false;
             if (!tetrisGrid.pieceAt(x, y).isNoShape())
                 return false;
@@ -46,7 +46,7 @@ public class GhostGrid extends Grid {
 		for (int i = 0; i < curGhost.nsquares; ++i){
 			int x = curGhost.x() + curGhost.x(i);
 			int y = curGhost.y() - curGhost.y(i);
-			board[(y * BoardWidth) + x] = curGhost;
+			board[(y * columns) + x] = curGhost;
 		}
 		
 	}
