@@ -5,7 +5,7 @@ A simple Java reinterpretation of the classic game "Tetris". No pictures, only 1
 
 ## How to install Petris
 
-Nothing could be easier. Install the lastest version of [Java]. Download the latest Petris [jar]. Run the jar. Enjoy!
+Nothing could be easier. Install the latest version of [Java]. Download the latest Petris [jar]. Run the jar. Enjoy!
 
 ## How to play
 
