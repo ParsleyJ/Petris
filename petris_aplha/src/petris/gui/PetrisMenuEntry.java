@@ -10,14 +10,14 @@ import parsleyj.utils.GuiUtils;
 import petris.Game.Action;
 
 public class PetrisMenuEntry {
-	private String text;
-	private int height = 40;
+	protected String text;
+	protected int height = 40;
 	private boolean isFocused = false;
-	private FadingColor bgColor = new FadingColor(new Color(50,50,50,230), 230);
-	private FadingColor textColor = new FadingColor(new Color(50,200,50,230), 230);
-	private FadingColor focusColor = new FadingColor(new Color(50,50,50,0).brighter().brighter());
-	private int width;
-	private Font textFont;
+	protected FadingColor bgColor = new FadingColor(new Color(50,50,50,230), 230);
+	protected FadingColor textColor = new FadingColor(new Color(50,200,50,230), 230);
+	protected FadingColor focusColor = new FadingColor(new Color(50,50,50,0).brighter().brighter(), 230);
+	protected int width;
+	protected Font textFont;
 	private boolean isVisible;
 	private boolean hasAction = false;
 	private Action action;
@@ -92,17 +92,18 @@ public class PetrisMenuEntry {
 	
 	public void paint(Graphics graphics, int y)
 	{
-			graphics.setColor(bgColor.getStaticColor());
-			graphics.fillRect(0,y,width ,height);
-			graphics.setColor(focusColor.getStaticColor());
-			graphics.fillRect(0,y,width ,height);
-			graphics.setColor(textColor.getStaticColor());
-			graphics.setFont(textFont);
-			int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
-			int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
-			
-			Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w,h));
-			graphics.drawString(text, titleCoords.x, titleCoords.y);
+		if (!isVisible && textColor.getAlpha()==0 && bgColor.getAlpha()==0 && focusColor.getAlpha()==0) return;
+		graphics.setColor(bgColor.getStaticColor());
+		graphics.fillRect(0,y,width ,height);
+		graphics.setColor(focusColor.getStaticColor());
+		graphics.fillRect(0,y,width ,height);
+		graphics.setColor(textColor.getStaticColor());
+		graphics.setFont(textFont);
+		int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
+		int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
+		
+		Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w,h));
+		graphics.drawString(text, titleCoords.x, titleCoords.y);
 	}
 	
 	public void performLeft() {

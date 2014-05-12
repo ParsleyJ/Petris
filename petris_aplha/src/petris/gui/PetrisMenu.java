@@ -122,18 +122,20 @@ public class PetrisMenu implements MenuInterface {
 
 	@Override
 	public void paint(Graphics graphics) {
-		if (!isVisible && titleColor.getAlpha()==0 && bgColor.getAlpha()==0) return;
+		if (!isVisible && titleColor.getAlpha()==0 && bgColor.getAlpha()==0) ; //return;
+		else {
+			//draw title
+			graphics.setColor(bgColor.getStaticColor());
+			graphics.fillRect(0,0,parentWidth,titleHeight);
+			graphics.setColor(titleColor.getStaticColor());
+			graphics.setFont(titleFont);
+			int w = (int) graphics.getFontMetrics().getStringBounds(title,graphics).getWidth();
+			int h = (int) graphics.getFontMetrics().getStringBounds(title,graphics).getHeight();
+			
+			Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,0), new Dimension(parentWidth,titleHeight), new Dimension(w,h));
+			graphics.drawString(title, titleCoords.x, titleCoords.y);
+		}
 		
-		//draw title
-		graphics.setColor(bgColor.getStaticColor());
-		graphics.fillRect(0,0,parentWidth,titleHeight);
-		graphics.setColor(titleColor.getStaticColor());
-		graphics.setFont(titleFont);
-		int w = (int) graphics.getFontMetrics().getStringBounds(title,graphics).getWidth();
-		int h = (int) graphics.getFontMetrics().getStringBounds(title,graphics).getHeight();
-		
-		Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,0), new Dimension(parentWidth,titleHeight), new Dimension(w,h));
-		graphics.drawString(title, titleCoords.x, titleCoords.y);
 		
 		
 
@@ -228,7 +230,14 @@ public class PetrisMenu implements MenuInterface {
 		startingY = getStartingListY();
 		isEmpty = entries.isEmpty();
 		focusedEntry = focusedTraceback.pop();
-		if (!isEmpty) entries.get(focusedEntry).setFocused(true);
+		if (!isEmpty)  
+		{
+			for (int i = 0; i < entries.size(); ++ i)
+			{
+				if (i==focusedEntry) entries.get(focusedEntry).setFocused(true);
+				else entries.get(i).setFocused(false);
+			}			
+		}
 
 	}
 	
@@ -238,10 +247,22 @@ public class PetrisMenu implements MenuInterface {
 		title = titlesTraceback.get(0);
 		titleColor = foreColorTraceback.get(0);
 		entries = traceback.get(0);
+		for (PetrisMenuEntry e: entries)
+		{
+			e.bgColor.setAlpha(bgColor.getAlpha());
+			e.textColor.setAlpha(bgColor.getAlpha());
+		}
 		startingY = getStartingListY();
 		isEmpty = entries.isEmpty();
 		focusedEntry = focusedTraceback.get(0);
-		if (!isEmpty) entries.get(focusedEntry).setFocused(true);
+		if (!isEmpty) 
+		{
+			for (int i = 0; i < entries.size(); ++ i)
+			{
+				if (i==focusedEntry) entries.get(focusedEntry).setFocused(true);
+				else entries.get(i).setFocused(false);
+			}			
+		}
 	}
 	
 	public void resetRootEntries() { //it will be resetted before the next show()
@@ -313,7 +334,15 @@ public class PetrisMenu implements MenuInterface {
 		startingY = getStartingListY();
 		isEmpty = entries.isEmpty();
 		focusedEntry = 0;
-		if (!isEmpty) entries.get(0).setFocused(true);
+		if (!isEmpty)  
+		{
+			for (int i = 0; i < entries.size(); ++ i)
+			{
+				if (i==focusedEntry) entries.get(focusedEntry).setFocused(true);
+				else entries.get(i).setFocused(false);
+				entries.get(i).show();
+			}			
+		}
 		
 	}
 

@@ -33,6 +33,12 @@ public class TAdapter extends KeyAdapter {
    	 		case KeyEvent.VK_DOWN:
    	 			game.menuNavDown();
    	 			break;
+   	 		case KeyEvent.VK_LEFT:
+   	 			game.menuNavLeft();
+   	 			break;
+   	 		case KeyEvent.VK_RIGHT:
+   	 			game.menuNavRight();
+   	 			break;
    	 		case KeyEvent.VK_ENTER:
    	 		case KeyEvent.VK_SPACE:
    	 			game.menuNavOk();

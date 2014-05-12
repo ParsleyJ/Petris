@@ -23,6 +23,7 @@ import petris.gui.PetrisChildMenu;
 import petris.gui.PetrisColor;
 import petris.gui.PetrisMenu;
 import petris.gui.PetrisMenuEntry;
+import petris.gui.PetrisOptionMenuEntry;
 import petris.gui.PieceLayer;
 import petris.gui.GhostLayer;
 import petris.gui.PanelLayer;
@@ -58,10 +59,13 @@ public class Game implements ActionListener{
 	private LabelLayer linesTextLabel;
 	private LabelLayer speedTextLabel;
 	
+	private LabelLayer powerNameLabel;
+	
 	private LabelLayer pointsLabel;
 	private LabelLayer multiplierLabel;
 	private LabelLayer speedLabel;
 	private LabelLayer linesLabel;
+	private LabelLayer ammoLabel;
 	
 	private MessageLayer messageBox;
 	private MessageLayer secondMessage;
@@ -87,14 +91,14 @@ public class Game implements ActionListener{
     private int powerAmmo;
     private boolean infiniteAmmo;
     
-    private LabelLayer ammoLabel;
+    
 	private FlashingGravityColor gravityColor;
 	private ColorFlash flashColor;
 	
 	private SquareStyle curStyle = SquareStyle.Border3d;
 	private String curPower = "PROCRASTINATE";
 	
-	private LabelLayer powerNameLabel;
+	
 	private int powerMaxAmmo = -1;
 	private float baseFontSize = 4;
 	private int baseFontStyle = 0;
@@ -103,6 +107,8 @@ public class Game implements ActionListener{
 	
 	private PetrisMenu mainMenu;
 	private MenuLayer menuLayer;
+	
+	PetrisOptionMenuEntry selectPowerMenuEntry;
 	
 	private boolean inMenu = false;
 	private PanelLayer leftGuiPanel;
@@ -190,11 +196,9 @@ public class Game implements ActionListener{
 			rightGuiPanel = new PanelLayer(new Dimension(80,120), (int)gameSize.getWidth()-85, 5);
 			render.addLayer(rightGuiPanel);
 			
-			
-			
 			render.addLayer(nextTextLabel);
 			render.addLayer(scoreTextLabel);
-			render.addLayer(multiplierTextLabel );
+			render.addLayer(multiplierTextLabel);
 			render.addLayer(linesTextLabel);
 			render.addLayer(speedTextLabel);
 			
@@ -237,6 +241,15 @@ public class Game implements ActionListener{
 			PetrisChildMenu newGameMenuEntry = new PetrisChildMenu("New game", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
 			
+			selectPowerMenuEntry = new PetrisOptionMenuEntry("Select power:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70,
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
+			selectPowerMenuEntry.addOption("Procrastinate");
+			selectPowerMenuEntry.addOption("Relaunch");
+			selectPowerMenuEntry.addOption("Mirror");
+			selectPowerMenuEntry.addOption("Erosion");
+			selectPowerMenuEntry.addOption("No Power");
+			newGameMenuEntry.addEntry(selectPowerMenuEntry);
+			
 			PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start game!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
 			startGameMenuEntry.setAction(new Action(){
@@ -246,12 +259,14 @@ public class Game implements ActionListener{
 				}
 			});
 			newGameMenuEntry.addEntry(startGameMenuEntry);
+			
+			
 			mainMenu.addEntry(newGameMenuEntry);
 			
 			mainMenu.addEntry(new PetrisMenuEntry("Leaderboards", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230)));
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.lightGray, 230)));
 			mainMenu.addEntry(new PetrisMenuEntry("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230)));
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.lightGray, 230)));
 			
 			PetrisMenuEntry quitMenuEntry = new PetrisMenuEntry("Quit", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
@@ -296,7 +311,10 @@ public class Game implements ActionListener{
         multiplier = 1;
         speed = 1;
         tetriGrid.clear();
+        
+        setPower(selectPowerMenuEntry.getSelected());
         reloadAmmo();
+        
         updateGui();
         
         nextPiece.setRandomShape();
@@ -400,8 +418,9 @@ public class Game implements ActionListener{
 		secondMessage.fadeOut();
 		thirdMessage.fadeOut();
 		fourthMessage.fadeOut();
-		mainMenu.resetRootEntries();
+		
 		mainMenu.close();
+		mainMenu.resetRootEntries();
 		
 		inMenu = false;
 	}
@@ -412,6 +431,8 @@ public class Game implements ActionListener{
 		multiplierTextLabel.fadeIn(-1, 500);
 		linesTextLabel.fadeIn(-1, 500);
 		speedTextLabel.fadeIn(-1, 500);
+		
+		powerNameLabel.fadeIn(-1, 500);
 		
 		pointsLabel.fadeIn(-1, 500);
 		multiplierLabel.fadeIn(-1, 500);
@@ -430,6 +451,8 @@ public class Game implements ActionListener{
 		multiplierTextLabel.fadeOut();
 		linesTextLabel.fadeOut();
 		speedTextLabel.fadeOut();
+		
+		powerNameLabel.fadeOut();
 		
 		pointsLabel.fadeOut();
 		multiplierLabel.fadeOut();
@@ -798,6 +821,39 @@ public class Game implements ActionListener{
 		render.repaint();		
 	}
 	
+	public void setPower(String power)
+	{
+		switch(power.toUpperCase())
+		{
+		case "PROCRASTINATE":
+			curPower = "PROCRASTINATE";
+			powerMaxAmmo = -1;
+			break;
+		case "RELAUNCH":
+			curPower = "RELAUNCH";
+			powerMaxAmmo = 20;
+			break;
+		case "MIRROR":
+			curPower = "MIRROR";
+			powerMaxAmmo = 50;
+			break;
+		case "EROSION":
+			curPower = "EROSION";
+			powerMaxAmmo = 10;
+			break;
+		case "NO POWER":
+			curPower = "NO POWER";
+			powerMaxAmmo = -1;
+			break;
+		default:
+			curPower = "NO POWER";
+			break;
+		}
+		if (!isStarted) reloadAmmo();
+		updateGui();
+		
+	}
+	
 	public void nextPower(){
 		switch(curPower)
 		{
@@ -916,14 +972,20 @@ public class Game implements ActionListener{
 		
 	}
 	
+	public void menuNavLeft() {
+		mainMenu.performGoLeft();		
+	}
+	
+	public void menuNavRight() {
+		mainMenu.performGoRight();
+	}
+	
 	public interface Action
 	{
 		public void run();
 	}
 
-	
-
-	
+		
 	
 	
 }

@@ -24,8 +24,7 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 			entries.get(0).setFocused(true);
 			
 		}
-	}
-	
+	}	
 	
 	public void addEntry(PetrisMenuEntry entry, int index) {
 		entries.add(index, entry);

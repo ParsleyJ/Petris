@@ -13,6 +13,7 @@ public class FadingColor extends DynamicColor {
 	private int alphaMax = 255;
 	private int alphaStep;
 	private boolean permanent;
+	private int fTime = 0;
 	
 	public FadingColor(Color c)
 	{
@@ -97,12 +98,14 @@ public class FadingColor extends DynamicColor {
 		showTime = 0;
 		fadeInTicks = 0;
 		currentAlpha = alphaMax;
+		fadeOutTicks = fTime/renderDelay;
 		
 	}
 	
 	public void fadeIn(int maxAlphaTime, int fadeTime)
 	{
 		reset();
+		fTime = fadeTime;
 		showTime = maxAlphaTime / renderDelay;
 		permanent = !(maxAlphaTime >= 0); //if messageTime is negative, the color will be visible until fadeOut() is invoked.
 		fadeOutTicks = fadeInTicks = fadeTime / renderDelay; 
