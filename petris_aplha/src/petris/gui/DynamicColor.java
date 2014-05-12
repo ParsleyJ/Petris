@@ -138,5 +138,6 @@ public abstract class DynamicColor implements ActionListener {
 		alpha = c.getAlpha();
 	}
 	
+	
 
 }

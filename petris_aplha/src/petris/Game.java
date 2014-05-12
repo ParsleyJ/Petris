@@ -5,9 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
+import java.io.File;
 
-import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import petris.ClassicPiece.TetrominoesId;
@@ -15,13 +14,18 @@ import petris.GraphicSquare.SquareStyle;
 import petris.gui.BackgroundLayer;
 import petris.gui.BottomMessageLayer;
 import petris.gui.ColorFlash;
+import petris.gui.FadingColor;
 import petris.gui.FlashingGravityColor;
 import petris.gui.LineAnimationLayer;
+import petris.gui.MenuLayer;
 import petris.gui.MessageLayer;
+import petris.gui.PetrisChildMenu;
 import petris.gui.PetrisColor;
+import petris.gui.PetrisMenu;
+import petris.gui.PetrisMenuEntry;
 import petris.gui.PieceLayer;
 import petris.gui.GhostLayer;
-import petris.gui.GuiLayer;
+import petris.gui.PanelLayer;
 import petris.gui.LabelLayer;
 import petris.gui.Render;
 import petris.gui.RenderInterface;
@@ -32,65 +36,78 @@ public class Game implements ActionListener{
 	public ClassicPiece curPiece;
 	public ClassicPiece nextPiece;
 	
-	public Dimension gameSize;
+	private Dimension gameSize;
 	
-	RenderInterface render;
+	private RenderInterface render;
 	
-	TetrisGrid tetriGrid;
-	TetrisGridLayer tetriLayer;
-	PieceLayer fallLayer;
+	private TetrisGrid tetriGrid;
+	private TetrisGridLayer tetriLayer;
+	private PieceLayer fallLayer;
 	
-	GhostGrid ghostGrid;
-	GhostLayer ghostLayer;
+	private GhostGrid ghostGrid;
+	private GhostLayer ghostLayer;
 	
-	LineAnimationLayer removeLineAnimation;
+	private LineAnimationLayer removeLineAnimation;
 	
-	TetrisGrid nextGrid;
-	PieceLayer nextLayer;
+	private TetrisGrid nextGrid;
+	private PieceLayer nextLayer;
 	
-	LabelLayer pointsLabel;
-	LabelLayer multiplierLabel;
-	LabelLayer speedLabel;
-	LabelLayer linesLabel;
+	private LabelLayer nextTextLabel;
+	private LabelLayer scoreTextLabel;
+	private LabelLayer multiplierTextLabel;
+	private LabelLayer linesTextLabel;
+	private LabelLayer speedTextLabel;
 	
-	MessageLayer messageBox;
-	MessageLayer secondMessage;
-	MessageLayer thirdMessage;
-	MessageLayer fourthMessage;
-	BottomMessageLayer smallMessage;
+	private LabelLayer pointsLabel;
+	private LabelLayer multiplierLabel;
+	private LabelLayer speedLabel;
+	private LabelLayer linesLabel;
 	
-	Timer timer;
+	private MessageLayer messageBox;
+	private MessageLayer secondMessage;
+	private MessageLayer thirdMessage;
+	private MessageLayer fourthMessage;
+	private BottomMessageLayer smallMessage;
 	
-    boolean isFallingFinished = false;
-    boolean isStarted = false;
-    boolean isPaused = false;
+	private Timer timer;
+	
+	private boolean isFallingFinished = false;
+	private boolean isStarted = false;
+	private boolean isPaused = false;
     
-    Render guiRender;
+	private Render guiRender;
     
-    boolean wasPreviousSuccesful = false;
+	private boolean wasPreviousSuccesful = false;
     
-    int numLinesRemoved = 0;
-    int speed = 1;
-    public int points = 0;
-    public int multiplier = 1;
-    
-    JFrame parent;//?
-	
-	
-	Random randomGenerator = new Random();//used for animations
+	private int numLinesRemoved = 0;
+	private int speed = 1;
+	private int points = 0;
+	private int multiplier = 1;
     
     private int powerAmmo;
-    boolean infiniteAmmo;
+    private boolean infiniteAmmo;
     
-    LabelLayer ammoLabel;
+    private LabelLayer ammoLabel;
 	private FlashingGravityColor gravityColor;
 	private ColorFlash flashColor;
 	
-	SquareStyle curStyle = SquareStyle.Border3d;
-	String curPower = "PROCRASTINATE";
+	private SquareStyle curStyle = SquareStyle.Border3d;
+	private String curPower = "PROCRASTINATE";
 	
-	LabelLayer powerNameLabel;
+	private LabelLayer powerNameLabel;
 	private int powerMaxAmmo = -1;
+	private float baseFontSize = 4;
+	private int baseFontStyle = 0;
+	private File fontFile = new File("src/resources/Mecha.ttf");
+	private Font gameFont;
+	
+	private PetrisMenu mainMenu;
+	private MenuLayer menuLayer;
+	
+	private boolean inMenu = false;
+	private PanelLayer leftGuiPanel;
+	private PanelLayer rightGuiPanel;
+	
 	
     
     public Game(Dimension d, RenderInterface r, Render g)
@@ -133,11 +150,28 @@ public class Game implements ActionListener{
 		removeLineAnimation = new LineAnimationLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), tetriGrid, 200);
 		render.addLayer(removeLineAnimation);
 		
-		pointsLabel = new LabelLayer("",new Font("Arial",Font.BOLD,18),15, 40, new Color(50,255,0), 100);
-		multiplierLabel = new LabelLayer("",new Font("Arial",Font.BOLD,12),15, 76, new Color(0,255,255), 80);
-		linesLabel = new LabelLayer("0",new Font("Arial",Font.BOLD,14),15, 112, Color.yellow, 100);
-		speedLabel = new LabelLayer("",new Font("Arial",Font.BOLD,14),15, 148, new Color(255,0,0), 100);
-		ammoLabel = new LabelLayer("0",new Font("Arial",Font.BOLD,14), 15, 186, Color.orange, 100);
+		try
+		{
+			gameFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+			gameFont = gameFont.deriveFont(baseFontStyle);
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+			baseFontSize = 0;
+			gameFont = new Font("Arial", Font.BOLD, 18);
+		}
+		
+		nextTextLabel = new LabelLayer("NEXT",gameFont.deriveFont(baseFontSize + 16F),(int)gameSize.getWidth()-70, 25, new Color(255,255,255), 80);
+		scoreTextLabel = new LabelLayer("SCORE",gameFont.deriveFont(baseFontSize + 12F),15, 20, new Color(255,255,255), 80);
+		multiplierTextLabel = new LabelLayer("MULTIPLIER",gameFont.deriveFont(baseFontSize + 10F),15, 60, new Color(255,255,255), 80);
+		linesTextLabel = new LabelLayer("LINES",gameFont.deriveFont(baseFontSize + 10F),15, 94, new Color(255,255,255), 80);
+		speedTextLabel = new LabelLayer("SPEED",gameFont.deriveFont(baseFontSize + 10F),15, 132, new Color(255,255,255), 80);
+		
+		pointsLabel = new LabelLayer("",gameFont.deriveFont(baseFontSize + 18F),15, 40, new Color(50,255,0), 100);
+		multiplierLabel = new LabelLayer("",gameFont.deriveFont(baseFontSize + 12F),15, 76, new Color(0,255,255), 80);
+		linesLabel = new LabelLayer("0",gameFont.deriveFont(baseFontSize + 14F),15, 112, Color.yellow, 100);
+		speedLabel = new LabelLayer("",gameFont.deriveFont(baseFontSize + 14F),15, 148, new Color(255,0,0), 100);
+		ammoLabel = new LabelLayer("0",gameFont.deriveFont(baseFontSize + 14F), 15, 186, Color.orange, 100);
 		
 		powerAmmo = 20;
 		infiniteAmmo = false;
@@ -151,15 +185,20 @@ public class Game implements ActionListener{
 		}
 		else //always this configuration
 		{
-			render.addLayer(new GuiLayer(new Dimension(80,200), 5, 5));
-			render.addLayer(new GuiLayer(new Dimension(80,120), (int)gameSize.getWidth()-85, 5));
-			render.addLayer(new LabelLayer("NEXT",new Font("Arial",Font.BOLD,16),(int)gameSize.getWidth()-70, 25, new Color(255,255,255), 80));
-			render.addLayer(new LabelLayer("SCORE",new Font("Arial",Font.BOLD,12),15, 20, new Color(255,255,255), 80));
-			render.addLayer(new LabelLayer("MULTIPLIER",new Font("Arial",Font.BOLD,10),15, 60, new Color(255,255,255), 80));
-			render.addLayer(new LabelLayer("LINES",new Font("Arial",Font.BOLD,10),15, 94, new Color(255,255,255), 80));
-			render.addLayer(new LabelLayer("SPEED",new Font("Arial",Font.BOLD,10),15, 132, new Color(255,255,255), 80));
+			leftGuiPanel = new PanelLayer(new Dimension(80,200), 5, 5);
+			render.addLayer(leftGuiPanel);
+			rightGuiPanel = new PanelLayer(new Dimension(80,120), (int)gameSize.getWidth()-85, 5);
+			render.addLayer(rightGuiPanel);
 			
-			powerNameLabel = new LabelLayer("RELAUNCH",new Font("Arial",Font.BOLD,8),15, 170, new Color(255,255,255), 80);			
+			
+			
+			render.addLayer(nextTextLabel);
+			render.addLayer(scoreTextLabel);
+			render.addLayer(multiplierTextLabel );
+			render.addLayer(linesTextLabel);
+			render.addLayer(speedTextLabel);
+			
+			powerNameLabel = new LabelLayer("RELAUNCH",gameFont.deriveFont(baseFontSize + 8F),15, 170, new Color(255,255,255), 80);			
 			render.addLayer(powerNameLabel);
 			
 			render.addLayer(pointsLabel);
@@ -168,24 +207,61 @@ public class Game implements ActionListener{
 			render.addLayer(speedLabel);
 			render.addLayer(ammoLabel);
 			
-			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),new Font("Arial",0,12),200);
+			//notification messages configuration
+			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),gameFont.deriveFont(baseFontSize + 12F),200);
 			render.addLayer(smallMessage);
 			
-			messageBox = new MessageLayer ((int)gameSize.getWidth(), (int)gameSize.getHeight(), 40, new Font("Arial",Font.BOLD,20), 230);
+			messageBox = new MessageLayer ((int)gameSize.getWidth(), (int)gameSize.getHeight(), 40, gameFont.deriveFont(baseFontSize + 20F), 230);
 			render.addLayer(messageBox);
 			
-			secondMessage = new MessageLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), 20, 31, new Font("Arial",0,12), 230);
+			secondMessage = new MessageLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), 20, 31, gameFont.deriveFont(baseFontSize + 12F), 230);
 			render.addLayer(secondMessage);
 			
-			thirdMessage = new MessageLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), 20, 52, new Font("Arial",0,12), 230);
+			thirdMessage = new MessageLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), 20, 52, gameFont.deriveFont(baseFontSize + 12F), 230);
 			render.addLayer(thirdMessage);
 			
-			fourthMessage = new MessageLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), 20, 73, new Font("Arial",0,12), 230);
+			fourthMessage = new MessageLayer((int)gameSize.getWidth(), (int)gameSize.getHeight(), 20, 73, gameFont.deriveFont(baseFontSize + 12F), 230);
 			render.addLayer(fourthMessage);
 			
 			nextGrid = new TetrisGrid(this,new Dimension(150,334), 10, 22);
 			nextLayer = new PieceLayer(nextGrid,nextPiece,215,-15,3,100);
 			render.addLayer(nextLayer);
+			
+			//main menu configuration	------------------------		
+			menuLayer = new MenuLayer();
+			mainMenu = new PetrisMenu(gameSize,"Petris",gameFont.deriveFont(baseFontSize + 34F), 
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+			menuLayer.setCurrentMenu(mainMenu);
+			render.addLayer(menuLayer);
+			
+			PetrisChildMenu newGameMenuEntry = new PetrisChildMenu("New game", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+			
+			PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start game!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+			startGameMenuEntry.setAction(new Action(){
+				@Override
+				public void run() {
+					Game.this.start();					
+				}
+			});
+			newGameMenuEntry.addEntry(startGameMenuEntry);
+			mainMenu.addEntry(newGameMenuEntry);
+			
+			mainMenu.addEntry(new PetrisMenuEntry("Leaderboards", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230)));
+			mainMenu.addEntry(new PetrisMenuEntry("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230)));
+			
+			PetrisMenuEntry quitMenuEntry = new PetrisMenuEntry("Quit", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+			quitMenuEntry.setAction(new Action() {
+				@Override
+				public void run() {
+					System.exit(0);
+				}
+			});
+			mainMenu.addEntry(quitMenuEntry);
 		}
 		
 		
@@ -222,16 +298,23 @@ public class Game implements ActionListener{
         tetriGrid.clear();
         reloadAmmo();
         updateGui();
+        
+        nextPiece.setRandomShape();
         newPiece();
         gravityColor.setGravity(0);
         gravityColor.setTimerDelay(50);
         timer.setDelay(500);
         timer.start();
         smallMessage.show("New game started", Color.green, 1500, 500);//what with simoultaneous message shows? ---> add a queue
-        fadeOutMessages();
+        fadeOutMenus();
+        fadeInGui();
     }
     
-    public void pause()
+   
+
+
+
+	public void pause()
     {
         if (!isStarted)
             return;
@@ -242,7 +325,7 @@ public class Game implements ActionListener{
             timer.stop();
             smallMessage.show("Paused", Color.yellow, 1500, 500);
         } else {
-        	fadeOutMessages();
+        	fadeOutMenus();
             timer.start();
             smallMessage.show("Resumed", Color.cyan, 1500, 500);
             //statusbar.setText(String.valueOf(numLinesRemoved));
@@ -287,15 +370,21 @@ public class Game implements ActionListener{
 	{
 		curPiece.setShape(TetrominoesId.NOSHAPE);
 		ghostGrid.setGhost(curPiece);
+		nextPiece.setShape(TetrominoesId.NOSHAPE);
 		ghostGrid.clear();
 		tetriGrid.clear();
 		timer.stop();
         isStarted = false;
         updateGui();
+        /* old menu
         messageBox.show("Petris", Color.cyan, -1, 500);
         secondMessage.show("Press N to start a new game.", Color.orange, -1, 500);
         thirdMessage.show("Press Y to change power.", Color.green, -1, 500);
         fourthMessage.show("Press T to change theme.", Color.red, -1, 500);
+        */
+        fadeOutGui();
+        mainMenu.show(); //new menu
+        inMenu = true;
 	}
 	
 	public void showPausedMenu() {
@@ -303,14 +392,59 @@ public class Game implements ActionListener{
 		secondMessage.show("Press P or Esc to resume", Color.green, -1, 300);
 		thirdMessage.show("Press T to change theme", Color.orange, -1, 300);
 		fourthMessage.show("Press Q to exit to main menu", Color.red, -1, 300);
+		inMenu = true;
 	}
 	
-	private void fadeOutMessages() {
+	private void fadeOutMenus() {
 		messageBox.fadeOut();
 		secondMessage.fadeOut();
 		thirdMessage.fadeOut();
 		fourthMessage.fadeOut();
+		mainMenu.resetRootEntries();
+		mainMenu.close();
+		
+		inMenu = false;
 	}
+	
+	public void fadeInGui() {
+		nextTextLabel.fadeIn(-1, 500);
+		scoreTextLabel.fadeIn(-1, 500);
+		multiplierTextLabel.fadeIn(-1, 500);
+		linesTextLabel.fadeIn(-1, 500);
+		speedTextLabel.fadeIn(-1, 500);
+		
+		pointsLabel.fadeIn(-1, 500);
+		multiplierLabel.fadeIn(-1, 500);
+		linesLabel.fadeIn(-1, 500);
+		speedLabel.fadeIn(-1, 500);
+		ammoLabel.fadeIn(-1, 500);
+		
+		leftGuiPanel.fadeIn(-1, 500);
+		rightGuiPanel.fadeIn(-1, 500);
+	}
+	    
+    public void fadeOutGui()
+    {
+    	nextTextLabel.fadeOut();
+		scoreTextLabel.fadeOut();
+		multiplierTextLabel.fadeOut();
+		linesTextLabel.fadeOut();
+		speedTextLabel.fadeOut();
+		
+		pointsLabel.fadeOut();
+		multiplierLabel.fadeOut();
+		linesLabel.fadeOut();
+		speedLabel.fadeOut();
+		ammoLabel.fadeOut();
+		
+		leftGuiPanel.fadeOut();
+		rightGuiPanel.fadeOut();
+		
+		messageBox.fadeOut();
+		secondMessage.fadeOut();
+		thirdMessage.fadeOut();
+		fourthMessage.fadeOut();
+    }
 	
     public void oneLineDown()
     {
@@ -759,6 +893,37 @@ public class Game implements ActionListener{
 	public ClassicPiece getCurrentPiece() {
 		return curPiece;
 	}
+
+	public boolean isInMenu() {
+		return inMenu;
+	}
+
+	public void menuNavDown() {
+		mainMenu.performGoDown();		
+	}
+
+	public void menuNavUp() {
+		mainMenu.performGoUp();		
+	}
+	
+	public void menuNavOk() {
+		mainMenu.performOk();
+		
+	}
+	
+	public void menuNavBack() {
+		mainMenu.performBack();
+		
+	}
+	
+	public interface Action
+	{
+		public void run();
+	}
+
+	
+
+	
 	
 	
 }

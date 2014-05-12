@@ -1,48 +1,42 @@
 package petris.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
-import java.awt.Font;
+public class PanelLayer extends Layer {
 
-public class LabelLayer extends Layer {
-
-	
+	private Dimension layerSize;
 	private int coordX =0;
 	private int coordY =0;
-	private FadingColor layerColor = new FadingColor(new Color(50,50,50,0),230);
-	private Font font;
-	public String value;
+	private FadingColor layerColor = new FadingColor(new Color(50,50,50,0), 100);
+	private int angleSquare = 10;
 	
 	
-	public LabelLayer(String s, Font f) 
+	public PanelLayer(Dimension l) 
 	{
 		super();
-		font = f;
-		value = s;
+		layerSize = l;
 	}
-	public LabelLayer(String s, Font f, int x, int y) 
+	public PanelLayer(Dimension l, int x, int y) 
 	{
 		super();
-		font = f;
+		layerSize = l;
 		coordX = x;
 		coordY = y;
-		value = s;
 	}
-	public LabelLayer(String s, Font f, int x, int y, Color c, int alpha) 
+	public PanelLayer(Dimension l, int x, int y, Color c, int alpha) 
 	{
 		super();
-		font = f;
+		layerSize = l;
 		coordX = x;
 		coordY = y;
-		value = s;
 		layerColor = new FadingColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),0), alpha);
 	}
 	
 	public void  paint()
 	{
 		graphics.setColor(layerColor.getStaticColor());
-		graphics.setFont(font);
-		graphics.drawString(value, coordX, coordY);
+		graphics.fillRoundRect(coordX, coordY, (int)layerSize.getWidth(), (int)layerSize.getHeight(), angleSquare, angleSquare);
 		
 	}
 	

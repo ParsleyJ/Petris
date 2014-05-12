@@ -22,7 +22,27 @@ public class TAdapter extends KeyAdapter {
 	}
 
 	public void keyPressed(KeyEvent e) {
-   	 
+   	 	if (game.isInMenu())
+   	 	{
+   	 		int kc = e.getKeyCode();
+   	 		switch (kc)
+   	 		{
+   	 		case KeyEvent.VK_UP:
+   	 			game.menuNavUp();
+   	 			break;
+   	 		case KeyEvent.VK_DOWN:
+   	 			game.menuNavDown();
+   	 			break;
+   	 		case KeyEvent.VK_ENTER:
+   	 		case KeyEvent.VK_SPACE:
+   	 			game.menuNavOk();
+   	 			break;
+   	 		case KeyEvent.VK_ESCAPE:
+   	 			game.menuNavBack();
+   	 			break;
+   	 		}
+   	 	}
+		
 		if (!game.isStarted())
         {
 			if (e.getKeyCode() == 'N' || e.getKeyCode() == 'n')	game.start();

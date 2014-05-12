@@ -51,4 +51,11 @@ public class PetrisColor {
 			return staticC;
 	}
 	
+	public void setAlpha(int alpha)
+	{
+		if (alpha < 0 || alpha > 255) throw new RuntimeException("Alpha out of range");
+		if (isDynamic) dynamicC.setAlpha(alpha);
+		else staticC = new Color(staticC.getRed(),staticC.getGreen(),staticC.getBlue(),alpha);
+	}
+	
 }

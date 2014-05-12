@@ -1,6 +1,5 @@
 package petris;
 
-import petris.gui.Render;
 import petris.gui.RenderInterface;
 
 public class GlobalVarSet {

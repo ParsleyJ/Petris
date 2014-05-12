@@ -8,11 +8,10 @@ public class MessageLayer extends Layer {
 	private int parentWidth;
 	private int parentHeight;
 	private int boxHeight;
-	private Color bgColor = new Color(255,255,255);
+	private Color bgColor = new Color(50,50,50);
 	private Color foreColor;
 	private int renderDelay = 20;
 	private int showTime;
-	private int fadeTime;
 	private int fadeInTicks;
 	private int fadeOutTicks;
 	private String message;
@@ -105,7 +104,7 @@ public class MessageLayer extends Layer {
 		if(fadeOutTicks <= 0)
 		{
 			isStarted = false;
-			currentAlpha = fadeTime = fadeOutTicks = fadeInTicks = showTime = 0;
+			currentAlpha = fadeOutTicks = fadeInTicks = showTime = 0;
 			return;
 		}
 		else
@@ -142,13 +141,12 @@ public class MessageLayer extends Layer {
 	public void show(String text, Color color, int messageTime, int fTime)
 	{
 		//messages.add(new Msg(text,color,messageTime,fTime));
-		if (!isStarted)
-			isStarted = false;
+		
 		reset();
 		message = text;
 		foreColor = color;
 		showTime = messageTime / renderDelay;
-		permanent = !(messageTime >= 0);
+		permanent = !(messageTime >= 0); //if messageTime is negative, the message will be visible until fadeOut() is invoked.
 		fadeOutTicks = fadeInTicks = fTime / renderDelay; 
 		alphaStep = alphaMax / (fTime / renderDelay);
 		isStarted = true;

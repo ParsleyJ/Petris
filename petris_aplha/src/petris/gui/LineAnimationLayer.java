@@ -1,7 +1,7 @@
 package petris.gui;
 
 import java.awt.Color;
-import java.awt.Font;
+
 
 import petris.TetrisGrid;
 
@@ -13,7 +13,6 @@ public class LineAnimationLayer extends Layer {
 	private Color bgColor = new Color(255,255,255);
 	private int renderDelay = 20;//TODO: parametrizzare
 	private int showTime;
-	private int fadeTime;
 	private int fadeInTicks;
 	private int fadeOutTicks;
 	private boolean isStarted = false;
@@ -81,7 +80,7 @@ public class LineAnimationLayer extends Layer {
 		if(fadeOutTicks <= 0)
 		{
 			isStarted = false;
-			currentAlpha = fadeTime = fadeOutTicks = fadeInTicks = showTime = 0;
+			currentAlpha = fadeOutTicks = fadeInTicks = showTime = 0;
 			return;
 		}
 		else

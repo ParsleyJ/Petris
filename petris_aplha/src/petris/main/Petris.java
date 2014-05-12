@@ -1,4 +1,4 @@
-package petris.gui;
+package petris.main;
 
 import javax.swing.JFrame;
 
@@ -8,6 +8,10 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 import petris.*;
+import petris.gui.DebugConsole;
+import petris.gui.Render;
+import petris.gui.RenderInterface;
+import petris.gui.TAdapter;
 
 public class Petris {
 	
@@ -20,6 +24,7 @@ public class Petris {
 	private static GlobalVarSet globals;
 	private static Profile currentProfile;
 	public static DebugConsole console;
+	
 	
 	public static void main(String[] args)
 	{
@@ -60,7 +65,7 @@ public class Petris {
 		
 		currentProfile = new Profile();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.25");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.30");
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		
 		console = new DebugConsole(globals);

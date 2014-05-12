@@ -11,7 +11,7 @@ public class BottomMessageLayer extends Layer {
 	private Color foreColor;
 	private int renderDelay = 20;
 	private int showTime;
-	private int fadeTime;
+	
 	private int fadeInTicks;
 	private int fadeOutTicks;
 	private String message;
@@ -78,7 +78,7 @@ public class BottomMessageLayer extends Layer {
 		if(fadeOutTicks <= 0)
 		{
 			isStarted = false;
-			currentAlpha = fadeTime = fadeOutTicks = fadeInTicks = showTime = 0;
+			currentAlpha = fadeOutTicks = fadeInTicks = showTime = 0;
 			return;
 		}
 		else
