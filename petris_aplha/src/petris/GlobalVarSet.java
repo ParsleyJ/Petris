@@ -20,7 +20,11 @@ public class GlobalVarSet {
 		currentProfile  =profile;
 		petrisVersion = version;
 	}
-
+	
+	public void getFreeMem()
+	{
+		
+	}
 	
 
 }

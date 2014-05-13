@@ -243,15 +243,16 @@ public class Game implements ActionListener{
 			
 			selectPowerMenuEntry = new PetrisOptionMenuEntry("Select power:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70,
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
+			selectPowerMenuEntry.addOption("No Power");
 			selectPowerMenuEntry.addOption("Procrastinate");
 			selectPowerMenuEntry.addOption("Relaunch");
 			selectPowerMenuEntry.addOption("Mirror");
 			selectPowerMenuEntry.addOption("Erosion");
-			selectPowerMenuEntry.addOption("No Power");
+			
 			newGameMenuEntry.addEntry(selectPowerMenuEntry);
 			
 			PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start game!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
 			startGameMenuEntry.setAction(new Action(){
 				@Override
 				public void run() {
@@ -261,12 +262,22 @@ public class Game implements ActionListener{
 			newGameMenuEntry.addEntry(startGameMenuEntry);
 			
 			
+			PetrisMenuEntry backMenuEntry = new PetrisMenuEntry("Return to main menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+			backMenuEntry.setAction(new Action(){
+				@Override
+				public void run() {
+					Game.this.menuNavBack();					
+				}
+			});
+			newGameMenuEntry.addEntry(backMenuEntry);
+			
 			mainMenu.addEntry(newGameMenuEntry);
 			
 			mainMenu.addEntry(new PetrisMenuEntry("Leaderboards", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.lightGray, 230)));
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
 			mainMenu.addEntry(new PetrisMenuEntry("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.lightGray, 230)));
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230),false));
 			
 			PetrisMenuEntry quitMenuEntry = new PetrisMenuEntry("Quit", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
@@ -607,7 +618,7 @@ public class Game implements ActionListener{
     	}
     	if (previousLvl < speed)
     	{
-    		secondMessage.show("Speed up: " + speed + "!", Color.red, 1500, 300);
+    		fourthMessage.show("Speed up: " + speed + "!", Color.red, 2000, 300);
     	}
 	}
     
@@ -616,14 +627,16 @@ public class Game implements ActionListener{
     	if(wasPreviousSuccesful && numLines > 0) 
 		{
 			++multiplier;
-			
+			thirdMessage.show("Streak! + X1", Color.orange, 1500, 500);
 		}
     	if(numLines >= 2)
     	{
     		multiplier += numLines;
+    		secondMessage.show("Combo! + X" + numLines, Color.cyan, 1500, 500);
     	}
     	points += numLines * multiplier;
     	messageBox.show("+" + (numLines*multiplier),Color.green,500,300);
+    	
     }
 	
 	public void linesSuccessfullyRemoved(int numLines)

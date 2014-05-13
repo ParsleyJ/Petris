@@ -168,14 +168,19 @@ public class PetrisMenu implements MenuInterface {
 	}
 
 	@Override
-	public void performGoUp() {
+	public void performGoUp() 
+	{
 		if (focusedEntry > 0)
 		{
 			entries.get(focusedEntry).setFocused(false);
-			--focusedEntry;
-			entries.get(focusedEntry).setFocused(true);
-		}
-			
+			while(true)
+			{
+				if(entries.get(focusedEntry-1).isEnabled() || focusedEntry == 0) break;
+				else --focusedEntry;
+			}
+			if (focusedEntry != 0)--focusedEntry;
+			entries.get(focusedEntry).setFocused(true);			
+		}			
 	}
 
 	@Override
@@ -183,7 +188,12 @@ public class PetrisMenu implements MenuInterface {
 		if (focusedEntry < entries.size() - 1)
 		{
 			entries.get(focusedEntry).setFocused(false);
-			++focusedEntry;
+			while (true)
+			{
+				if(entries.get(focusedEntry+1).isEnabled() || focusedEntry == entries.size()-1 )break; 
+				else ++focusedEntry;
+			}
+			if (focusedEntry != entries.size() - 1)++focusedEntry;
 			entries.get(focusedEntry).setFocused(true);
 		}
 	}
@@ -223,6 +233,7 @@ public class PetrisMenu implements MenuInterface {
 
 	@Override
 	public void performBack() {
+		
 		if(titlesTraceback.isEmpty()) return;
 		title = titlesTraceback.pop();
 		titleColor = foreColorTraceback.pop();

@@ -6,8 +6,7 @@ public interface MenuInterface {
 	
 	public void show();
 	
-	public void close();
-	
+	public void close();	
 	
 	public void addEntry(PetrisMenuEntry entry);
 	public void addEntry(PetrisMenuEntry entry, int index);

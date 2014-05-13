@@ -16,12 +16,14 @@ public class PetrisMenuEntry {
 	protected FadingColor bgColor = new FadingColor(new Color(50,50,50,230), 230);
 	protected FadingColor textColor = new FadingColor(new Color(50,200,50,230), 230);
 	protected FadingColor focusColor = new FadingColor(new Color(50,50,50,0).brighter().brighter(), 230);
+	protected FadingColor disabledColor = new FadingColor(new Color(100,100,100,230), 230);
 	protected int width;
 	protected Font textFont;
 	private boolean isVisible;
 	private boolean hasAction = false;
 	private Action action;
 	protected PetrisMenu root;
+	private boolean enabled = true;
 	
 	public PetrisMenuEntry(String entryText, Font font, int parentWidth)
 	{
@@ -49,6 +51,20 @@ public class PetrisMenuEntry {
 		focusColor = new FadingColor(foreColor.getStaticColor().darker().darker().darker());
 		focusColor.setAlpha(0);
 		width = parentWidth;
+	}
+	
+	public PetrisMenuEntry(String entryText, Font font, int parentWidth, int entryHeight, FadingColor background, FadingColor foreColor, boolean isEnabled)
+	{
+		text = entryText;
+		textFont = font;
+		height = entryHeight;
+		bgColor = background;
+		textColor = foreColor;
+		//focusColor = new FadingColor(background.getStaticColor().brighter().brighter());
+		focusColor = new FadingColor(foreColor.getStaticColor().darker().darker().darker());
+		focusColor.setAlpha(0);
+		width = parentWidth;
+		setEnabled(isEnabled);
 	}
 	
 	public String getText() {
@@ -80,13 +96,13 @@ public class PetrisMenuEntry {
 		this.isFocused = isFocused;
 		if (isFocused)
 		{
-			focusColor.fadeIn(-1, 500);
+			focusColor.fadeIn(-1, 200);
 			bgColor.fadeOut();
 		}
 		else
 		{
 			focusColor.fadeOut();
-			bgColor.fadeIn(-1, 500);
+			bgColor.fadeIn(-1, 200);
 		}
 	}
 	
@@ -97,7 +113,8 @@ public class PetrisMenuEntry {
 		graphics.fillRect(0,y,width ,height);
 		graphics.setColor(focusColor.getStaticColor());
 		graphics.fillRect(0,y,width ,height);
-		graphics.setColor(textColor.getStaticColor());
+		if (isEnabled()) graphics.setColor(textColor.getStaticColor());
+		else graphics.setColor(disabledColor.getStaticColor());		
 		graphics.setFont(textFont);
 		int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
 		int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
@@ -179,6 +196,14 @@ public class PetrisMenuEntry {
 
 	public void setRootMenu(PetrisMenu root) {
 		this.root = root;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 	
 	
