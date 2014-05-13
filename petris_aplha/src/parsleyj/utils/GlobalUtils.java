@@ -6,4 +6,10 @@ public class GlobalUtils {
 	{
 		return (min <= val && val <= max);
 	}
+	
+	public static String boolToString(boolean x)
+	{
+		if (x) return "true";
+		else return "false";
+	}
 }

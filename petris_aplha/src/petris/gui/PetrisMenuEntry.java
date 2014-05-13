@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 
+import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
 import petris.Game.Action;
 
@@ -24,6 +25,9 @@ public class PetrisMenuEntry {
 	private Action action;
 	protected PetrisMenu root;
 	private boolean enabled = true;
+	private final int fadeTime = 300;
+	protected String style = "Blurred";
+	protected int borderSize = 5;
 	
 	public PetrisMenuEntry(String entryText, Font font, int parentWidth)
 	{
@@ -109,10 +113,12 @@ public class PetrisMenuEntry {
 	public void paint(Graphics graphics, int y)
 	{
 		if (!isVisible && textColor.getAlpha()==0 && bgColor.getAlpha()==0 && focusColor.getAlpha()==0) return;
-		graphics.setColor(bgColor.getStaticColor());
-		graphics.fillRect(0,y,width ,height);
+		graphics.setColor(bgColor.getStaticColor());		
+		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
+		else graphics.fillRect(0,y,width ,height);
 		graphics.setColor(focusColor.getStaticColor());
-		graphics.fillRect(0,y,width ,height);
+		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, focusColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
+		else graphics.fillRect(0,y,width ,height);
 		if (isEnabled()) graphics.setColor(textColor.getStaticColor());
 		else graphics.setColor(disabledColor.getStaticColor());		
 		graphics.setFont(textFont);
@@ -167,8 +173,9 @@ public class PetrisMenuEntry {
 
 	public void show() {
 		isVisible = true;
-		bgColor.fadeIn(-1, 500);
-		textColor.fadeIn(-1, 500);
+		bgColor.fadeIn(-1, fadeTime);
+		textColor.fadeIn(-1, fadeTime);
+		disabledColor.fadeIn(-1, fadeTime);
 
 	}
 
@@ -177,6 +184,7 @@ public class PetrisMenuEntry {
 		bgColor.fadeOut();
 		textColor.fadeOut();
 		focusColor.fadeOut();
+		disabledColor.fadeOut();
 	}
 	
 	public boolean isVisible()

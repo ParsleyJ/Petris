@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
 
 public class PetrisMenu implements MenuInterface {
@@ -35,8 +36,12 @@ public class PetrisMenu implements MenuInterface {
 	private int startingY = titleHeight;
 	
 	private int focusedEntry = 0;
-	private int spaceHeight = 5;
+	private int spaceHeight = 1;
 	private boolean needToReset = false;
+	
+	private final int fadeTime = 300;
+	protected String style = "Blurred";
+	protected int titleBorderSize = 10;
 	
 	public PetrisMenu(Dimension parentSize, String title, Font font)
 	{
@@ -66,8 +71,8 @@ public class PetrisMenu implements MenuInterface {
 			resetRoot();
 			needToReset = false;
 		}
-		bgColor.fadeIn(-1, 500);
-		titleColor.fadeIn(-1, 500);
+		bgColor.fadeIn(-1, fadeTime);
+		titleColor.fadeIn(-1, fadeTime);
 		for (PetrisMenuEntry e : entries)
 		{
 			e.show();
@@ -126,13 +131,15 @@ public class PetrisMenu implements MenuInterface {
 		else {
 			//draw title
 			graphics.setColor(bgColor.getStaticColor());
-			graphics.fillRect(0,0,parentWidth,titleHeight);
+			if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, 0, parentWidth, titleHeight-titleBorderSize*2, titleBorderSize, titleBorderSize);
+			else graphics.fillRect(0, 0, parentWidth, titleHeight);
 			graphics.setColor(titleColor.getStaticColor());
 			graphics.setFont(titleFont);
 			int w = (int) graphics.getFontMetrics().getStringBounds(title,graphics).getWidth();
 			int h = (int) graphics.getFontMetrics().getStringBounds(title,graphics).getHeight();
-			
-			Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,0), new Dimension(parentWidth,titleHeight), new Dimension(w,h));
+			Point titleCoords;
+			if (style == "Blurred") titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,0), new Dimension(parentWidth, titleHeight-titleBorderSize*2), new Dimension(w,h));
+			else titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,0), new Dimension(parentWidth, titleHeight), new Dimension(w,h));
 			graphics.drawString(title, titleCoords.x, titleCoords.y);
 		}
 		
@@ -327,6 +334,16 @@ public class PetrisMenu implements MenuInterface {
 	public void setStatusBarHeight(int stastusBarHeight) {
 		this.statusBarHeight = stastusBarHeight;
 	}
+
+	public int getSpaceHeight() {
+		return spaceHeight;
+	}
+
+
+	public void setSpaceHeight(int spaceHeight) {
+		this.spaceHeight = spaceHeight;
+	}
+
 
 	public boolean isEmpty() {
 		return isEmpty;

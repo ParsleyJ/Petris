@@ -15,7 +15,8 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	}
 	
 	
-	public void addEntry(PetrisMenuEntry entry) {
+	public void addEntry(PetrisMenuEntry entry) 
+	{
 		entries.add(entry);
 		entry.setRootMenu(this.getRootMenu());
 		if (isEmpty)

@@ -6,8 +6,6 @@ public abstract class Layer {
 
 	protected Graphics graphics;
 	
-	
-	
 	public abstract void paint();
 
 	public Graphics getGraphics() {
@@ -17,8 +15,5 @@ public abstract class Layer {
 	public void setGraphics(Graphics graphics) {
 		this.graphics = graphics;
 	}
-	
-	
-	
 	
 }

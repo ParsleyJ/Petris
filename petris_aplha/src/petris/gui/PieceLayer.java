@@ -51,6 +51,12 @@ public class PieceLayer extends Layer {
 		curPiece = p;
 	}
 	
+	public void setOffsets(int x, int y)
+	{
+		ox = x;
+		oy = y;
+	}
+	
 	public void paint()
     { 
        

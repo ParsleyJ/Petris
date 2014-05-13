@@ -21,6 +21,7 @@ import petris.gui.MenuLayer;
 import petris.gui.MessageLayer;
 import petris.gui.PetrisChildMenu;
 import petris.gui.PetrisColor;
+import petris.gui.PetrisGridOptionMenuEntry;
 import petris.gui.PetrisMenu;
 import petris.gui.PetrisMenuEntry;
 import petris.gui.PetrisOptionMenuEntry;
@@ -36,6 +37,7 @@ public class Game implements ActionListener{
 	
 	public ClassicPiece curPiece;
 	public ClassicPiece nextPiece;
+	private ClassicPiece previevPiece;
 	
 	private Dimension gameSize;
 	
@@ -47,11 +49,13 @@ public class Game implements ActionListener{
 	
 	private GhostGrid ghostGrid;
 	private GhostLayer ghostLayer;
+	private TetrisGrid previewGrid;
 	
 	private LineAnimationLayer removeLineAnimation;
 	
 	private TetrisGrid nextGrid;
 	private PieceLayer nextLayer;
+	private PieceLayer themePreviewLayer; //in settings menu
 	
 	private LabelLayer nextTextLabel;
 	private LabelLayer scoreTextLabel;
@@ -98,17 +102,17 @@ public class Game implements ActionListener{
 	private SquareStyle curStyle = SquareStyle.Border3d;
 	private String curPower = "PROCRASTINATE";
 	
-	
 	private int powerMaxAmmo = -1;
 	private float baseFontSize = 4;
 	private int baseFontStyle = 0;
-	private File fontFile = new File("src/resources/Mecha.ttf");
+	private File fontFile;
 	private Font gameFont;
 	
 	private PetrisMenu mainMenu;
 	private MenuLayer menuLayer;
 	
 	PetrisOptionMenuEntry selectPowerMenuEntry;
+	PetrisGridOptionMenuEntry selectThemeMenuEntry;
 	
 	private boolean inMenu = false;
 	private PanelLayer leftGuiPanel;
@@ -158,7 +162,8 @@ public class Game implements ActionListener{
 		
 		try
 		{
-			gameFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+			//fontFile = new File(this.getClass().getResourceAsInputStream("resources/Mecha.ttf").toString());
+			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/resources/Mecha.ttf"));
 			gameFont = gameFont.deriveFont(baseFontStyle);
 		}
 		catch (Exception e) {
@@ -231,36 +236,7 @@ public class Game implements ActionListener{
 			nextLayer = new PieceLayer(nextGrid,nextPiece,215,-15,3,100);
 			render.addLayer(nextLayer);
 			
-			//main menu configuration	------------------------		
-			menuLayer = new MenuLayer();
-			mainMenu = new PetrisMenu(gameSize,"Petris",gameFont.deriveFont(baseFontSize + 34F), 
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-			menuLayer.setCurrentMenu(mainMenu);
-			render.addLayer(menuLayer);
-			
-			PetrisChildMenu newGameMenuEntry = new PetrisChildMenu("New game", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-			
-			selectPowerMenuEntry = new PetrisOptionMenuEntry("Select power:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70,
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
-			selectPowerMenuEntry.addOption("No Power");
-			selectPowerMenuEntry.addOption("Procrastinate");
-			selectPowerMenuEntry.addOption("Relaunch");
-			selectPowerMenuEntry.addOption("Mirror");
-			selectPowerMenuEntry.addOption("Erosion");
-			
-			newGameMenuEntry.addEntry(selectPowerMenuEntry);
-			
-			PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start game!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-			startGameMenuEntry.setAction(new Action(){
-				@Override
-				public void run() {
-					Game.this.start();					
-				}
-			});
-			newGameMenuEntry.addEntry(startGameMenuEntry);
-			
+			//Main menu configuration	--------------------------------	
 			
 			PetrisMenuEntry backMenuEntry = new PetrisMenuEntry("Return to main menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
@@ -270,14 +246,97 @@ public class Game implements ActionListener{
 					Game.this.menuNavBack();					
 				}
 			});
-			newGameMenuEntry.addEntry(backMenuEntry);
+			
+			menuLayer = new MenuLayer();
+			mainMenu = new PetrisMenu(gameSize,"Petris",gameFont.deriveFont(baseFontSize + 34F), 
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+			menuLayer.setCurrentMenu(mainMenu);
+			render.addLayer(menuLayer);
+				
+						//New Game menu configuration   ----------------------------
+						PetrisChildMenu newGameMenuEntry = new PetrisChildMenu("New game", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+						
+						selectPowerMenuEntry = new PetrisOptionMenuEntry("Select power:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70,
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
+						selectPowerMenuEntry.addOption("No Power");
+						selectPowerMenuEntry.addOption("Procrastinate");
+						selectPowerMenuEntry.addOption("Relaunch");
+						selectPowerMenuEntry.addOption("Mirror");
+						selectPowerMenuEntry.addOption("Erosion");
+						
+						newGameMenuEntry.addEntry(selectPowerMenuEntry);
+						
+						PetrisOptionMenuEntry pieceSetOptionMenuEntry = new PetrisOptionMenuEntry("Select set of pieces:", gameFont.deriveFont(baseFontSize + 16F), 
+								(int)gameSize.getWidth(), 70, new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.blue, 230));
+						pieceSetOptionMenuEntry.setEnabled(false);
+						pieceSetOptionMenuEntry.setOptionText("Coming soon...");
+						newGameMenuEntry.addEntry(pieceSetOptionMenuEntry);
+						
+						PetrisOptionMenuEntry comboBonusOptionMenuEntry = new PetrisOptionMenuEntry("Select Combo Bonus:", gameFont.deriveFont(baseFontSize + 16F), 
+								(int)gameSize.getWidth(), 70, new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230));
+						comboBonusOptionMenuEntry.setEnabled(false);
+						comboBonusOptionMenuEntry.setOptionText("Coming soon...");
+						newGameMenuEntry.addEntry(comboBonusOptionMenuEntry);
+						
+						PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start game!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+						startGameMenuEntry.setAction(new Action(){
+							@Override
+							public void run() {
+								Game.this.start();					
+							}
+						});
+						newGameMenuEntry.addEntry(startGameMenuEntry);
+						newGameMenuEntry.addEntry(backMenuEntry);
+						//------------------------------------------
+				
+				
 			
 			mainMenu.addEntry(newGameMenuEntry);
-			
 			mainMenu.addEntry(new PetrisMenuEntry("Leaderboards", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
-			mainMenu.addEntry(new PetrisMenuEntry("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
-					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230),false));
+			mainMenu.addEntry(new PetrisMenuEntry("Profile", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230), false));
+			
+			
+			
+						//Settings menu configuration-----------------------
+						PetrisChildMenu settingsMenuEntry = new PetrisChildMenu("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
+						previewGrid = new TetrisGrid(this,new Dimension(125,125),5,5);
+						previevPiece = new ClassicPiece(TetrominoesId.SQUARE);
+						previevPiece.setX(0);
+						previevPiece.setY(previewGrid.rows -1);
+						themePreviewLayer = new PieceLayer(previewGrid, previevPiece, 0, 0, 5, 255);
+						selectThemeMenuEntry = new PetrisGridOptionMenuEntry("Select Style:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 150, 
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230), themePreviewLayer, 50, 50);
+						selectThemeMenuEntry.setOnLeft(new Action(){
+							@Override
+							public void run() {
+								Game.this.previousSquareStyle();
+							}							
+						});
+						selectThemeMenuEntry.setOnRight(new Action(){
+							@Override
+							public void run() {
+								Game.this.nextSquareStyle();
+							}							
+						});
+						selectThemeMenuEntry.setOnOk(new Action(){
+							@Override
+							public void run() {
+								Game.this.nextSquareStyle();
+							}
+						});
+						selectThemeMenuEntry.setOptionText("Border3D");
+						settingsMenuEntry.addEntry(selectThemeMenuEntry);
+						settingsMenuEntry.addEntry(backMenuEntry);
+						
+						//--------------------------------------------------
+				
+				
+			mainMenu.addEntry(settingsMenuEntry);
 			
 			PetrisMenuEntry quitMenuEntry = new PetrisMenuEntry("Quit", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
@@ -421,7 +480,7 @@ public class Game implements ActionListener{
 		secondMessage.show("Press P or Esc to resume", Color.green, -1, 300);
 		thirdMessage.show("Press T to change theme", Color.orange, -1, 300);
 		fourthMessage.show("Press Q to exit to main menu", Color.red, -1, 300);
-		inMenu = true;
+		//inMenu = true;
 	}
 	
 	private void fadeOutMenus() {
@@ -791,6 +850,8 @@ public class Game implements ActionListener{
 		//System.out.println(getHeightAverage() + " / " + tetriGrid.BoardHeight + " * 255 = " + (int) (getHeightAverage() / (tetriGrid.BoardHeight-5) * 255));
 		return (Math.min((int) (getHeightAverage() /(tetriGrid.rows - 5) * 510), 510));
 	}
+	
+	
 
 	public void nextSquareStyle() {
 		switch(curStyle)
@@ -821,17 +882,64 @@ public class Game implements ActionListener{
 			break;
 		case Medieval:
 			curStyle = SquareStyle.noBorder;
-			
+			break;
 		default:
 			curStyle = SquareStyle.noBorder;
 			break;
 		}
 		
+		updateSquareStyle();
+				
+	}
+	
+	public void previousSquareStyle() {
+		switch(curStyle)
+		{
+		case noBorder:
+			curStyle = SquareStyle.Medieval;
+			break;
+		case SimpleBorder:
+			curStyle = SquareStyle.noBorder;
+			break;
+		case Border3d:
+			curStyle = SquareStyle.SimpleBorder;
+			break;
+		case RoundSquare:
+			curStyle = SquareStyle.Border3d;
+			break;
+		case RoundSquareBorder:
+			curStyle = SquareStyle.RoundSquare;
+			break;
+		case Circle:
+			curStyle = SquareStyle.RoundSquareBorder;
+			break;
+		case CircleBorder:
+			curStyle = SquareStyle.Circle;
+			break;
+		case Octagon:
+			curStyle = SquareStyle.CircleBorder;
+			break;
+		case Medieval:
+			curStyle = SquareStyle.Octagon;
+			break;
+		default:
+			curStyle = SquareStyle.noBorder;
+			break;
+		}
+		
+		updateSquareStyle();
+				
+	}
+	
+	private void updateSquareStyle()
+	{
 		tetriLayer.setSquareStyle(curStyle);
 		fallLayer.setSquareStyle(curStyle);
 		nextLayer.setSquareStyle(curStyle);
 		ghostLayer.setSquareStyle(curStyle);
-		render.repaint();		
+		themePreviewLayer.setSquareStyle(curStyle);
+		selectThemeMenuEntry.setOptionText(curStyle.toString());
+		render.repaint();
 	}
 	
 	public void setPower(String power)

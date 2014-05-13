@@ -6,19 +6,24 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
+import petris.Game.Action;
 
 public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 
 	private boolean okForNext = true;
 	private boolean cycle =  true;
-	private boolean drawTriangles = true;
+	protected boolean drawTriangles = true;
 	private ArrayList<String> options = new ArrayList<String>();
 	private int selectedOption = 0;
-	private String selectedText = "";
-	private int triangleHeight = 16;
-	private int triangleWidth = 20;
-	private int triangleBorderDistance = 15;
+	protected String selectedText = "";
+	protected int triangleHeight = 16;
+	protected int triangleWidth = 20;
+	protected int triangleBorderDistance = 15;
+	private Action onLeft;
+	private Action onRight;
+	private Action onOk;
 	
 	public PetrisOptionMenuEntry(String entryText, Font font, int parentWidth,
 			int entryHeight, FadingColor background, FadingColor foreColor) {
@@ -52,6 +57,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 	
 	public void selectNext()
 	{
+		if (options.isEmpty()) return;
 		if (selectedOption + 1 > options.size() -1) 
 		{
 			if (cycle) 
@@ -71,6 +77,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 	
 	public void selectPrevious()
 	{
+		if (options.isEmpty()) return;
 		if (selectedOption - 1 < 0) 
 		{
 			if (cycle)
@@ -94,33 +101,55 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 		return options.get(selectedOption);
 	}
 	
+	public void setOptionText(String text)
+	{
+		selectedText = text;
+	}
+	
 	public void performOk()
 	{
 		super.performOk();
+		runOnOk();
 		if (okForNext)
 		{
 			selectNext();
 		}
 	}
 	
+	private void runOnOk() {
+		if (onOk != null)onOk.run();		
+	}
+
 	public void performRight()
 	{
 		super.performRight();
+		runOnRight();
 		selectNext();
 	}
 	
+	private void runOnRight() {
+		if (onRight != null)onRight.run();		
+	}
+
 	public void performLeft()
 	{
 		super.performLeft();
+		runOnLeft();
 		selectPrevious();
 	}
 	
+	private void runOnLeft() {
+		if (onLeft != null)onLeft.run();				
+	}
+
 	public void paint(Graphics graphics, int y)
 	{
 			graphics.setColor(bgColor.getStaticColor());
-			graphics.fillRect(0,y,width ,height);
+			if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
+			else graphics.fillRect(0,y,width ,height);
 			graphics.setColor(focusColor.getStaticColor());
-			graphics.fillRect(0,y,width ,height);
+			if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, focusColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
+			else graphics.fillRect(0,y,width ,height);
 			if (isEnabled()) graphics.setColor(textColor.getStaticColor());
 			else graphics.setColor(disabledColor.getStaticColor());		
 			graphics.setFont(textFont);
@@ -130,7 +159,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 			int w2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getWidth();
 			int h2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getHeight();
 			
-			Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w, h - 5 -h2));
+			Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w, h -5 -h2));
 			graphics.setFont(textFont);
 			graphics.drawString(text, titleCoords.x, titleCoords.y);
 			
@@ -190,6 +219,34 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 	public void setTriangleBorderDistance(int triangleBorderDistance) {
 		this.triangleBorderDistance = triangleBorderDistance;
 	}
+
+	public Action getOnLeft() {
+		return onLeft;
+	}
+
+	public void setOnLeft(Action onLeft) {
+		this.onLeft = onLeft;
+	}
+
+	public Action getOnRight() {
+		return onRight;
+	}
+
+	public void setOnRight(Action onRight) {
+		this.onRight = onRight;
+	}
+
+	public Action getOnOk() {
+		return onOk;
+	}
+
+	public void setOnOk(Action onOk) {
+		this.onOk = onOk;
+	}
+	
+	
+	
+	
 	
 
 }

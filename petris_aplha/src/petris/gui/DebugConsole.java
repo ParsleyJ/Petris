@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import parsleyj.utils.GlobalUtils;
 import petris.GlobalVarSet;
 
 public class DebugConsole extends JFrame implements ActionListener {
@@ -196,13 +197,13 @@ public class DebugConsole extends JFrame implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		
+	public void actionPerformed(ActionEvent e) 
+	{		
 		labelFpsW.setText("" + globals.currentRender.getIdealFps());
 		labelFpsR.setText("" + globals.currentRender.getSampledRealFps());
 		labelDelay.setText("" + globals.currentRender.getFrameDelay());
 		labelProfile.setText(globals.currentProfile.getName());
-		labelInGame.setText(boolToString(globals.currentGame.isInGame()));
+		labelInGame.setText(GlobalUtils.boolToString(globals.currentGame.isInGame()));
 		labelPoints.setText("" + globals.currentGame.getScore());
 		labelSpeedLevel.setText("" + globals.currentGame.getSpeedLevel());
 		labelSpeed.setText("" + globals.currentGame.getSpeed());
@@ -223,10 +224,6 @@ public class DebugConsole extends JFrame implements ActionListener {
 		
 	}
 	
-	public String boolToString(boolean x)
-	{
-		if (x) return "true";
-		else return "false";
-	}
+	
 	
 }
