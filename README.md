@@ -29,10 +29,13 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+
 ### pre-Alpha 0.34
 
 	- New power: “Freeze”
 	- Multiple full lines in a row will now increase the multiplier
+
+
 
 ### pre-Alpha 0.33
 	
@@ -42,4 +45,8 @@ N : start a new game (only in game)
 
 
 [Java]: https://www.java.com/it/download/
+
 [jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha034.jar?raw=true
+
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha033.jar?raw=true
+
