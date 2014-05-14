@@ -48,5 +48,3 @@ N : start a new game (only in game)
 
 [jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha034.jar?raw=true
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha033.jar?raw=true
-
