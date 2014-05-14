@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
-import petris.Game.Action;
+import petris.Action;
 
 public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 

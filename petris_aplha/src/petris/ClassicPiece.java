@@ -3,6 +3,8 @@ package petris;
 import java.awt.Color;
 import java.util.Random;
 
+import petris.gui.GraphicSquare;
+
 public class ClassicPiece extends Item {
 	
 	private int[][] coords;

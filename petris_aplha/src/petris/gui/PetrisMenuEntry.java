@@ -8,7 +8,7 @@ import java.awt.Point;
 
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
-import petris.Game.Action;
+import petris.Action;
 
 public class PetrisMenuEntry {
 	protected String text;

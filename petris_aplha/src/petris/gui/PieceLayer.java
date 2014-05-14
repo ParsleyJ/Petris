@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import petris.ClassicPiece;
-import petris.GraphicSquare;
-import petris.GraphicSquare.SquareStyle;
+import petris.gui.GraphicSquare;
+import petris.gui.GraphicSquare.SquareStyle;
 import petris.TetrisGrid;
 
 public class PieceLayer extends Layer {

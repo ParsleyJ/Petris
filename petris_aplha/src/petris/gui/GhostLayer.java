@@ -9,8 +9,8 @@ import javax.swing.Timer;
 
 import petris.GhostGrid;
 import petris.ClassicPiece;
-import petris.GraphicSquare;
-import petris.GraphicSquare.SquareStyle;
+import petris.gui.GraphicSquare;
+import petris.gui.GraphicSquare.SquareStyle;
 
 public class GhostLayer extends Layer implements ActionListener {
 	private GhostGrid grid;

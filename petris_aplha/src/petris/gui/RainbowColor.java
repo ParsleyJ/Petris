@@ -8,8 +8,8 @@ public class RainbowColor extends DynamicColor {
 	private boolean phase1 = true;
 	private boolean phase2 = false;
 	private boolean phase3 = false;
-	int step = 16;
-	
+	private int step = 16;
+	private int maxValue = 255;
 	public enum Phase{RED,GREEN,BLUE};
 	
 	public RainbowColor()
@@ -42,17 +42,26 @@ public class RainbowColor extends DynamicColor {
 		start();
 	}
 	
+	public RainbowColor(int speed, Phase phase, int max)
+	{
+		super(0,0,255,255,20);
+		setPhase(phase);
+		step = Math.max(Math.min(speed, 255),0);
+		maxValue = max;
+		start();
+	}
+	
 	
 	@Override
 	void tick() {
 		if(phase1)
 		{
-			if(getRed() + step >= 255)
+			if(getRed() + step >= maxValue)
 			{
 				phase1 =false;
 				phase2 =true;
 				phase3 =false;
-				setRed(255);
+				setRed(maxValue);
 				setBlue(0);
 			}
 			else 
@@ -64,12 +73,12 @@ public class RainbowColor extends DynamicColor {
 		
 		if(phase2)
 		{
-			if(getGreen() + step >= 255)
+			if(getGreen() + step >= maxValue)
 			{
 				phase1 =false;
 				phase2 =false;
 				phase3 =true;
-				setGreen(255);
+				setGreen(maxValue);
 				setRed(0);
 			}
 			else 
@@ -81,12 +90,12 @@ public class RainbowColor extends DynamicColor {
 		
 		if(phase3)
 		{
-			if(getBlue() + step >= 255)
+			if(getBlue() + step >= maxValue)
 			{
 				phase1 =true;
 				phase2 =false;
 				phase3 =false;
-				setBlue(255);
+				setBlue(maxValue);
 				setGreen(0);
 			}
 			else 
@@ -104,7 +113,7 @@ public class RainbowColor extends DynamicColor {
 		{
 		case RED:
 		{
-			setColor(new Color(0,0,255,255));
+			setColor(new Color(0,0,maxValue,255));
 			phase1=true;
 			phase2=false;
 			phase3=false;
@@ -112,7 +121,7 @@ public class RainbowColor extends DynamicColor {
 		}
 		case GREEN:
 		{
-			setColor(new Color(255,0,0,255));
+			setColor(new Color(maxValue,0,0,255));
 			phase1=false;
 			phase2=true;
 			phase3=false;
@@ -120,13 +129,29 @@ public class RainbowColor extends DynamicColor {
 		}
 		case BLUE:
 		{
-			setColor(new Color(0,255,0,255));
+			setColor(new Color(0,maxValue,0,255));
 			phase1=false;
 			phase2=false;
 			phase3=true;
 			break;
 		}
 		}
+	}
+	
+	public int getIncreasingValue()
+	{
+		if (phase1) return getRed();
+		if (phase2) return getGreen();
+		if (phase3) return getBlue();
+		return 0;
+	}
+
+	public int getSpeed() {
+		return step;
+	}
+
+	public void setSpeed(int step) {
+		this.step = step;
 	}
 	
 

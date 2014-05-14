@@ -47,6 +47,16 @@ public class GraphicsUtils {
 		return new int[]{r, g, b, a};
 	}
 	
+	public static double[] getColorSteppers(Color c1, Color c2, double dividend)
+	{
+		double r=0, g=0, b=0, a=0;
+		r=  (c2.getRed() - c1.getRed()) /dividend;
+		g= (c2.getGreen() - c1.getGreen()) /dividend;
+		b= (c2.getBlue() - c1.getBlue()) /dividend;
+		a= (c2.getAlpha() - c1.getAlpha())  /dividend;
+		return new double[]{r, g, b, a};
+	}
+	
 	public enum GradientMode { HORIZONTAL, VERTICAL, DOWNLEFT, UPLEFT, UPRIGHT, DOWNRIGHT, CENTER}
 	
 	public static void fillGradientRect(Graphics g, Color c1, Color c2, int x, int y, int width, int height, GradientMode mode)
@@ -55,10 +65,10 @@ public class GraphicsUtils {
 		{
 		case VERTICAL:
 		{
-			int [] step = getColorSteppers(c1,c2,height);
+			double [] step = getColorSteppers(c1,c2,(double)height);
 			for(int i = 0; i < height; ++i)
 			{
-				g.setColor(new Color(c1.getRed()+step[0]*i, c1.getGreen()+step[1]*i, c1.getBlue()+step[2]*i, c1.getAlpha()+step[3]*i));
+				g.setColor(new Color((int)(c1.getRed()+step[0]*i), (int)(c1.getGreen()+step[1]*i), (int)(c1.getBlue()+step[2]*i), (int)(c1.getAlpha()+step[3]*i)));
 				g.drawLine(x, y+i, x+width-1, y+i);
 			}
 			break;

@@ -1,13 +1,22 @@
 package petris.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
+
+import petris.Action;
+import petris.PaintAction;
+
+
 
 public class BackgroundLayer extends Layer {
 	
 	PetrisColor color;
 	Dimension size;
 	
+	PaintAction customPaint;
 	
+	
+
 
 	public BackgroundLayer(PetrisColor col, Dimension s)
 	{
@@ -20,6 +29,10 @@ public class BackgroundLayer extends Layer {
 		color = col;
 	}
 	
+	public PetrisColor getPetrisColor() {
+		return color;
+	}
+	
 	public Dimension getSize() {
 		return size;
 	}
@@ -30,9 +43,27 @@ public class BackgroundLayer extends Layer {
 
 	public void paint()
 	{
-		graphics.setColor(color.getColor());
-		graphics.fillRect(0,0,(int)size.getWidth(),(int)size.getHeight());
+		if (customPaint != null)
+		{
+			customPaint.runPaint(graphics);
+		}
+		else
+		{
+			graphics.setColor(color.getColor());
+			graphics.fillRect(0,0,(int)size.getWidth(),(int)size.getHeight());
+		}
 	}
+
+	public PaintAction getCustomPaint() {
+		return customPaint;
+	}
+
+	public void setCustomPaint(PaintAction customPaint) {
+		this.customPaint = customPaint;
+	}
+	
+	
+
 	
 	
 	

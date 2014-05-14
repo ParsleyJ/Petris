@@ -1,16 +1,21 @@
-package petris;
+package petris.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
 
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GraphicsUtils.GradientMode;
+import petris.Item;
 import petris.gui.RainbowColor;
 import petris.gui.RainbowColor.Phase;
 
 
 
-public class GraphicSquare extends Item {
+public class GraphicSquare extends Item{
 	
 	private Color bgColor;
 	private Color bordColor;
@@ -26,11 +31,11 @@ public class GraphicSquare extends Item {
 	
 	
 	public enum SquareStyle {
-		noBorder, SimpleBorder, Border3d, RoundSquare, RoundSquareBorder, 
-		Circle, CircleBorder, Octagon, Medieval, BlurredOutBorder, 
-		BlurredInBorder, SquareMadness, Granular, VerticalGradient, 
-		HorizontalGradient,	DownLeftGradient, DownRightGradient, CenterGradient,
-		Rainbow, Rainbow2, ColorMadness, LucyInTheSky, GhostSquare, Glitchy,
+		noBorder, SimpleBorder, Border3d, Cartoon, RoundSquareBorder, 
+		Circle, CircleBorder, Octagon, Medieval, BlurredOutBorder, BlurredInBorder,
+		SquareMadness, Granular, VerticalGradient, HorizontalGradient, DownLeftGradient, 
+		DownRightGradient, CenterGradient, Rainbow, Rainbow2, ColorMadness, LucyInTheSky,
+		GhostSquare, Glitchy, YouNeedGlasses, CityLights, Rotatuille, Smiley
 	}
 	
 	public GraphicSquare()//Default ctor
@@ -72,6 +77,7 @@ public class GraphicSquare extends Item {
 		borderSize = d;
 		bordColor = b;
 		style = sqs;
+		
 	}
 	
 	public GraphicSquare(GraphicSquare s)//Copy ctor
@@ -148,7 +154,7 @@ public class GraphicSquare extends Item {
 	        
 	        break;
 		}
-		case RoundSquare:
+		case Cartoon:
 		{
 			g.setColor(bgColor);
 			g.fillRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
@@ -198,6 +204,23 @@ public class GraphicSquare extends Item {
 			int yp[] = { locY, locY, locY +  margin, locY + squareHeight -margin,
 						locY + squareHeight, locY + squareHeight, locY + squareHeight - margin, locY +margin}; 
 			g.fillPolygon(xp, yp, 8);
+			break;
+		}
+		case YouNeedGlasses:
+		{
+			/*GraphicsUtils.fillGradientRect(g, bgColor, new Color(0,0,0,0), locX -squareWidth/6, locY-squareHeight/6, 
+					squareWidth+squareHeight/3, squareHeight+squareHeight/3, GradientMode.CENTER);*/
+			GraphicsUtils.fillGradientRect(g, bgColor, GraphicsUtils.setColorAlpha(bgColor, 50), locX -squareWidth/6, locY-squareHeight/6, 
+					squareWidth+squareHeight/3, squareHeight+squareHeight/3, GradientMode.CENTER);
+			
+			break;
+		}
+		case CityLights:
+		{
+			GraphicsUtils.fillGradientRect(g, bgColor, new Color(0,0,0,0), locX -squareWidth/6, locY-squareHeight/6, 
+					squareWidth+squareHeight/3, squareHeight+squareHeight/3, GradientMode.CENTER);
+			
+			
 			break;
 		}
 		case Glitchy:
@@ -318,6 +341,33 @@ public class GraphicSquare extends Item {
 		{
 			GraphicsUtils.fillGradientRect(g, bgColor, new Color(0,0,0,0), locX, locY, squareWidth, squareHeight, GradientMode.DOWNLEFT);			
 			break;
+		}
+		case Rotatuille:
+		{
+			
+			/*int delta = rainbowFast.getIncreasingValue();
+			
+			int[] x ={locX+squareWidth-delta, locX+squareWidth, locX+delta, locX };
+			int[] y ={locY, locY-delta, locY+squareHeight, locY+delta };
+			g.fillPolygon(x, y, 4);*/ //<<<--- TODO: Fireworks!?
+			g.setColor(bgColor);
+			int delta = (rainbowFast.getIncreasingValue()*squareWidth)/(255-rainbowFast.getSpeed());			
+			int[] x ={locX+squareWidth-delta, locX+squareWidth, locX+delta, locX };
+			int[] y ={locY, locY+squareHeight-delta, locY+squareHeight, locY+delta };
+			g.fillPolygon(x, y, 4);
+			break;
+			
+		}
+		case Smiley:
+		{
+			g.setColor(bgColor);
+			g.fillOval(locX, locY, squareWidth, squareHeight);
+			g.setColor(Color.black);
+			g.fillOval(locX+squareWidth/4, locY+squareHeight/4,squareWidth/8,squareHeight/8); //left eye
+			g.fillOval(locX+squareWidth*5/8, locY+squareHeight/4,squareWidth/8,squareHeight/8); //right eye
+			g.drawArc(locX+squareWidth/4, locY+squareHeight/4, squareWidth/2, squareHeight/2, 225, 90); //mouth
+			break;
+		
 		}
 		default:
 		{

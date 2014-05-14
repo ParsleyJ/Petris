@@ -32,7 +32,7 @@ public class Petris {
 		gameFrame.setLocation(new Point(450,100));
 		
 		
-		int y = 689; //TODO: changes on Windows
+		int y = 689; 
 		int x = 300;
 		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
 		{
@@ -65,7 +65,7 @@ public class Petris {
 		
 		currentProfile = new Profile();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.34");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.35");
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		
 		console = new DebugConsole(globals);
