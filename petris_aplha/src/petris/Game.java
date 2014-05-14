@@ -99,7 +99,7 @@ public class Game implements ActionListener{
 	private FlashingGravityColor gravityColor;
 	private ColorFlash flashColor;
 	
-	private SquareStyle curStyle = SquareStyle.Border3d;
+	private SquareStyle curStyle = SquareStyle.noBorder;
 	private String curPower = "PROCRASTINATE";
 	
 	private int powerMaxAmmo = -1;
@@ -279,7 +279,7 @@ public class Game implements ActionListener{
 						comboBonusOptionMenuEntry.setOptionText("Coming soon...");
 						newGameMenuEntry.addEntry(comboBonusOptionMenuEntry);
 						
-						PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start game!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+						PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
 						startGameMenuEntry.setAction(new Action(){
 							@Override
@@ -304,12 +304,13 @@ public class Game implements ActionListener{
 						//Settings menu configuration-----------------------
 						PetrisChildMenu settingsMenuEntry = new PetrisChildMenu("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
+						
 						previewGrid = new TetrisGrid(this,new Dimension(125,125),5,5);
 						previevPiece = new ClassicPiece(TetrominoesId.SQUARE);
 						previevPiece.setX(0);
 						previevPiece.setY(previewGrid.rows -1);
 						themePreviewLayer = new PieceLayer(previewGrid, previevPiece, 0, 0, 5, 255);
-						selectThemeMenuEntry = new PetrisGridOptionMenuEntry("Select Style:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 150, 
+						selectThemeMenuEntry = new PetrisGridOptionMenuEntry("Select square style:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 150, 
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230), themePreviewLayer, 50, 50);
 						selectThemeMenuEntry.setOnLeft(new Action(){
 							@Override
@@ -329,8 +330,21 @@ public class Game implements ActionListener{
 								Game.this.nextSquareStyle();
 							}
 						});
-						selectThemeMenuEntry.setOptionText("Border3D");
+						selectThemeMenuEntry.setOptionText("noBorder");
 						settingsMenuEntry.addEntry(selectThemeMenuEntry);
+						
+						PetrisOptionMenuEntry setBackgroundMenuEntry = new PetrisOptionMenuEntry("Select background:", gameFont.deriveFont(baseFontSize + 16F), 
+								(int)gameSize.getWidth(), 70, new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.blue, 230));
+						setBackgroundMenuEntry.setEnabled(false);
+						setBackgroundMenuEntry.setOptionText("Coming soon...");
+						settingsMenuEntry.addEntry(setBackgroundMenuEntry);
+						
+						
+						settingsMenuEntry.addEntry(new PetrisMenuEntry("Controls", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230), false));
+						settingsMenuEntry.addEntry(new PetrisMenuEntry("Graphics settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230), false));
+						
 						settingsMenuEntry.addEntry(backMenuEntry);
 						
 						//--------------------------------------------------
@@ -353,6 +367,7 @@ public class Game implements ActionListener{
 		
 	    timer = new Timer(500,this);
 	    gravityColor.setTimerDelay(50);
+	    updateSquareStyle();
 	    
 	}
     
@@ -396,6 +411,7 @@ public class Game implements ActionListener{
         smallMessage.show("New game started", Color.green, 1500, 500);//what with simoultaneous message shows? ---> add a queue
         fadeOutMenus();
         fadeInGui();
+        
     }
     
    
@@ -452,6 +468,7 @@ public class Game implements ActionListener{
         messageBox.show("Game Over!", Color.red, -1, 500);
         secondMessage.show("Press N to start a new game.", Color.white, -1, 500);
         thirdMessage.show("Press Y to change power.", Color.green, -1, 500);
+        fourthMessage.show("Press Q to exit to main menu", Color.red, -1, 300);
 	}
 	
 	public void showMainMenu()
@@ -854,81 +871,20 @@ public class Game implements ActionListener{
 	
 
 	public void nextSquareStyle() {
-		switch(curStyle)
-		{
-		case noBorder:
-			curStyle = SquareStyle.SimpleBorder;
-			break;
-		case SimpleBorder:
-			curStyle = SquareStyle.Border3d;
-			break;
-		case Border3d:
-			curStyle = SquareStyle.RoundSquare;
-			break;
-		case RoundSquare:
-			curStyle = SquareStyle.RoundSquareBorder;
-			break;
-		case RoundSquareBorder:
-			curStyle = SquareStyle.Circle;
-			break;
-		case Circle:
-			curStyle = SquareStyle.CircleBorder;
-			break;
-		case CircleBorder:
-			curStyle = SquareStyle.Octagon;
-			break;
-		case Octagon:
-			curStyle = SquareStyle.Medieval;
-			break;
-		case Medieval:
-			curStyle = SquareStyle.noBorder;
-			break;
-		default:
-			curStyle = SquareStyle.noBorder;
-			break;
-		}
 		
+		SquareStyle[] allv = SquareStyle.values();
+		if (curStyle.ordinal() + 1 >= allv.length) curStyle = allv[0];
+		else curStyle = allv[curStyle.ordinal() + 1];
 		updateSquareStyle();
-				
+		if(!inMenu)smallMessage.show("Style selected: " + curStyle.toString(), Color.yellow, 1500, 500);
 	}
 	
 	public void previousSquareStyle() {
-		switch(curStyle)
-		{
-		case noBorder:
-			curStyle = SquareStyle.Medieval;
-			break;
-		case SimpleBorder:
-			curStyle = SquareStyle.noBorder;
-			break;
-		case Border3d:
-			curStyle = SquareStyle.SimpleBorder;
-			break;
-		case RoundSquare:
-			curStyle = SquareStyle.Border3d;
-			break;
-		case RoundSquareBorder:
-			curStyle = SquareStyle.RoundSquare;
-			break;
-		case Circle:
-			curStyle = SquareStyle.RoundSquareBorder;
-			break;
-		case CircleBorder:
-			curStyle = SquareStyle.Circle;
-			break;
-		case Octagon:
-			curStyle = SquareStyle.CircleBorder;
-			break;
-		case Medieval:
-			curStyle = SquareStyle.Octagon;
-			break;
-		default:
-			curStyle = SquareStyle.noBorder;
-			break;
-		}
-		
+		SquareStyle[] allv = SquareStyle.values();
+		if (curStyle.ordinal() - 1 < 0) curStyle = allv[allv.length-1];
+		else curStyle = allv[curStyle.ordinal() - 1];
 		updateSquareStyle();
-				
+		if(!inMenu)smallMessage.show("Style selected: " + curStyle.toString(), Color.yellow, 1500, 500);	
 	}
 	
 	private void updateSquareStyle()

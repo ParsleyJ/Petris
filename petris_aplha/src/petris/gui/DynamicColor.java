@@ -13,12 +13,21 @@ public abstract class DynamicColor implements ActionListener {
 	private int blue;
 	private int alpha;
 	
-	protected void checkValues()
+	protected void checkValuesAndThrow()
 	{
 		if (red < 0 || red > 255) throw new RuntimeException("Red out of range");
 		if (green < 0 || green > 255) throw new RuntimeException("Green out of range");
 		if (blue < 0 || blue > 255) throw new RuntimeException("Blue out of range");
 		if (alpha < 0 || alpha > 255) throw new RuntimeException("Alpha out of range");
+	}
+	
+	protected boolean checkValues()
+	{
+		if (red < 0 || red > 255) return false;
+		if (green < 0 || green > 255) return false;
+		if (blue < 0 || blue > 255) return false;
+		if (alpha < 0 || alpha > 255) return false;
+		return true;
 	}
 	
 	private Timer timer;
@@ -51,7 +60,7 @@ public abstract class DynamicColor implements ActionListener {
 		green = g;
 		blue = b;
 		alpha = a;
-		checkValues();
+		checkValuesAndThrow();
 		timer = null;
 		
 	}
@@ -61,7 +70,7 @@ public abstract class DynamicColor implements ActionListener {
 		green = g;
 		blue = b;
 		alpha = a;
-		checkValues();
+		checkValuesAndThrow();
 		timer = new Timer(t,this);
 		
 	}

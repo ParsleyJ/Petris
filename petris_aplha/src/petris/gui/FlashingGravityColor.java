@@ -28,9 +28,9 @@ public class FlashingGravityColor extends DynamicColor {
 		start();
 	}
 	
-	protected void checkValues()
+	protected void checkValuesAndThrow()
 	{
-		super.checkValues();
+		super.checkValuesAndThrow();
 		if (gravity < 0 || gravity >510) throw new RuntimeException("Gravity out of range");
 	}
 	
@@ -65,7 +65,7 @@ public class FlashingGravityColor extends DynamicColor {
 
 	public void setGravity(int gravity) {
 		this.gravity = gravity;
-		checkValues();
+		checkValuesAndThrow();
 		updateRedGreen();
 	}
 	

@@ -182,7 +182,7 @@ public class PetrisMenu implements MenuInterface {
 			entries.get(focusedEntry).setFocused(false);
 			while(true)
 			{
-				if(entries.get(focusedEntry-1).isEnabled() || focusedEntry == 0) break;
+				if(entries.get(focusedEntry-1).isEnabled() || focusedEntry == 0) break;//TODO: what if first entry is disabled?
 				else --focusedEntry;
 			}
 			if (focusedEntry != 0)--focusedEntry;

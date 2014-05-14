@@ -3,36 +3,50 @@ package petris;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import parsleyj.utils.GraphicsUtils;
+import parsleyj.utils.GraphicsUtils.GradientMode;
+import petris.gui.RainbowColor;
+import petris.gui.RainbowColor.Phase;
+
 
 
 public class GraphicSquare extends Item {
 	
-	private Color bgcolor;
-	private Color bordcolor;
-	public int deepness;
+	private Color bgColor;
+	private Color bordColor;
+	public int borderSize;
 	public int squareHeight = 30;
 	public int squareWidth = 30;
 	private SquareStyle style;
+	public static RainbowColor rainbowSlow = new RainbowColor(1);
+	public static RainbowColor rainbowFast = new RainbowColor(8);
+	public static RainbowColor rainbowFast2 = new RainbowColor(8,Phase.GREEN);
+	public static RainbowColor rainbowVeryFast = new RainbowColor(32);
+	
 	
 	
 	public enum SquareStyle {
-		noBorder, SimpleBorder, Border3d, RoundSquare, RoundSquareBorder, Circle, CircleBorder, Octagon, Medieval,  
+		noBorder, SimpleBorder, Border3d, RoundSquare, RoundSquareBorder, 
+		Circle, CircleBorder, Octagon, Medieval, BlurredOutBorder, 
+		BlurredInBorder, SquareMadness, Granular, VerticalGradient, 
+		HorizontalGradient,	DownLeftGradient, DownRightGradient, CenterGradient,
+		Rainbow, Rainbow2, ColorMadness, LucyInTheSky, GhostSquare, Glitchy,
 	}
 	
 	public GraphicSquare()//Default ctor
 	{
 		
-		bgcolor = new Color(0,0,0);
-		deepness = 0;
+		bgColor = new Color(0,0,0);
+		borderSize = 0;
 		style = SquareStyle.noBorder;
 	}
 	
 	public GraphicSquare(int h, int w, Color c, int d)
 	{
-		bgcolor = c;
+		bgColor = c;
 		squareHeight = h;
 		squareWidth = w;
-		deepness = d;
+		borderSize = d;
 		style = SquareStyle.noBorder;
 	}
 	
@@ -40,11 +54,11 @@ public class GraphicSquare extends Item {
 	{
 		locX = x;
 		locY = y;
-		bgcolor = c;
+		bgColor = c;
 		squareHeight = h;
 		squareWidth = w;
-		deepness = d;
-		bordcolor = b;
+		borderSize = d;
+		bordColor = b;
 		style = SquareStyle.noBorder;
 	}
 	
@@ -52,19 +66,19 @@ public class GraphicSquare extends Item {
 	{
 		locX = x;
 		locY = y;
-		bgcolor = c;
+		bgColor = c;
 		squareHeight = h;
 		squareWidth = w;
-		deepness = d;
-		bordcolor = b;
+		borderSize = d;
+		bordColor = b;
 		style = sqs;
 	}
 	
 	public GraphicSquare(GraphicSquare s)//Copy ctor
 	{
-		this.bgcolor = s.bgcolor;//it references the same color (for now)
-		this.bordcolor = s.bordcolor;
-		this.deepness = s.deepness;
+		this.bgColor = s.bgColor;//it references the same color (for now)
+		this.bordColor = s.bordColor;
+		this.borderSize = s.borderSize;
 		this.squareHeight = s.squareHeight;
 		this.squareWidth = s.squareWidth;
 		this.style = s.style;
@@ -72,20 +86,20 @@ public class GraphicSquare extends Item {
 	
 	public void setBGColor(Color col)
 	{
-		bgcolor = col;
+		bgColor = col;
 	}
 	public Color getBGColor()
 	{
-		return bgcolor;
+		return bgColor;
 	}
 	
 	public int getDeepness()
 	{
-		return deepness;
+		return borderSize;
 	}
 	public void setDeepness(int d)
 	{
-		deepness = d;
+		borderSize = d;
 	}
 	public void paint(Graphics g)
 	{
@@ -93,26 +107,26 @@ public class GraphicSquare extends Item {
 		{
 		case noBorder:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			g.fillRect(locX,locY,squareWidth,squareHeight);
 			break;
 		}
 		case SimpleBorder:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			g.fillRect(locX,locY,squareWidth,squareHeight);
-			g.setColor(bordcolor.darker().darker());
+			g.setColor(bordColor.darker().darker());
 			g.drawRect(locX, locY, squareWidth, squareHeight);
 			break;
 		}
 		case Border3d:
 		{
-			g.setColor (bgcolor);
-	        g.fillRect(locX + deepness - 1, locY + deepness - 1, 
-	        		squareWidth - deepness, squareHeight - deepness);
-	        Color bord = new Color(bordcolor.getRGB());
-	        Color bord2 = new Color(bordcolor.getRGB());
-	        for (int i = 1; i <= deepness; ++i)
+			g.setColor (bgColor);
+	        g.fillRect(locX + borderSize - 1, locY + borderSize - 1, 
+	        		squareWidth - borderSize, squareHeight - borderSize);
+	        Color bord = new Color(bordColor.getRGB());
+	        Color bord2 = new Color(bordColor.getRGB());
+	        for (int i = 1; i <= borderSize; ++i)
 	        {
 	        	for (int j = 1; j <= i; ++j)
 	        	{
@@ -131,41 +145,42 @@ public class GraphicSquare extends Item {
 	        	g.drawLine(locX + squareWidth - i, locY + squareHeight - i,
 	        			locX + squareWidth - i, locY + i);
 	        }
+	        
 	        break;
 		}
 		case RoundSquare:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			g.fillRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
 			break;
 		}
 		case RoundSquareBorder:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			g.fillRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
-			g.setColor(bordcolor.darker().darker());
+			g.setColor(bordColor.darker().darker());
 			g.drawRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
 			break;
 		}
 		case Circle:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			//g.fillRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
 			g.fillOval(locX, locY, squareWidth, squareHeight);
 			break;
 		}
 		case CircleBorder:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			//g.fillRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
 			g.fillOval(locX, locY, squareWidth, squareHeight);
-			g.setColor(bordcolor.darker().darker());
+			g.setColor(bordColor.darker().darker());
 			g.drawOval(locX, locY, squareWidth, squareHeight);
 			break;
 		}
 		case Octagon:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			int margin = (int)((4 + Math.sqrt(16+8*squareHeight*squareHeight))/4);
 			int xp[] = { locX + margin, locX + squareHeight -margin, locX, locX,
 						locX + squareHeight -margin, locX +margin, locX + squareWidth, locX + squareWidth};
@@ -176,7 +191,7 @@ public class GraphicSquare extends Item {
 		}
 		case Medieval:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			int margin = (int)((4 + Math.sqrt(16+8*squareHeight*squareHeight))/4);
 			int xp[] = { locX + margin, locX + squareHeight -margin, locX + squareHeight, locX+squareHeight,
 						locX + squareHeight -margin, locX +margin, locX, locX};
@@ -185,9 +200,128 @@ public class GraphicSquare extends Item {
 			g.fillPolygon(xp, yp, 8);
 			break;
 		}
+		case Glitchy:
+		{
+			GraphicsUtils.fillBlurredGlitchRect(g, bgColor, locX, locY, squareWidth, squareHeight, borderSize, borderSize);
+			g.setColor(bgColor);
+			g.fillRect(locX,locY,squareWidth,squareHeight);
+			break;
+		}
+		case BlurredOutBorder:
+		{
+			g.setColor(bgColor);
+			GraphicsUtils.fillBlurredBorderRect(g, bgColor, locX, locY, squareWidth, squareHeight, borderSize, borderSize);
+			break;
+		}
+		case BlurredInBorder:
+		{
+			g.setColor(bgColor);
+			GraphicsUtils.fillBlurredBorderRect(g, bgColor, locX+borderSize, locY+borderSize, squareWidth-borderSize, squareHeight-borderSize, borderSize, borderSize);
+			break;
+		}
+		case SquareMadness:
+		{
+			g.setColor(bgColor);
+			g.fillRect(locX, locY, squareWidth/3, squareHeight/3);
+			g.fillRect(locX+squareWidth/3, locY, squareWidth/3, squareHeight/3);
+			g.fillRect(locX+squareWidth*2/3, locY, squareWidth/3, squareHeight/3);
+			g.fillRect(locX, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.fillRect(locX+squareWidth/3, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.fillRect(locX+squareWidth*2/3, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.fillRect(locX, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.fillRect(locX+squareWidth/3, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.fillRect(locX+squareWidth*2/3, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.setColor(bordColor.darker().darker());
+			g.drawRect(locX, locY, squareWidth/3, squareHeight/3);
+			g.drawRect(locX+squareWidth/3, locY, squareWidth/3, squareHeight/3);
+			g.drawRect(locX+squareWidth*2/3, locY, squareWidth/3, squareHeight/3);
+			g.drawRect(locX, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.drawRect(locX+squareWidth/3, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.drawRect(locX+squareWidth*2/3, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.drawRect(locX, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.drawRect(locX+squareWidth/3, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.drawRect(locX+squareWidth*2/3, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			
+			break;
+		}
+		case Granular:
+		{
+			g.setColor(bgColor);
+			g.fillOval(locX, locY, squareWidth/3, squareHeight/3);
+			g.fillOval(locX+squareWidth/3, locY, squareWidth/3, squareHeight/3);
+			g.fillOval(locX+squareWidth*2/3, locY, squareWidth/3, squareHeight/3);
+			g.fillOval(locX, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.fillOval(locX+squareWidth/3, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.fillOval(locX+squareWidth*2/3, locY+squareHeight/3, squareWidth/3, squareHeight/3);
+			g.fillOval(locX, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.fillOval(locX+squareWidth/3, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			g.fillOval(locX+squareWidth*2/3, locY+squareHeight*2/3, squareWidth/3, squareHeight/3);
+			
+			break;
+		}
+		case VerticalGradient:
+		{
+			GraphicsUtils.fillGradientRect(g, bgColor, bgColor.darker().darker(), locX, locY, squareWidth, squareHeight, GradientMode.VERTICAL);			
+			break;
+		}
+		case HorizontalGradient:
+		{
+			GraphicsUtils.fillGradientRect(g, bgColor, bgColor.darker().darker(), locX, locY, squareWidth, squareHeight, GradientMode.HORIZONTAL);			
+			break;
+		}
+		case DownLeftGradient:
+		{
+			GraphicsUtils.fillGradientRect(g, bgColor, bgColor.darker().darker(), locX, locY, squareWidth, squareHeight, GradientMode.DOWNLEFT);
+			break;
+		}
+		case DownRightGradient:
+		{
+			GraphicsUtils.fillGradientRect(g, bgColor, bgColor.darker().darker(), locX, locY, squareWidth, squareHeight, GradientMode.DOWNRIGHT);
+			break;
+		}
+		case CenterGradient:
+		{
+			//g.setXORMode(Color.white);
+			GraphicsUtils.fillGradientRect(g, bgColor, bgColor.darker().darker(), locX, locY, squareWidth, squareHeight, GradientMode.CENTER);
+			//g.setPaintMode();
+			break;
+		}
+		case Rainbow:
+		{
+			g.setColor(GraphicsUtils.setColorAlpha(rainbowFast.getStaticColor(), bgColor.getAlpha()));
+			g.fillRect(locX,locY,squareWidth,squareHeight);
+			break;
+		}
+		case Rainbow2:
+		{
+			GraphicsUtils.fillGradientRect(g, GraphicsUtils.setColorAlpha(rainbowFast.getStaticColor(), bgColor.getAlpha()),
+					GraphicsUtils.setColorAlpha(rainbowFast2.getStaticColor(), bgColor.getAlpha()), locX, locY, 
+					squareWidth, squareHeight, GradientMode.HORIZONTAL);
+			break;
+		}
+		case ColorMadness:
+		{
+			g.setColor(GraphicsUtils.setColorAlpha(rainbowVeryFast.getStaticColor(), bgColor.getAlpha()));
+			g.fillRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
+			g.setColor(bordColor.darker().darker());
+			g.drawRoundRect(locX,locY,squareWidth-1,squareHeight-1,squareWidth/3,squareHeight/3);
+			break;
+		}
+		case LucyInTheSky:
+		{
+			g.setXORMode(rainbowSlow.getStaticColor());
+			GraphicsUtils.fillGradientRect(g, bgColor, bgColor.darker().darker(), locX, locY, squareWidth, squareHeight, GradientMode.CENTER);
+			g.setPaintMode();
+			break;
+		}
+		case GhostSquare:
+		{
+			GraphicsUtils.fillGradientRect(g, bgColor, new Color(0,0,0,0), locX, locY, squareWidth, squareHeight, GradientMode.DOWNLEFT);			
+			break;
+		}
 		default:
 		{
-			g.setColor(bgcolor);
+			g.setColor(bgColor);
 			g.fillRect(locX,locY,squareWidth,squareHeight);
 			break;
 		}
@@ -198,11 +332,11 @@ public class GraphicSquare extends Item {
 	}
 
 	public Color getBorderColor() {
-		return bordcolor;
+		return bordColor;
 	}
 
 	public void setBorderColor(Color bordcolor) {
-		this.bordcolor = bordcolor;
+		this.bordColor = bordcolor;
 	}
 	
 	private Color brighter(Color c,int s)
@@ -222,4 +356,6 @@ public class GraphicSquare extends Item {
 		
 		return new Color(red, green, blue, c.getAlpha());
 	}
+	
+	
 }

@@ -19,13 +19,21 @@ D : one line down
 
 S : use power
 
-Y : change power
+Y : change power (only in game over menu)
 
-T : change "theme"
+T : change "theme" (only in game)
 
 P/Esc : pause/resume
 
-N : start a new game
+N : start a new game (only in game)
+
+## Changelog (from pre-Alpha 0.33)
+
+### pre-Alpha 0.33
+	
+	- 15 New themes added;
+	- Various bug fixes;
+	- Various menu and gui improvements;
 
 
 [Java]: https://www.java.com/it/download/

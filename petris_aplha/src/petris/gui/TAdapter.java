@@ -47,6 +47,7 @@ public class TAdapter extends KeyAdapter {
    	 			game.menuNavBack();
    	 			break;
    	 		}
+   	 		return;
    	 	}
 		
 		if (!game.isStarted())
@@ -55,6 +56,7 @@ public class TAdapter extends KeyAdapter {
 			else if (e.getKeyCode() == 'T' || e.getKeyCode() == 't') game.nextSquareStyle();
 			else if (e.getKeyCode() == 'Y' || e.getKeyCode() == 'Y') game.nextPower();
 			else if (e.getKeyCode() == 'C' || e.getKeyCode() == 'c') console.toggleShow();
+			else if (e.getKeyCode() == 'Q' || e.getKeyCode() == 'q') game.showMainMenu();
 			return;
         }
 		/*
