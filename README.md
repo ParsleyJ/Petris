@@ -27,7 +27,7 @@ P/Esc : pause/resume
 
 N : start a new game (only in game)
 
-## Changelog (from pre-Alpha 0.33)
+## Changelog (since pre-Alpha 0.33)
 
 ### pre-Alpha 0.33
 	
