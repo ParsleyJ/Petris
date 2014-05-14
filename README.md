@@ -19,7 +19,7 @@ D : one line down
 
 S : use power
 
-Y : change power (only in game over menu)
+Y : change power (only in Game Over menu)
 
 T : change "theme" (only in game)
 
@@ -29,22 +29,28 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.35
+
+	- 4 New square styles added;
+	- 4 New backgrounds added;
+	- Option to change background in Settings menu
+	- Various graphics improvements;
 
 ### pre-Alpha 0.34
 
 	- New power: “Freeze”
 	- Multiple full lines in a row will now increase the multiplier
 
-
-
 ### pre-Alpha 0.33
 	
-	- 15 New themes added;
+	- 15 New square styles added;
 	- Various bug fixes;
 	- Various menu and gui improvements;
 
 
 [Java]: https://www.java.com/it/download/
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha034.jar?raw=true
+
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha035.jar?raw=true
+
 
