@@ -92,6 +92,8 @@ public class Game implements ActionListener{
 	private int points = 0;
 	private int multiplier = 1;
     
+	private int streak = 0;
+	
     private int powerAmmo;
     private boolean infiniteAmmo;
     
@@ -117,6 +119,7 @@ public class Game implements ActionListener{
 	private boolean inMenu = false;
 	private PanelLayer leftGuiPanel;
 	private PanelLayer rightGuiPanel;
+	private boolean freezeOn = false;
 	
 	
     
@@ -264,6 +267,7 @@ public class Game implements ActionListener{
 						selectPowerMenuEntry.addOption("Relaunch");
 						selectPowerMenuEntry.addOption("Mirror");
 						selectPowerMenuEntry.addOption("Erosion");
+						selectPowerMenuEntry.addOption("Freeze");
 						
 						newGameMenuEntry.addEntry(selectPowerMenuEntry);
 						
@@ -378,7 +382,7 @@ public class Game implements ActionListener{
             isFallingFinished = false;
             newPiece();
         } else {
-            oneLineDown();
+        	if(!freezeOn) oneLineDown();
         }
         updateGui();
         render.repaint();
@@ -580,6 +584,9 @@ public class Game implements ActionListener{
     	tempPiece.rotateLeft();
     	if(!canBeMoved(tempPiece, tempPiece.x(), tempPiece.y()))
 		{
+    		if (freezeOn) 
+    			if (tryMove(curPiece,curPiece.x(),curPiece.y()-1))
+    				tryRotateLeft();
 			return false;
 		}
     	else
@@ -595,6 +602,9 @@ public class Game implements ActionListener{
     	tempPiece.rotateRight();
     	if(!canBeMoved(tempPiece, tempPiece.x(), tempPiece.y()))
 		{
+    		if (freezeOn) 
+    			if (tryMove(curPiece,curPiece.x(),curPiece.y()-1))
+    				tryRotateRight();
 			return false;
 		}
     	else
@@ -702,8 +712,11 @@ public class Game implements ActionListener{
     {
     	if(wasPreviousSuccesful && numLines > 0) 
 		{
-			++multiplier;
-			thirdMessage.show("Streak! + X1", Color.orange, 1500, 500);
+    		if (streak == 0) streak = 1;
+    		
+			multiplier+=streak;
+			thirdMessage.show("Streak! + X" + streak, Color.orange, 1500, 500);
+			++streak;
 		}
     	if(numLines >= 2)
     	{
@@ -737,6 +750,18 @@ public class Game implements ActionListener{
         updateGui();
         if (!isFallingFinished)
             newPiece();
+        
+        if (freezeOn)
+        {
+        	--powerAmmo;
+        	if (powerAmmo==0)
+        	{
+        		freezeOn=false;
+        		messageBox.show("Unfreeze!", Color.red, 300, 200);
+    			flashColor.flash(Color.blue);
+        	}
+        	updateGui();
+        }
     }
 	
 	public boolean isStarted()
@@ -751,7 +776,7 @@ public class Game implements ActionListener{
 
 	public void noLinesRemoved() {
 		wasPreviousSuccesful = false;
-		
+		streak = 0;
 	}
 	
 	
@@ -853,6 +878,18 @@ public class Game implements ActionListener{
 		}
 	}
 	
+	public void tryFreeze()
+	{
+		if (curPower!="FREEZE" || freezeOn) return;
+		if (powerAmmo <= 0 && !infiniteAmmo)
+			return;
+		
+		freezeOn=true;
+		messageBox.show("Freeze!", Color.green, 300, 200);
+		flashColor.flash(Color.blue);
+		
+	}
+	
 	public double getHeightAverage()
 	{
 		int[] heights = tetriGrid.getMaxHeights();
@@ -918,6 +955,10 @@ public class Game implements ActionListener{
 			curPower = "EROSION";
 			powerMaxAmmo = 10;
 			break;
+		case "FREEZE":
+			curPower = "FREEZE";
+			powerMaxAmmo = 10;
+			break;
 		case "NO POWER":
 			curPower = "NO POWER";
 			powerMaxAmmo = -1;
@@ -947,9 +988,12 @@ public class Game implements ActionListener{
 			powerMaxAmmo = 10;
 			break;
 		case "EROSION":
+			curPower = "FREEZE";
+			powerMaxAmmo = 10;
+			break;
+		case "FREEZE":
 			curPower = "NO POWER";
 			powerMaxAmmo = -1;
-			break;
 		case "NO POWER":
 			curPower = "PROCRASTINATE";
 			powerMaxAmmo = -1;
@@ -979,6 +1023,9 @@ public class Game implements ActionListener{
 			break;
 		case "EROSION":
 			tryErosion();
+			break;
+		case "FREEZE":
+			tryFreeze();
 			break;
 		}
 	}
