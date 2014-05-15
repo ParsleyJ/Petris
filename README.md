@@ -29,6 +29,10 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.37
+
+	- Background color is now customizable (in Settings menu)
+
 ### pre-Alpha 0.36
 
 	- Great rendering performance improvements
@@ -37,24 +41,24 @@ N : start a new game (only in game)
 
 	- 4 New square styles added;
 	- 4 New backgrounds added;
-	- Option to change background in Settings menu
-	- Various graphics improvements;
+	- Option to change background in Settings menu;
+	- Various graphics improvements.
 
 ### pre-Alpha 0.34
 
-	- New power: “Freeze”
-	- Multiple full lines in a row will now increase the multiplier
+	- New power: “Freeze”;
+	- Multiple full lines in a row will now increase the multiplier.
 
 ### pre-Alpha 0.33
 	
 	- 15 New square styles added;
 	- Various bug fixes;
-	- Various menu and gui improvements;
+	- Various menu and gui improvements.
 
 
 [Java]: https://www.java.com/it/download/
 
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha036.jar?raw=true
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha037.jar?raw=true
 
 
