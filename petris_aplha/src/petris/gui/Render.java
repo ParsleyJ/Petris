@@ -63,8 +63,11 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 		g.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
 		for(Layer l : layers)
 		{
-			l.setGraphics(g);
-			l.paint();
+			if (l.isEnabled())
+			{
+				l.setGraphics(g);
+				l.paint();
+			}
 		}
 		++frameCounter;
 	}

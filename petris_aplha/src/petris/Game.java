@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.Timer;
 
@@ -18,6 +19,7 @@ import petris.gui.GraphicSquare.SquareStyle;
 import petris.gui.BackgroundLayer;
 import petris.gui.BottomMessageLayer;
 import petris.gui.ColorFlash;
+import petris.gui.DialogConfirmAction;
 import petris.gui.FadingColor;
 import petris.gui.FlashingGravityColor;
 import petris.gui.LineAnimationLayer;
@@ -25,10 +27,12 @@ import petris.gui.MenuLayer;
 import petris.gui.MessageLayer;
 import petris.gui.PetrisChildMenu;
 import petris.gui.PetrisColor;
+import petris.gui.PetrisDialogMenu;
 import petris.gui.PetrisGridOptionMenuEntry;
 import petris.gui.PetrisMenu;
 import petris.gui.PetrisMenuEntry;
 import petris.gui.PetrisOptionMenuEntry;
+import petris.gui.PetrisSliderEntry;
 import petris.gui.PieceLayer;
 import petris.gui.GhostLayer;
 import petris.gui.PanelLayer;
@@ -124,14 +128,25 @@ public class Game implements ActionListener{
 	PetrisGridOptionMenuEntry selectThemeMenuEntry;
 	PetrisOptionMenuEntry selectBackgroundMenuEntry;
 	
+	BackgroundLayer bgLayer;
+	PetrisColor customColor = new PetrisColor(new Color(0,0,0,255));
+	BackgroundLayer colorPreviewLayer;
+	
+	private PetrisDialogMenu colorDialogMenu;	
+	private PetrisSliderEntry redSlider;
+	private PetrisSliderEntry greenSlider;
+	private PetrisSliderEntry blueSlider;
+	
+	
 	private boolean inMenu = false;
 	private PanelLayer leftGuiPanel;
 	private PanelLayer rightGuiPanel;
 	private boolean freezeOn = false;
 	
-	BackgroundLayer bgLayer;
 	
-	public enum BackgroundStyles {JustBlack, FlashingGravity, Rainbow, MonoChromeFaded, GravityFaded};
+	
+	
+	public enum BackgroundStyles {JustBlack, FlashingGravity, Rainbow, MonochromeGradient, GravityGradient, Custom};
 	public static RainbowColor rainbowDark = new RainbowColor(2,Phase.GREEN,100);
     
     public Game(Dimension d, RenderInterface r, Render g)
@@ -149,14 +164,18 @@ public class Game implements ActionListener{
 		render = r;
 		
 		gravityColor = new FlashingGravityColor(0,20);
-		
 		bgLayer = new BackgroundLayer(new PetrisColor(gravityColor),gameSize);
 		
 		flashColor = new ColorFlash(new Color(0,0,0,0),20);
-		
 		BackgroundLayer bgLayer2 = new BackgroundLayer(new PetrisColor(flashColor),gameSize);
+		
+		colorPreviewLayer = new BackgroundLayer(customColor, gameSize);
+		colorPreviewLayer.setEnabled(false);
+		colorPreviewLayer.setColor(new PetrisColor(new Color(0,0,0)));
+		
 		render.addLayer(bgLayer);
 		render.addLayer(bgLayer2);
+		render.addLayer(colorPreviewLayer);
 		
 		render.addLayer(tetriLayer);
 		
@@ -250,7 +269,7 @@ public class Game implements ActionListener{
 			nextLayer = new PieceLayer(nextGrid,nextPiece,215,-15,3,100);
 			render.addLayer(nextLayer);
 			
-			//Main menu configuration	--------------------------------	
+			//MENUS	--------------------------------	
 			
 			PetrisMenuEntry backMenuEntry = new PetrisMenuEntry("Return to main menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
@@ -260,6 +279,62 @@ public class Game implements ActionListener{
 					Game.this.menuNavBack();					
 				}
 			});
+			
+			//Color picker dialog menu configuration:
+			
+			colorDialogMenu = new PetrisDialogMenu(gameSize,"Select Color:",gameFont.deriveFont(baseFontSize + 16F), 
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230), new DialogConfirmAction() {
+						@Override
+						public void run(ArrayList<PetrisMenuEntry> entries) {
+							//PetrisOptionMenuEntry colorMode = (PetrisOptionMenuEntry)entries.get(0);
+							int red = ((PetrisSliderEntry)entries.get(0)).getValue();
+							int green = ((PetrisSliderEntry)entries.get(1)).getValue();
+							int blue = ((PetrisSliderEntry)entries.get(2)).getValue();
+							Game.this.customColor.setColor(new Color(red,green,blue));
+							Game.this.menuNavBack();
+						}
+					
+					});	
+			colorDialogMenu.setOnEntered(new Action(){
+				public void run() {
+					Game.this.setPreviewMode(true);
+				}
+			});
+			colorDialogMenu.setOnExiting(new Action(){
+				public void run() {
+					Game.this.setPreviewMode(false);
+				}
+			});
+			
+			/*PetrisOptionMenuEntry colorModeDialogEntry = new PetrisOptionMenuEntry("Color paint style:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70,
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.white, 230));
+			colorModeDialogEntry.addOption("Color");
+			colorModeDialogEntry.addOption("Rainbow");
+			colorModeDialogEntry.addOption("FlashingGravity");
+			colorDialogMenu.addEntry(colorModeDialogEntry);*/
+			Action updatePC= new Action() {				
+				@Override
+				public void run() {
+					Game.this.updatePreviewBackground();
+				}
+			};			
+			redSlider = new PetrisSliderEntry("Red:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70, 
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+			greenSlider = new PetrisSliderEntry("Green:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70, 
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+			blueSlider = new PetrisSliderEntry("Blue:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70, 
+					new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.blue, 230));
+			redSlider.setOnLeft(updatePC);
+			redSlider.setOnRight(updatePC);
+			greenSlider.setOnLeft(updatePC);
+			greenSlider.setOnRight(updatePC);
+			blueSlider.setOnLeft(updatePC);
+			blueSlider.setOnRight(updatePC);			
+			colorDialogMenu.addEntry(redSlider);
+			colorDialogMenu.addEntry(greenSlider);
+			colorDialogMenu.addEntry(blueSlider);
+			
+			//Main menu configuration:
 			
 			menuLayer = new MenuLayer();
 			mainMenu = new PetrisMenu(gameSize,"Petris",gameFont.deriveFont(baseFontSize + 34F), 
@@ -354,23 +429,30 @@ public class Game implements ActionListener{
 							@Override
 							public void run() {
 								Game.this.previousBackground();
+								if(Game.this.curBackgroundStyle==BackgroundStyles.Custom)
+									selectBackgroundMenuEntry.setOptionText("Custom color (press Enter)...");
 							}
 						});
 						selectBackgroundMenuEntry.setOnRight(new Action(){
 							@Override
 							public void run() {
 								Game.this.nextBackground();
+								if(Game.this.curBackgroundStyle==BackgroundStyles.Custom)
+									selectBackgroundMenuEntry.setOptionText("Custom color (press Enter)...");
 							}
 						});
 						selectBackgroundMenuEntry.setOnOk(new Action(){
 							@Override
 							public void run() {
-								Game.this.nextBackground();
+								if(Game.this.curBackgroundStyle==BackgroundStyles.Custom)
+									mainMenu.enterChildMenu(colorDialogMenu);
 							}
 						});
+						selectBackgroundMenuEntry.setOkForNext(false);
 						selectBackgroundMenuEntry.setOptionText("FlashingGravity");
 						settingsMenuEntry.addEntry(selectBackgroundMenuEntry);
 						
+						//settingsMenuEntry.addEntry(colorDialogMenu);
 						
 						settingsMenuEntry.addEntry(new PetrisMenuEntry("Controls", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230), false));
@@ -393,6 +475,11 @@ public class Game implements ActionListener{
 				}
 			});
 			mainMenu.addEntry(quitMenuEntry);
+			
+			
+			
+			
+			
 		}
 		
 		
@@ -998,7 +1085,7 @@ public class Game implements ActionListener{
 			bgLayer.setColor(new PetrisColor(Color.black));
 			bgLayer.setCustomPaint(null);
 			break;
-		case MonoChromeFaded:
+		case MonochromeGradient:
 			bgLayer.setCustomPaint(new Painter(){
 				@Override
 				public void paint(Graphics g) {
@@ -1006,13 +1093,24 @@ public class Game implements ActionListener{
 				}
 			});
 			break;
-		case GravityFaded:
+		case GravityGradient:
 			bgLayer.setCustomPaint(new Painter(){
 				@Override
 				public void paint(Graphics g) {
 					GraphicsUtils.fillGradientRect(g, new Color(40,0,0), new Color(0,40,0), 0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
 				}
 			});
+			break;
+		case Custom:
+			bgLayer.setCustomPaint(new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					g.setColor(customColor.getColor());
+					g.fillRect(0, 0, gameSize.width, gameSize.height);
+				}
+			});
+			break;
+		default:
 			break;
 		}
 		selectBackgroundMenuEntry.setOptionText(curBackgroundStyle.toString());
@@ -1189,6 +1287,19 @@ public class Game implements ActionListener{
 		mainMenu.performGoRight();
 	}
 	
+	public void setPreviewMode(boolean mode)
+	{
+		colorPreviewLayer.setEnabled(mode);
+		
+	}
+	
+	public void updatePreviewBackground()
+	{
+		colorPreviewLayer.setColor(new PetrisColor(new Color(
+				redSlider.getValue(),
+				greenSlider.getValue(),
+				blueSlider.getValue())));
+	}
 	
 
 		

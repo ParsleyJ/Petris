@@ -8,7 +8,6 @@ public class MenuLayer extends Layer {
 	
 	@Override
 	public void paint() {
-		// TODO Auto-generated method stub
 		currentMenu.paint(graphics);
 	}
 

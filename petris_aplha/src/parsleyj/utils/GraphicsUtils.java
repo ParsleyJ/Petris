@@ -75,10 +75,10 @@ public class GraphicsUtils {
 		}
 		case HORIZONTAL:
 		{
-			int [] step = getColorSteppers(c1,c2,width);
+			double [] step = getColorSteppers(c1,c2,(double)width);;
 			for(int i = 0; i < width; ++i)
 			{
-				g.setColor(new Color(c1.getRed()+step[0]*i, c1.getGreen()+step[1]*i, c1.getBlue()+step[2]*i, c1.getAlpha()+step[3]*i));
+				g.setColor(new Color((int)(c1.getRed()+step[0]*i), (int)(c1.getGreen()+step[1]*i), (int)(c1.getBlue()+step[2]*i), (int)(c1.getAlpha()+step[3]*i)));
 				g.drawLine(x+i, y, x+i, y+height-1);
 			}
 			break;

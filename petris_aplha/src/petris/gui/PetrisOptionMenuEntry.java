@@ -116,7 +116,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 		}
 	}
 	
-	private void runOnOk() {
+	protected void runOnOk() {
 		if (onOk != null)onOk.run();		
 	}
 
@@ -127,7 +127,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 		selectNext();
 	}
 	
-	private void runOnRight() {
+	protected void runOnRight() {
 		if (onRight != null)onRight.run();		
 	}
 
@@ -138,7 +138,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 		selectPrevious();
 	}
 	
-	private void runOnLeft() {
+	protected void runOnLeft() {
 		if (onLeft != null)onLeft.run();				
 	}
 
@@ -155,7 +155,7 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 			graphics.setFont(textFont);
 			int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
 			int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
-			graphics.setFont(textFont.deriveFont(textFont.getSize() - 4F));
+			graphics.setFont(textFont.deriveFont(textFont.getSize() - 6F));
 			int w2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getWidth();
 			int h2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getHeight();
 			
@@ -242,6 +242,14 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 
 	public void setOnOk(Action onOk) {
 		this.onOk = onOk;
+	}
+
+	public boolean isOkForNext() {
+		return okForNext;
+	}
+
+	public void setOkForNext(boolean okForNext) {
+		this.okForNext = okForNext;
 	}
 	
 	

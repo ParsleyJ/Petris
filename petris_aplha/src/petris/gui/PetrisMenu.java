@@ -13,20 +13,21 @@ import parsleyj.utils.GuiUtils;
 
 public class PetrisMenu implements MenuInterface {
 	
-	private ArrayList<PetrisMenuEntry> entries = new ArrayList<PetrisMenuEntry>();
+	protected ArrayList<PetrisMenuEntry> entries = new ArrayList<PetrisMenuEntry>();
 	private boolean isListCentered = true;
 	
 	private Stack<ArrayList<PetrisMenuEntry>> traceback = new Stack<ArrayList<PetrisMenuEntry>>();
 	private Stack<String> titlesTraceback = new Stack<String>();
 	private Stack<FadingColor> foreColorTraceback = new Stack<FadingColor>();
 	private Stack<Integer> focusedTraceback = new Stack<Integer>();
+	private Stack<PetrisChildMenu> childTraceback = new Stack<PetrisChildMenu>();
 	
 	private boolean isVisible = false;
 	private boolean isEmpty = true;
 	private FadingColor bgColor = new FadingColor(new Color(50,50,50,230), 230);
 	private FadingColor titleColor = new FadingColor(new Color(50,200,50,230), 230);
 	private Font titleFont;
-	private int parentWidth;
+	protected int parentWidth;
 	private int parentHeight;
 	private String title;
 	
@@ -35,13 +36,18 @@ public class PetrisMenu implements MenuInterface {
 	
 	private int startingY = titleHeight;
 	
-	private int focusedEntry = 0;
+	protected int focusedEntry = 0;
 	private int spaceHeight = 1;
 	private boolean needToReset = false;
 	
 	private final int fadeTime = 300;
 	protected String style = "Blurred";
 	protected int titleBorderSize = 10;
+	
+	public final PetrisChildMenu nullChild = new PetrisChildMenu("###root###",null,0,0,new FadingColor(Color.black),new FadingColor(Color.black));
+	
+	private PetrisChildMenu curChild = nullChild;
+	
 	
 	public PetrisMenu(Dimension parentSize, String title, Font font)
 	{
@@ -108,6 +114,7 @@ public class PetrisMenu implements MenuInterface {
 	@Override
 	public void addEntry(PetrisMenuEntry entry, int index) {
 		entries.add(index, entry);
+		entry.setRootMenu(this);
 		startingY = getStartingListY();
 		if (isEmpty)
 		{
@@ -242,6 +249,9 @@ public class PetrisMenu implements MenuInterface {
 	public void performBack() {
 		
 		if(titlesTraceback.isEmpty()) return;
+		
+		curChild.performExiting();
+		curChild= childTraceback.pop();
 		title = titlesTraceback.pop();
 		titleColor = foreColorTraceback.pop();
 		entries = traceback.pop();
@@ -281,6 +291,8 @@ public class PetrisMenu implements MenuInterface {
 				else entries.get(i).setFocused(false);
 			}			
 		}
+		curChild.performExiting();
+		curChild = nullChild;
 	}
 	
 	public void resetRootEntries() { //it will be resetted before the next show()
@@ -354,7 +366,8 @@ public class PetrisMenu implements MenuInterface {
 		titlesTraceback.push("" + title);
 		foreColorTraceback.push(titleColor);
 		focusedTraceback.push(focusedEntry);
-		
+		childTraceback.push(curChild);
+		curChild = petrisChildMenu;
 		entries = petrisChildMenu.entries;
 		title = petrisChildMenu.getText();
 		titleColor = petrisChildMenu.getTextColor();
@@ -371,6 +384,7 @@ public class PetrisMenu implements MenuInterface {
 				entries.get(i).show();
 			}			
 		}
+		curChild.performEntered();
 		
 	}
 

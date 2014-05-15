@@ -44,7 +44,7 @@ public class PetrisGridOptionMenuEntry extends PetrisOptionMenuEntry {
 		graphics.setFont(textFont);
 		int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
 		int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
-		graphics.setFont(textFont.deriveFont(textFont.getSize() - 4F));
+		graphics.setFont(textFont.deriveFont(textFont.getSize() - 6F));
 		int w2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getWidth();
 		int h2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getHeight();
 		

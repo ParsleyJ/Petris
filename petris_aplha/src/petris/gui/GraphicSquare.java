@@ -31,7 +31,7 @@ public class GraphicSquare extends Item{
 		Circle, CircleBorder, Octagon, Medieval, BlurredOutBorder, BlurredInBorder,
 		SquareMadness, Granular, VerticalGradient, HorizontalGradient, DownLeftGradient, 
 		DownRightGradient, CenterGradient, Rainbow, Rainbow2, ColorMadness, LucyInTheSky,
-		GhostSquare, Glitchy, YouNeedGlasses, CityLights, Rotatuille, Smiley
+		GhostSquare, Glitchy, YouNeedGlasses, CityLights, Rotatuille, Smiley, NoticeMe
 	}
 	
 	public GraphicSquare()//Default ctor
@@ -364,6 +364,13 @@ public class GraphicSquare extends Item{
 			g.drawArc(locX+squareWidth/4, locY+squareHeight/4, squareWidth/2, squareHeight/2, 225, 90); //mouth
 			break;
 		
+		}
+		case NoticeMe:
+		{
+			g.setColor(bgColor);
+			int delta = (int)(Math.sin(((double)rainbowFast.getIncreasingValue())/(double)(255-rainbowFast.getSpeed())*Math.PI) * borderSize);
+			g.fillRect(locX+delta, locY+delta, squareWidth-delta*2, squareHeight-delta*2);
+			break;
 		}
 		default:
 		{

@@ -3,6 +3,8 @@ package petris.gui;
 import java.awt.Color;
 import java.awt.Font;
 
+import parsleyj.utils.GraphicsUtils;
+
 public class MessageLayer extends Layer {
 
 	private int parentWidth;
@@ -23,6 +25,7 @@ public class MessageLayer extends Layer {
 	private int offset;
 	//private PriorityQueue<Msg> messages;
 	private boolean permanent;
+	private int borderSize = 3;
 
 	public MessageLayer(int pw, int ph, int bh, Font font, int maxalpha) {
 		parentWidth = pw;
@@ -74,16 +77,17 @@ public class MessageLayer extends Layer {
 	public void framePaint()
 	{
 		graphics.setColor(bgColor);
-		graphics.fillRect(0, parentHeight/2 - boxHeight/2 + offset, parentWidth, boxHeight);
+		GraphicsUtils.fillBlurredBorderRect(graphics, bgColor, 0, parentHeight/2 - (boxHeight-borderSize*2)/2 + offset,
+				parentWidth, boxHeight-borderSize*2, 0, borderSize);
+		//graphics.fillRect(0, parentHeight/2 - boxHeight/2 + offset, parentWidth, boxHeight);
 		graphics.setColor(foreColor);
 		graphics.setFont(textFont);
 		int strLength = (int) graphics.getFontMetrics().getStringBounds(message, graphics).getWidth();
 		int strHeight = (int) graphics.getFontMetrics().getStringBounds(message, graphics).getHeight();
 		int startX = parentWidth/2 - strLength/2;
 		int startY = parentHeight/2 + strHeight/2;
-		graphics.drawString(message, startX, startY + offset);
+		graphics.drawString(message, startX, startY + offset -2);
 		
-		//System.out.println(bgColor.getAlpha()); //bubble for debug ;)
 	}
 	
 	public void fadeOutStep()
