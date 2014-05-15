@@ -55,6 +55,6 @@ N : start a new game (only in game)
 [Java]: https://www.java.com/it/download/
 
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha035.jar?raw=true
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha036.jar?raw=true
 
 
