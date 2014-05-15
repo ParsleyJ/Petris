@@ -32,6 +32,7 @@ N : start a new game (only in game)
 ### pre-Alpha 0.37
 
 	- Background color is now customizable (in Settings menu)
+	- New square style added ("NoticeMe")
 
 ### pre-Alpha 0.36
 
