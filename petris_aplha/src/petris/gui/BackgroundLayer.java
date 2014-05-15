@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import petris.Action;
-import petris.PaintAction;
+import petris.Painter;
 
 
 
@@ -13,7 +13,7 @@ public class BackgroundLayer extends Layer {
 	PetrisColor color;
 	Dimension size;
 	
-	PaintAction customPaint;
+	Painter customPaint;
 	
 	
 
@@ -45,7 +45,7 @@ public class BackgroundLayer extends Layer {
 	{
 		if (customPaint != null)
 		{
-			customPaint.runPaint(graphics);
+			customPaint.paint(graphics);
 		}
 		else
 		{
@@ -54,11 +54,11 @@ public class BackgroundLayer extends Layer {
 		}
 	}
 
-	public PaintAction getCustomPaint() {
+	public Painter getCustomPaint() {
 		return customPaint;
 	}
 
-	public void setCustomPaint(PaintAction customPaint) {
+	public void setCustomPaint(Painter customPaint) {
 		this.customPaint = customPaint;
 	}
 	

@@ -29,6 +29,10 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.36
+
+	- Great rendering performance improvements
+
 ### pre-Alpha 0.35
 
 	- 4 New square styles added;

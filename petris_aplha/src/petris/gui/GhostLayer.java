@@ -20,7 +20,7 @@ public class GhostLayer extends Layer implements ActionListener {
 	private int alphaStep = 3;
 	private int alphaMax = 200;
 	private int alphaMin = 50;
-	private Timer timer;
+	private PetrisFakeTimer timer;
 
 	private SquareStyle style  = SquareStyle.Border3d;
 	
@@ -30,7 +30,7 @@ public class GhostLayer extends Layer implements ActionListener {
 		grid = gr;
 		ascending = true;
 		currentAlpha = 150;
-		timer = new Timer(20,this);
+		timer = new PetrisFakeTimer(20,this);
 		timer.start();
 		
 	}

@@ -18,7 +18,7 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 	 */
 	private static final long serialVersionUID = 1L;
 	List<Layer> layers;
-	Timer timer;
+	PetrisFakeTimer timer;
 	Dimension dimension;
 	boolean isActivated = false;
 	private int frameDelay = 20;
@@ -32,7 +32,7 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 		this.setBackground(bgCol);
 		layers = new ArrayList<Layer>();
 		frameDelay = 20;
-		timer = new Timer(frameDelay, this);
+		timer = new PetrisFakeTimer(frameDelay, this);
 		setPreferredSize(size);
 		dimension = size;
 	}

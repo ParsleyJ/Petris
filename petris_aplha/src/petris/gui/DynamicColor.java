@@ -30,7 +30,7 @@ public abstract class DynamicColor implements ActionListener {
 		return true;
 	}
 	
-	private Timer timer;
+	private PetrisFakeTimer timer;
 	
 	public DynamicColor()
 	{
@@ -52,7 +52,7 @@ public abstract class DynamicColor implements ActionListener {
 		green = c.getGreen();
 		blue = c.getBlue();
 		alpha = c.getAlpha();
-		timer = new Timer(t,this);
+		timer = new PetrisFakeTimer(t,this);
 	}
 	
 	public DynamicColor(int r, int g, int b, int a) {
@@ -71,13 +71,13 @@ public abstract class DynamicColor implements ActionListener {
 		blue = b;
 		alpha = a;
 		checkValuesAndThrow();
-		timer = new Timer(t,this);
+		timer = new PetrisFakeTimer(t,this);
 		
 	}
 	
 	public void setTimerDelay(int t)
 	{
-		if (timer == null) timer = new Timer(t,this);
+		if (timer == null) timer = new PetrisFakeTimer(t,this);
 		timer.setDelay(t);
 	}
 	

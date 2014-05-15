@@ -65,7 +65,7 @@ public class Petris {
 		
 		currentProfile = new Profile();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.35");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.36");
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		
 		console = new DebugConsole(globals);

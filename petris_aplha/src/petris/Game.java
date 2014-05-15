@@ -999,17 +999,17 @@ public class Game implements ActionListener{
 			bgLayer.setCustomPaint(null);
 			break;
 		case MonoChromeFaded:
-			bgLayer.setCustomPaint(new PaintAction(){
+			bgLayer.setCustomPaint(new Painter(){
 				@Override
-				public void runPaint(Graphics g) {
+				public void paint(Graphics g) {
 					GraphicsUtils.fillGradientRect(g, Color.black, Color.white, 0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
 				}
 			});
 			break;
 		case GravityFaded:
-			bgLayer.setCustomPaint(new PaintAction(){
+			bgLayer.setCustomPaint(new Painter(){
 				@Override
-				public void runPaint(Graphics g) {
+				public void paint(Graphics g) {
 					GraphicsUtils.fillGradientRect(g, new Color(40,0,0), new Color(0,40,0), 0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
 				}
 			});

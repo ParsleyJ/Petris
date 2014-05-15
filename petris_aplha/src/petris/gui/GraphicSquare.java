@@ -2,10 +2,6 @@ package petris.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Timer;
 
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GraphicsUtils.GradientMode;
