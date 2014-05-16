@@ -17,7 +17,7 @@ public class PetrisSliderEntry extends PetrisOptionMenuEntry {
 	private int step = 16;
 	
 	private int barHeight = 10;
-	private int horizDistance = 45; //horizontal distance from parent container borders (best if more than 35)
+	private int horizDistance = 50; //horizontal distance from parent container borders (best if more than 35)
 	
 	public PetrisSliderEntry(String entryText, Font font, int parentWidth,
 			int entryHeight, FadingColor background, FadingColor foreColor) {
@@ -112,6 +112,8 @@ public class PetrisSliderEntry extends PetrisOptionMenuEntry {
 		int w2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getWidth();
 		int h2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getHeight();
 		
+		if (text == "") h = 0;
+		
 		Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w, h -5 -h2 -5 -barHeight));
 		graphics.setFont(textFont);
 		graphics.drawString(text, titleCoords.x, titleCoords.y);
@@ -122,7 +124,7 @@ public class PetrisSliderEntry extends PetrisOptionMenuEntry {
 		graphics.drawRect(barCoords.x,titleCoords.y + 5,width-horizDistance*2,barHeight);
 		if(value!=0)
 			//graphics.fillRect(barCoords.x,titleCoords.y + 5, (value*(width-horizDistance*2))/(maxValue-minValue),barHeight);
-			GraphicsUtils.fillGradientRect(graphics, GraphicsUtils.setColorAlpha(graphics.getColor(), 30), graphics.getColor(), 
+			GraphicsUtils.fillGradientRect(graphics, GraphicsUtils.setColorAlpha(graphics.getColor(), 00), graphics.getColor(), 
 					barCoords.x,titleCoords.y + 5, (value*(width-horizDistance*2))/(maxValue-minValue),barHeight, GradientMode.HORIZONTAL);
 			
 		Point optionCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w2, h2));

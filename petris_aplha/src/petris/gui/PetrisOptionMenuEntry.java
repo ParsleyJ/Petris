@@ -123,8 +123,9 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 	public void performRight()
 	{
 		super.performRight();
-		runOnRight();
 		selectNext();
+		runOnRight();
+		
 	}
 	
 	protected void runOnRight() {
@@ -134,8 +135,9 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 	public void performLeft()
 	{
 		super.performLeft();
-		runOnLeft();
 		selectPrevious();
+		runOnLeft();
+		
 	}
 	
 	protected void runOnLeft() {

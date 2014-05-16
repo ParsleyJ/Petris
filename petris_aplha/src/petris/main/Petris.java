@@ -46,8 +46,7 @@ public class Petris {
 		}
 		System.out.println(System.getProperty("os.name") + " --> Frame Size = (" + x + ", " + y + ").");
 		
-		if (sidegui)
-			gameFrame.setSize(x + 150,y);
+		if (sidegui)gameFrame.setSize(x + 150,y);
 		else gameFrame.setSize(x,y);
 		gameFrame.setResizable(false);		
 		
@@ -65,7 +64,8 @@ public class Petris {
 		
 		currentProfile = new Profile();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.37");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.38");
+		game.setGlobals(globals);
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		
 		console = new DebugConsole(globals);

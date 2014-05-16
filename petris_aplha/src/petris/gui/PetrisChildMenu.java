@@ -92,4 +92,9 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	{
 		if(onExiting!=null)onExiting.run();
 	}
+	
+	public void clearEntries()
+	{
+		entries.clear();
+	}
 }

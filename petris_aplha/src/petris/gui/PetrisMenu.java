@@ -44,6 +44,8 @@ public class PetrisMenu implements MenuInterface {
 	protected String style = "Blurred";
 	protected int titleBorderSize = 10;
 	
+	private boolean scrollActive = false;
+	
 	public final PetrisChildMenu nullChild = new PetrisChildMenu("###root###",null,0,0,new FadingColor(Color.black),new FadingColor(Color.black));
 	
 	private PetrisChildMenu curChild = nullChild;
@@ -133,7 +135,21 @@ public class PetrisMenu implements MenuInterface {
 	}
 
 	@Override
-	public void paint(Graphics graphics) {
+	public void paint(Graphics graphics) {	
+		
+		//draw entries
+		int currY;
+		if (scrollActive){
+			currY = titleHeight + spaceHeight + getScrollOffset();
+		}
+		else currY = startingY;
+		for (int i = 0; i < entries.size(); ++i)
+		{
+			PetrisMenuEntry e = entries.get(i);
+			e.paint(graphics, currY);
+			currY += e.getHeight() + spaceHeight;
+		}
+		
 		if (!isVisible && titleColor.getAlpha()==0 && bgColor.getAlpha()==0) ; //return;
 		else {
 			//draw title
@@ -150,23 +166,30 @@ public class PetrisMenu implements MenuInterface {
 			graphics.drawString(title, titleCoords.x, titleCoords.y);
 		}
 		
-		
-		
-
-		//draw entries
-		int currY = startingY;
-		for (int i = 0; i < entries.size(); ++i)
-		{
-			PetrisMenuEntry e = entries.get(i);
-			e.paint(graphics, currY);
-			currY += e.getHeight() + spaceHeight;
-		}
-		
 		//draw status bar
 		
 		
 	}
 
+	private int getScrollOffset() {
+		int offs = 0;
+		for (int i  = 0; i < focusedEntry; ++i)
+		{
+			offs += entries.get(i).getHeight() + spaceHeight;
+		}
+		return -Math.min(offs, getTotalEntriesHeight()- (parentHeight - spaceHeight*2 - titleHeight));
+	}
+
+	private int getTotalEntriesHeight()
+	{
+		int totalListHeight = 0;
+		for (PetrisMenuEntry e : entries)
+		{
+			totalListHeight += e.getHeight() + spaceHeight;
+		}
+		return totalListHeight - spaceHeight;
+	}
+	
 	private int getStartingListY() {
 		int totalListHeight = 0;
 		if (isListCentered)
@@ -175,6 +198,10 @@ public class PetrisMenu implements MenuInterface {
 			{
 				totalListHeight += e.getHeight() + spaceHeight;
 			}
+			
+			if (totalListHeight > parentHeight - spaceHeight*2 - titleHeight) scrollActive = true;
+			else scrollActive = false;
+			
 			totalListHeight -= spaceHeight;
 			return parentHeight/2 - totalListHeight/2;
 		}

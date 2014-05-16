@@ -9,6 +9,8 @@ public class Profile {
 	private int totalLines;
 	private int bestScore;
 	
+	
+	
 	public Profile()
 	{
 		name = "Guest";

@@ -68,8 +68,11 @@ public class GraphicsUtils {
 			double [] step = getColorSteppers(c1,c2,(double)height);
 			for(int i = 0; i < height; ++i)
 			{
-				g.setColor(new Color((int)(c1.getRed()+step[0]*i), (int)(c1.getGreen()+step[1]*i), (int)(c1.getBlue()+step[2]*i), (int)(c1.getAlpha()+step[3]*i)));
-				g.drawLine(x, y+i, x+width-1, y+i);
+				if (!((int)(c1.getAlpha()+step[3]*i) == 0))
+				{
+					g.setColor(new Color((int)(c1.getRed()+step[0]*i), (int)(c1.getGreen()+step[1]*i), (int)(c1.getBlue()+step[2]*i), (int)(c1.getAlpha()+step[3]*i)));
+					g.drawLine(x, y+i, x+width-1, y+i);
+				}
 			}
 			break;
 		}
@@ -78,8 +81,11 @@ public class GraphicsUtils {
 			double [] step = getColorSteppers(c1,c2,(double)width);;
 			for(int i = 0; i < width; ++i)
 			{
-				g.setColor(new Color((int)(c1.getRed()+step[0]*i), (int)(c1.getGreen()+step[1]*i), (int)(c1.getBlue()+step[2]*i), (int)(c1.getAlpha()+step[3]*i)));
-				g.drawLine(x+i, y, x+i, y+height-1);
+				if (!((int)(c1.getAlpha()+step[3]*i) == 0))
+				{
+					g.setColor(new Color((int)(c1.getRed()+step[0]*i), (int)(c1.getGreen()+step[1]*i), (int)(c1.getBlue()+step[2]*i), (int)(c1.getAlpha()+step[3]*i)));
+					g.drawLine(x+i, y, x+i, y+height-1);
+				}
 			}
 			break;
 		}
