@@ -29,6 +29,13 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.38
+
+	- Advanced customizable background (gradients, solid colors, gradients with rainbows)
+	- Filtering system added
+	- 10 filters added including “Blur”, “Posterize”, “Invert”, “JustEdges” (all available in Settings > For testers…)
+	- Simple highscoring system added
+
 ### pre-Alpha 0.37
 
 	- Background color is now customizable (in Settings menu)
@@ -60,6 +67,6 @@ N : start a new game (only in game)
 [Java]: https://www.java.com/it/download/
 
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha037.jar?raw=true
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha038.jar?raw=true
 
 
