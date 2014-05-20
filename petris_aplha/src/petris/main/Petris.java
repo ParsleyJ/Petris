@@ -58,9 +58,9 @@ public class Petris {
 		{
 			guiRender = new Render(new Color(20,20,20), new Dimension(150,689));
 			gameFrame.add(guiRender,BorderLayout.EAST);
-			game = new Game(new Dimension(300,667), (RenderInterface)gameRender, guiRender);
+			game = new Game(new Dimension(300,667), gameRender, guiRender);
 		}
-		else game = new Game(new Dimension(300,667), (RenderInterface)gameRender, null);
+		else game = new Game(new Dimension(300,667), gameRender, null);
 		
 		currentProfile = new Profile();
 		
