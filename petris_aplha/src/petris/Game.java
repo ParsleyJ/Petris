@@ -6,15 +6,18 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
+import javax.swing.plaf.ProgressBarUI;
 
 import parsleyj.utils.GlobalUtils;
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GraphicsUtils.GradientMode;
 import petris.ClassicPiece.TetrominoesId;
+import petris.db.DataLoader;
 import petris.gui.GraphicSquare;
 import petris.gui.GraphicSquare.SquareStyle;
 import petris.gui.BackgroundLayer;
@@ -33,16 +36,21 @@ import petris.gui.PetrisGridOptionMenuEntry;
 import petris.gui.PetrisMenu;
 import petris.gui.PetrisMenuEntry;
 import petris.gui.PetrisOptionMenuEntry;
+import petris.gui.ProgressBarMenuEntry;
 import petris.gui.PetrisSliderEntry;
 import petris.gui.PieceLayer;
 import petris.gui.GhostLayer;
 import petris.gui.PanelLayer;
 import petris.gui.LabelLayer;
+import petris.gui.ProgressIndicatorMenuEntry;
 import petris.gui.RainbowColor;
 import petris.gui.RainbowColor.Phase;
 import petris.gui.Render;
 import petris.gui.RenderInterface;
+import petris.gui.TAdapter;
 import petris.gui.TetrisGridLayer;
+import petris.gui.TextFieldMenuEntry;
+import petris.gui.ToggleMenuEntry;
 import petris.gui.effects.BlurFilter;
 import petris.gui.effects.BlurFilter2;
 
@@ -169,7 +177,8 @@ public class Game implements ActionListener{
 	private boolean freezeOn = false;
 	private GlobalVarSet globals;
 	
-	
+	private boolean isFirstLaunch;
+	private DataLoader dataLoader;
 	
 	
 	public enum BackgroundStyles {JustBlack, FlashingGravity, Rainbow, MonochromeGradient, GravityGradient, Custom};
@@ -1130,9 +1139,24 @@ public class Game implements ActionListener{
 		}
 	}
 	
+	public void setFirstLaunch(boolean isFirstLaunch) {
+		this.isFirstLaunch = isFirstLaunch;
+		
+	}
 	
+	public void setDataLoader(DataLoader dataLoader) {
+		this.dataLoader = dataLoader;
+		
+	}
+	
+
+
+
 	private void initializeMenu()
 	{
+		
+		
+		
 		PetrisMenuEntry backMenuEntry = new PetrisMenuEntry("Back", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
 		backMenuEntry.setAction(new Action(){
@@ -1536,9 +1560,38 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 						testsMenuEntry = new PetrisChildMenu("For Testers", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 						
-							scrollTestMenuEntry = new PetrisChildMenu("Dynamic Menu Test", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
+							scrollTestMenuEntry = new PetrisChildMenu("Menu Tests", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
 									new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 							
+								TextFieldMenuEntry textFieldTest = new TextFieldMenuEntry("Text Field:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 70, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.yellow, 230), "write text here...(press Enter)");
+							
+								scrollTestMenuEntry.addEntry(textFieldTest);
+								
+								ProgressIndicatorMenuEntry indicatorTest = new ProgressIndicatorMenuEntry("Progress Indicator:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
+								scrollTestMenuEntry.addEntry(indicatorTest);		
+								
+								ProgressBarMenuEntry progressBarTest = new ProgressBarMenuEntry("Progress Bar:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 60, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230),0,100,1);
+								progressBarTest.setValue(60);
+								scrollTestMenuEntry.addEntry(progressBarTest);
+								
+								ToggleMenuEntry toggleTest = new ToggleMenuEntry("Toggle (on/off):", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
+								scrollTestMenuEntry.addEntry(toggleTest);	
+								
+								PetrisOptionMenuEntry optionTest = new PetrisOptionMenuEntry("Options:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 70, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+								optionTest.addOption("Option1");
+								optionTest.addOption("Option2");
+								optionTest.addOption("Option3");
+								scrollTestMenuEntry.addEntry(optionTest);
+								
+								PetrisSliderEntry sliderTest = new PetrisSliderEntry("Slider:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 70, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.pink, 230));
+								scrollTestMenuEntry.addEntry(sliderTest);
+								
 								cloneEntry = new PetrisMenuEntry("0.Clone this entry", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 35, 
 										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
 								cloneEntry.setAction(new Action() {
@@ -1550,6 +1603,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 										scrollTestMenuEntry.addEntry(newClone);
 									}
 								});
+								
 								
 								scrollTestMenuEntry.addEntry(cloneEntry);
 								
@@ -1597,6 +1651,17 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		});
 		mainMenu.addEntry(quitMenuEntry);
 	}
+
+
+
+	
+
+	public void menuGeneralizedKeyboardInput(KeyEvent keyCode)
+	{
+		mainMenu.performGeneralizedKeyboardInput(keyCode);
+	}
+
+	
 
 		
 	

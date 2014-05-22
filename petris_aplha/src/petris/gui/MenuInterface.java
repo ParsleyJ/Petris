@@ -1,6 +1,7 @@
 package petris.gui;
 
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 
 public interface MenuInterface {
 	
@@ -23,5 +24,6 @@ public interface MenuInterface {
 	public void performGoRight();
 	public void performOk();
 	public void performBack();
+	public void performGeneralizedKeyboardInput(KeyEvent keyCode);
 	
 }

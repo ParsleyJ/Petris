@@ -5,13 +5,17 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import parsleyj.utils.GlobalUtils;
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
 
-public class PetrisMenu implements MenuInterface {
+public class PetrisMenu implements MenuInterface, ActionListener {
 	
 	protected ArrayList<PetrisMenuEntry> entries = new ArrayList<PetrisMenuEntry>();
 	private boolean isListCentered = true;
@@ -50,6 +54,12 @@ public class PetrisMenu implements MenuInterface {
 	
 	private PetrisChildMenu curChild = nullChild;
 	
+	private boolean textInputMode = false;
+	private boolean ignoreNextEnter;
+	private int currentFrame = 0;
+	
+	private PetrisFakeTimer frameAnimationTimer = new PetrisFakeTimer(20, this);
+	
 	
 	public PetrisMenu(Dimension parentSize, String title, Font font)
 	{
@@ -57,6 +67,7 @@ public class PetrisMenu implements MenuInterface {
 		this.setParentHeight((int)parentSize.getHeight());
 		this.setTitle(title);
 		titleFont = font;
+		frameAnimationTimer.start();
 	}
 	
 	
@@ -68,6 +79,7 @@ public class PetrisMenu implements MenuInterface {
 		titleFont = font;
 		bgColor = backgroundColor;
 		titleColor = foreColor;
+		frameAnimationTimer.start();
 	}
 	
 	
@@ -211,6 +223,7 @@ public class PetrisMenu implements MenuInterface {
 	@Override
 	public void performGoUp() 
 	{
+		if (textInputMode) return;
 		if (focusedEntry > 0)
 		{
 			entries.get(focusedEntry).setFocused(false);
@@ -226,6 +239,7 @@ public class PetrisMenu implements MenuInterface {
 
 	@Override
 	public void performGoDown() {
+		if (textInputMode) return;
 		if (focusedEntry < entries.size() - 1)
 		{
 			entries.get(focusedEntry).setFocused(false);
@@ -241,6 +255,7 @@ public class PetrisMenu implements MenuInterface {
 
 	@Override
 	public void performGoToEntry(int index) {
+		if (textInputMode) return;
 		try
 		{
 			entries.get(index).setFocused(true);
@@ -256,18 +271,26 @@ public class PetrisMenu implements MenuInterface {
 
 	@Override
 	public void performGoLeft() {
+		if (textInputMode) return;
 		entries.get(focusedEntry).performLeft();
 
 	}
 
 	@Override
 	public void performGoRight() {
+		if (textInputMode) return;
 		entries.get(focusedEntry).performRight();
 
 	}
 
 	@Override
 	public void performOk() {
+		if (ignoreNextEnter)
+		{
+			ignoreNextEnter = false;
+			return;
+		}
+		if (textInputMode) return;
 		entries.get(focusedEntry).performOk();
 
 	}
@@ -275,6 +298,7 @@ public class PetrisMenu implements MenuInterface {
 	@Override
 	public void performBack() {
 		
+		if (textInputMode) return;
 		if(titlesTraceback.isEmpty()) return;
 		
 		curChild.performExiting();
@@ -420,6 +444,48 @@ public class PetrisMenu implements MenuInterface {
 		startingY = getStartingListY();
 		
 	}
+
+
+	@Override
+	public void performGeneralizedKeyboardInput(KeyEvent keyCode) {
+		if (textInputMode) entries.get(focusedEntry).performTextInput(keyCode);
+		
+	}
+
+
+	public boolean isTextInputMode() {
+		return textInputMode;
+	}
+
+
+	public void setTextInputMode(boolean textInputMode) {
+		this.textInputMode = textInputMode;
+	}
+
+
+	public void ignoreNextEnter() {
+		this.ignoreNextEnter = true;
+		
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		currentFrame =(currentFrame+1)%500;
+		
+	}
+
+
+	public int getCurrentFrame() {
+		return currentFrame;
+	}
+
+
+	/*public void setCurrentFrame(int currentFrame) {
+		this.currentFrame = currentFrame;
+	}*/
+
+	
 
 	
 	

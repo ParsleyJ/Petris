@@ -11,6 +11,8 @@ public class TAdapter extends KeyAdapter {
 	private Game game;
 	private DebugConsole console;
 	
+	
+	
 	public TAdapter(Game g,DebugConsole c)
 	{
 		game = g;
@@ -22,6 +24,12 @@ public class TAdapter extends KeyAdapter {
 	}
 
 	public void keyPressed(KeyEvent e) {
+		
+	
+		
+		game.menuGeneralizedKeyboardInput(e);
+		
+		
    	 	if (game.isInMenu())
    	 	{
    	 		int kc = e.getKeyCode();
@@ -177,7 +185,7 @@ public class TAdapter extends KeyAdapter {
         }
 
     }
-	
+
 	
 
 

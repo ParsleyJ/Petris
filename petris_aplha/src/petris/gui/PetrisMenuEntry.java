@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyEvent;
 
 import parsleyj.utils.GraphicsUtils;
 import parsleyj.utils.GuiUtils;
@@ -21,8 +22,8 @@ public class PetrisMenuEntry {
 	protected int width;
 	protected Font textFont;
 	protected boolean isVisible;
-	private boolean hasAction = false;
-	private Action action;
+	protected boolean hasAction = false;
+	protected Action action;
 	protected PetrisMenu root;
 	private boolean enabled = true;
 	private final int fadeTime = 300;
@@ -160,6 +161,11 @@ public class PetrisMenuEntry {
 	}
 	
 	public void performBack() {
+		
+	}
+	
+	public void performTextInput(KeyEvent keyCode)
+	{
 		
 	}
 

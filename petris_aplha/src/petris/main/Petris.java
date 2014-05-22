@@ -28,6 +28,7 @@ public class Petris {
 	private static Profile currentProfile;
 	public static DebugConsole console;
 	private static DataLoader dataLoader = new DataLoader();
+	private static boolean isFirstLaunch = false;
 
 	
 	
@@ -74,9 +75,12 @@ public class Petris {
 		}
 		else firstLaunch();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.38");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.39");
 		game.setGlobals(globals);
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
+		
+		game.setFirstLaunch(isFirstLaunch);
+		game.setDataLoader(dataLoader);
 		
 		console = new DebugConsole(globals);
 		
@@ -102,7 +106,7 @@ public class Petris {
 	{
 		dataLoader.createNewSchema(false);
 		currentProfile = dataLoader.loginAs("Guest");
-		
+		isFirstLaunch = true;
 	}
 	
 	
