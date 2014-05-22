@@ -415,6 +415,12 @@ public class PetrisMenu implements MenuInterface {
 		
 	}
 
+
+	public void replace() {
+		startingY = getStartingListY();
+		
+	}
+
 	
 	
 	

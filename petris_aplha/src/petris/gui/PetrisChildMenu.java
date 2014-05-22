@@ -34,6 +34,7 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	{
 		entries.add(entry);
 		entry.setRootMenu(this.getRootMenu());
+		if (root!= null)root.replace();
 		if (isEmpty)
 		{
 			isEmpty = false;
@@ -45,6 +46,7 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	public void addEntry(PetrisMenuEntry entry, int index) {
 		entries.add(index, entry);
 		entry.setRootMenu(this.getRootMenu());
+		if (root!= null)root.replace();
 		if (isEmpty)
 		{
 			isEmpty = false;

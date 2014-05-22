@@ -135,6 +135,11 @@ public class Game implements ActionListener{
 	
 	PetrisChildMenu leaderboardsChildMenu;
 	
+	PetrisChildMenu scrollTestMenuEntry;
+	PetrisChildMenu testsMenuEntry;
+	PetrisMenuEntry cloneEntry;
+	private int cloneCounter = 0;
+	
 	BackgroundLayer bgLayer;
 	PetrisColor customColor1 = new PetrisColor(new Color(0,0,0,255));
 	PetrisColor customColor2 = new PetrisColor(new Color(0,0,0,255));
@@ -1528,32 +1533,26 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 					settingsMenuEntry.addEntry(new PetrisMenuEntry("Graphics settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230), false));
 					
-						PetrisChildMenu testsMenuEntry = new PetrisChildMenu("For Testers", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+						testsMenuEntry = new PetrisChildMenu("For Testers", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 						
-							PetrisChildMenu scrollTestMenuEntry = new PetrisChildMenu("Menu scrolling test", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
+							scrollTestMenuEntry = new PetrisChildMenu("Dynamic Menu Test", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
 									new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 							
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry1", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry2", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry3", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry4", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry5", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry6", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry7", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry8", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry9", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry10", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry11", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry12", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry13", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry14", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry15", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry16", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry17", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry18", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry19", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
-								scrollTestMenuEntry.addEntry(new PetrisMenuEntry("Entry20", gameFont.deriveFont(baseFontSize + 16F), gameSize.width));
+								cloneEntry = new PetrisMenuEntry("0.Clone this entry", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 35, 
+										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+								cloneEntry.setAction(new Action() {
+									@Override
+									public void run() {
+										PetrisMenuEntry newClone = new PetrisMenuEntry(cloneEntry);
+										++cloneCounter;
+										newClone.setText("" + cloneCounter + ".Clone this entry");
+										scrollTestMenuEntry.addEntry(newClone);
+									}
+								});
+								
+								scrollTestMenuEntry.addEntry(cloneEntry);
+								
 							
 							testsMenuEntry.addEntry(scrollTestMenuEntry);
 							filterMenuEntry = new PetrisOptionMenuEntry("Select render filter:", gameFont.deriveFont(baseFontSize + 16F), 

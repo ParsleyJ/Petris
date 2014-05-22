@@ -6,8 +6,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import petris.*;
+import petris.db.DataLoader;
 import petris.gui.DebugConsole;
 import petris.gui.Render;
 import petris.gui.RenderInterface;
@@ -24,6 +27,8 @@ public class Petris {
 	private static GlobalVarSet globals;
 	private static Profile currentProfile;
 	public static DebugConsole console;
+	private static DataLoader dataLoader = new DataLoader();
+
 	
 	
 	public static void main(String[] args)
@@ -62,7 +67,12 @@ public class Petris {
 		}
 		else game = new Game(new Dimension(300,667), gameRender, null);
 		
-		currentProfile = new Profile();
+		if(dataLoader.schemaExists())
+		{
+			dataLoader.openConnection();
+			currentProfile = dataLoader.loginAs("ParsleyJoe");
+		}
+		else firstLaunch();
 		
 		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.38");
 		game.setGlobals(globals);
@@ -76,8 +86,24 @@ public class Petris {
 		gameFrame.setVisible(true);
 		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		
+		gameFrame.addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				dataLoader.closeConnection();
+				System.exit(0);
+			}
+		});
 		
 		game.showMainMenu();
 	}
+	
+	public static void firstLaunch()
+	{
+		dataLoader.createNewSchema(false);
+		currentProfile = dataLoader.loginAs("Guest");
+		
+	}
+	
+	
 }

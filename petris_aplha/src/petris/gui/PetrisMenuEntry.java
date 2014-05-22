@@ -16,11 +16,11 @@ public class PetrisMenuEntry {
 	private boolean isFocused = false;
 	protected FadingColor bgColor = new FadingColor(new Color(50,50,50,230), 230);
 	protected FadingColor textColor = new FadingColor(new Color(50,200,50,230), 230);
-	protected FadingColor focusColor = new FadingColor(new Color(50,50,50,0).brighter().brighter(), 230);
+	protected FadingColor focusColor = new FadingColor(textColor.getStaticColor().darker().darker(), 230);
 	protected FadingColor disabledColor = new FadingColor(new Color(100,100,100,230), 230);
 	protected int width;
 	protected Font textFont;
-	private boolean isVisible;
+	protected boolean isVisible;
 	private boolean hasAction = false;
 	private Action action;
 	protected PetrisMenu root;
@@ -69,6 +69,23 @@ public class PetrisMenuEntry {
 		focusColor.setAlpha(0);
 		width = parentWidth;
 		setEnabled(isEnabled);
+	}
+	
+	public PetrisMenuEntry(PetrisMenuEntry x)
+	{
+		text = x.getText();
+		textFont = x.getTextFont();
+		height = x.height;
+		width = x.width;
+		bgColor = new FadingColor(x.bgColor.getStaticColor());
+		textColor = new FadingColor(x.textColor.getStaticColor());
+		focusColor = new FadingColor(textColor.getStaticColor().darker().darker().darker());
+		action = x.action;
+		hasAction = x.hasAction;
+		setFocused(false);
+		focusColor.setAlpha(0);
+		bgColor.setAlpha(230);
+		setEnabled(x.enabled);
 	}
 	
 	public String getText() {
