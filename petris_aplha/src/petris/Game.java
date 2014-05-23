@@ -142,6 +142,7 @@ public class Game implements ActionListener{
 	PetrisGridOptionMenuEntry selectThemeMenuEntry;
 	PetrisOptionMenuEntry selectBackgroundMenuEntry;
 	PetrisOptionMenuEntry filterMenuEntry;
+	ToggleMenuEntry renderModeEntry;
 	
 	PetrisChildMenu leaderboardsChildMenu;
 	
@@ -182,6 +183,7 @@ public class Game implements ActionListener{
 	private boolean isFirstLaunch;
 	private DataLoader dataLoader;
 	private boolean resumeOnEsc = false;
+	private PetrisChildMenu firstLaunchDialog;
 
 	
 	
@@ -314,6 +316,8 @@ public class Game implements ActionListener{
 			
 			initializePauseMenu();
 			
+			initializeFirstLaunchDialog();
+			
 			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),gameFont.deriveFont(baseFontSize + 12F),200);
 			render.addLayer(smallMessage);
 		}
@@ -328,7 +332,11 @@ public class Game implements ActionListener{
     
     
     
-    public void actionPerformed(ActionEvent e) {
+  
+
+
+
+	public void actionPerformed(ActionEvent e) {
     	if (e.getSource().equals(timer2))
     	{
     		mainMenu.show();
@@ -344,6 +352,18 @@ public class Game implements ActionListener{
         updateGui();
         render.repaint();
     }
+    
+	public void init(boolean firstLaunch) {
+		if (firstLaunch)
+		{
+			mainMenu.enterChildMenu(firstLaunchDialog);
+		}
+		else smallMessage.show("Welcome, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+		showMainMenu();
+		
+		
+	}
+
     
     public void start()
     {
@@ -462,7 +482,7 @@ public class Game implements ActionListener{
 		//secondMessage.show("Press P or Esc to resume", Color.green, -1, 300);
 		//thirdMessage.show("Press T to change theme", Color.orange, -1, 300);
 		//fourthMessage.show("Press Q to exit to main menu", Color.red, -1, 300);
-		this.resumeOnEsc =true;
+		//this.resumeOnEsc =true;
 		menuLayer.setBackFilterEnabled(true);
 	
 		mainMenu.show();
@@ -1588,8 +1608,22 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 					
 					settingsMenuEntry.addEntry(new PetrisMenuEntry("Controls", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230), false));
-					settingsMenuEntry.addEntry(new PetrisMenuEntry("Graphics settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
-							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230), false));
+					
+						PetrisChildMenu graphicsSettingsMenuEntry = new PetrisChildMenu("Graphics settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
+						
+						renderModeEntry = new ToggleMenuEntry("Menus background blur", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
+						renderModeEntry.setChecked(true);
+						renderModeEntry.setAction(new Action() {
+							@Override
+							public void run() {
+								Game.this.render.setLayerBasedFiltersDisabled(Game.this.renderModeEntry.isChecked());
+							}
+						});
+						graphicsSettingsMenuEntry.addEntry(renderModeEntry);
+					
+					settingsMenuEntry.addEntry(graphicsSettingsMenuEntry);
 					
 						testsMenuEntry = new PetrisChildMenu("For Testers", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
@@ -1702,6 +1736,24 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		});
 		pauseMenu.addEntry(resumeMenuEntry);
 		pauseMenu.addEntry(settingsMenuEntry);
+		pauseMenu.setOnEntered(new Action(){
+			@Override
+			public void run() {
+				Game.this.resumeOnEsc = true;
+			}
+		});
+		pauseMenu.setOnEnteringChild(new Action(){
+			@Override
+			public void run() {
+				Game.this.resumeOnEsc = false;
+			}
+		});
+		pauseMenu.setOnExiting(new Action(){
+			@Override
+			public void run() {
+				Game.this.resumeOnEsc = false;
+			}
+		});
 		
 		PetrisMenuEntry backToMainEntry = new PetrisMenuEntry("Return to Main Menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
@@ -1717,13 +1769,53 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 	}
 
 
+	private PetrisMenuEntry acceptNameEntry;
+	private TextFieldMenuEntry nameTextEntry;
+	private void initializeFirstLaunchDialog() {
+		firstLaunchDialog = new PetrisChildMenu("Welcome!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+		
+		nameTextEntry = new TextFieldMenuEntry("Insert your profile name:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 70, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230), "press Enter and type");
+		nameTextEntry.setOnExitingEdit(new Action(){
+			@Override
+			public void run() {
+				if (nameTextEntry.getFieldText() == "" || nameTextEntry.getFieldText() == null 
+						|| nameTextEntry.getFieldText().length() == 0) acceptNameEntry.setEnabled(false);
+				else acceptNameEntry.setEnabled(true);
+			}
+		});
+		firstLaunchDialog.addEntry(nameTextEntry);
+		
+		acceptNameEntry = new PetrisMenuEntry("Done", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230), false);
+		acceptNameEntry.setAction(new Action() {
+			@Override
+			public void run() {
+				Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(nameTextEntry.getFieldText());
+				Game.this.mainMenu.setCanGoBack(true);
+				Game.this.mainMenu.performBack();
+				Game.this.smallMessage.show("Welcome, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+			}
+		});
+		firstLaunchDialog.addEntry(acceptNameEntry);
+		firstLaunchDialog.setOnEntered(new Action(){
+			@Override
+			public void run() {
+				mainMenu.setCanGoBack(false);
+			}
+		});
 
-	
+	}
+
 
 	public void menuGeneralizedKeyboardInput(KeyEvent keyCode)
 	{
 		mainMenu.performGeneralizedKeyboardInput(keyCode);
 	}
+
+
+
 
 	
 

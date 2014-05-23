@@ -12,6 +12,7 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	
 	private Action onEntered;
 	private Action onExiting;
+	private Action onEnteringChild;
 	
 	public PetrisChildMenu(String entryText, Font font, int parentWidth,
 			int entryHeight, FadingColor background, FadingColor foreColor) {
@@ -85,12 +86,12 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 		this.onExiting = onExiting;
 	}
 	
-	public void performEntered()
+	public void performOnEntered()
 	{
 		if (onEntered!=null)onEntered.run();
 	}
 	
-	public void performExiting()
+	public void performOnExiting()
 	{
 		if(onExiting!=null)onExiting.run();
 	}
@@ -98,5 +99,21 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	public void clearEntries()
 	{
 		entries.clear();
+	}
+
+
+	public Action getOnEnteringChild() {
+		return onEnteringChild;
+	}
+
+
+	public void setOnEnteringChild(Action onEnteringChild) {
+		this.onEnteringChild = onEnteringChild;
+	}
+
+
+	public void performOnEnteringChild() {
+		if (onEnteringChild!=null)onEnteringChild.run();
+		
 	}
 }

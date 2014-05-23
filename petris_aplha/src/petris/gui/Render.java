@@ -34,6 +34,7 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 	
 	private BufferedImage bufferedImage;
 	private Filters curFilter = Filters.noFilter;
+	private boolean layerBasedFiltersDisabled = false;
 	
 	public enum Filters {Blur1, Blur2, Invert, Sharp, Posterize, Tilt, BrightUp, BrightDown, 
 						JustEdges, GrayScale, Antialiasing, noFilter, };
@@ -71,28 +72,55 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 	
 	public void paintComponent(Graphics g)
 	{
-		/*
-		if(filter==null)
+		
+		if (layerBasedFiltersDisabled )
 		{
-			
-			g.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
-			g.setColor(Color.black);
-			g.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
-			for(Layer l : layers)
+			if(filter==null)
 			{
-				if (l.isEnabled())
+				
+				g.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+				g.setColor(Color.black);
+				g.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+				for(Layer l : layers)
 				{
-					l.setGraphics(g);
-					l.paint();
+					if (l.isEnabled())
+					{
+						l.setGraphics(g);
+						l.paint();
+					}
 				}
+			
+			
 			}
-		
-		
+			
+			else
+			{
+				
+				Graphics2D g2D  = bufferedImage.createGraphics();
+				g2D.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+				g2D.setColor(Color.black);
+				g2D.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+				for(Layer l : layers)
+				{
+					if (l.isEnabled())
+					{
+						l.setGraphics(g2D);
+						l.paint();
+					}
+				}
+				
+				bufferedImage = filter.processImage(bufferedImage);
+					
+				g.drawImage(bufferedImage, 0, 0, null);
+				
+				
+				//freeze=true;
+			    
+			    //((Graphics2D)getGraphics()).drawImage(bufferedImage, blurFilter, this.getLocation().x, this.getLocation().x);
+			}
 		}
-		
 		else
 		{
-			
 			Graphics2D g2D  = bufferedImage.createGraphics();
 			g2D.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
 			g2D.setColor(Color.black);
@@ -101,40 +129,27 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 			{
 				if (l.isEnabled())
 				{
+					if (l.getBackFilter() !=null && l.isBackFilterEnabled())
+					{
+						bufferedImage = l.getBackFilter().processImage(bufferedImage);
+						g2D = bufferedImage.createGraphics();
+					}
+					
 					l.setGraphics(g2D);
 					l.paint();
+					if (l.getFrontFilter() !=null && l.isFrontFilterEnabled()) 
+					{
+						bufferedImage = l.getFrontFilter().processImage(bufferedImage);
+						g2D = bufferedImage.createGraphics();
+					}
+					
 				}
 			}
 			
-			bufferedImage = filter.processImage(bufferedImage);
+			if(filter!=null)bufferedImage = filter.processImage(bufferedImage);
 				
 			g.drawImage(bufferedImage, 0, 0, null);
-			
-			
-			//freeze=true;
-		    
-		    //((Graphics2D)getGraphics()).drawImage(bufferedImage, blurFilter, this.getLocation().x, this.getLocation().x);
-		}*/
-		Graphics2D g2D  = bufferedImage.createGraphics();
-		g2D.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
-		g2D.setColor(Color.black);
-		g2D.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
-		for(Layer l : layers)
-		{
-			if (l.isEnabled())
-			{
-				if (l.getBackFilter() !=null && l.isBackFilterEnabled()) bufferedImage = l.getBackFilter().processImage(bufferedImage);
-				g2D = bufferedImage.createGraphics();
-				l.setGraphics(g2D);
-				l.paint();
-				if (l.getFrontFilter() !=null && l.isFrontFilterEnabled()) bufferedImage = l.getFrontFilter().processImage(bufferedImage);
-				g2D = bufferedImage.createGraphics();
-			}
 		}
-		
-		if(filter!=null)bufferedImage = filter.processImage(bufferedImage);
-			
-		g.drawImage(bufferedImage, 0, 0, null);
 		
 		++frameCounter;
 		
@@ -292,6 +307,14 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 	public Filters getCurrentFilter()
 	{
 		return curFilter;
+	}
+
+	public boolean isLayerBasedFiltersDisabled() {
+		return layerBasedFiltersDisabled;
+	}
+
+	public void setLayerBasedFiltersDisabled(boolean layerBasedFiltersDisabled) {
+		this.layerBasedFiltersDisabled = layerBasedFiltersDisabled;
 	}
 	
 }

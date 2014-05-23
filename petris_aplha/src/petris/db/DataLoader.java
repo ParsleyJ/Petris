@@ -265,8 +265,8 @@ public class DataLoader {
 			return rs.getString(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return "entry_not_found";
 		}
-		return null;
 	}
 	
 	public String getMetadata(String key, Connection conn)

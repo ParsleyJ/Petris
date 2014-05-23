@@ -71,7 +71,15 @@ public class Petris {
 		if(dataLoader.schemaExists())
 		{
 			dataLoader.openConnection();
-			currentProfile = dataLoader.loginAs("ParsleyJoe");
+			String lastLogged = null;
+			try{
+				lastLogged = dataLoader.getLastLogged();
+				currentProfile = dataLoader.loginAs(lastLogged);
+			}
+			catch(RuntimeException e)
+			{
+				firstLaunch();
+			}			
 		}
 		else firstLaunch();
 		
@@ -99,13 +107,13 @@ public class Petris {
 			}
 		});
 		
-		game.showMainMenu();
+		game.init(isFirstLaunch);
 	}
 	
 	public static void firstLaunch()
 	{
 		dataLoader.createNewSchema(false);
-		currentProfile = dataLoader.loginAs("Guest");
+		//currentProfile = dataLoader.loginAs("Guest");
 		isFirstLaunch = true;
 	}
 	

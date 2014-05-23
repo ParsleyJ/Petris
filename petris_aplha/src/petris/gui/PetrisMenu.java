@@ -55,6 +55,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	private PetrisChildMenu curChild = nullChild;
 	
 	private boolean textInputMode = false;
+	private boolean canGoBack = true;
 	private boolean ignoreNextEnter;
 	private int currentFrame = 0;
 	
@@ -303,8 +304,8 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 		
 		if (textInputMode) return;
 		if(titlesTraceback.isEmpty()) return;
-		
-		curChild.performExiting();
+		if (!canGoBack) return;
+		curChild.performOnExiting();
 		curChild= childTraceback.pop();
 		title = titlesTraceback.pop();
 		titleColor = foreColorTraceback.pop();
@@ -345,7 +346,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 				else entries.get(i).setFocused(false);
 			}			
 		}
-		curChild.performExiting();
+		curChild.performOnExiting();
 		curChild = nullChild;
 	}
 	
@@ -416,6 +417,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	}
 
 	public void enterChildMenu(PetrisChildMenu petrisChildMenu) {
+		if (curChild!=null) curChild.performOnEnteringChild();
 		traceback.push(new ArrayList<PetrisMenuEntry>(entries));
 		titlesTraceback.push("" + title);
 		foreColorTraceback.push(titleColor);
@@ -438,7 +440,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 				entries.get(i).show();
 			}			
 		}
-		curChild.performEntered();
+		curChild.performOnEntered();
 		curChild.setRootMenu(this);
 		
 	}
@@ -483,6 +485,16 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 
 	public int getCurrentFrame() {
 		return currentFrame;
+	}
+
+
+	public boolean isCanGoBack() {
+		return canGoBack;
+	}
+
+
+	public void setCanGoBack(boolean canGoBack) {
+		this.canGoBack = canGoBack;
 	}
 
 
