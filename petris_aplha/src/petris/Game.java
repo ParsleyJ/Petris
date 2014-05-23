@@ -136,6 +136,8 @@ public class Game implements ActionListener{
 	private PetrisMenu mainMenu;
 	private MenuLayer menuLayer;
 	
+	PetrisChildMenu pauseMenu;
+	PetrisChildMenu settingsMenuEntry;
 	PetrisOptionMenuEntry selectPowerMenuEntry;
 	PetrisGridOptionMenuEntry selectThemeMenuEntry;
 	PetrisOptionMenuEntry selectBackgroundMenuEntry;
@@ -179,6 +181,8 @@ public class Game implements ActionListener{
 	
 	private boolean isFirstLaunch;
 	private DataLoader dataLoader;
+	private boolean resumeOnEsc = false;
+
 	
 	
 	public enum BackgroundStyles {JustBlack, FlashingGravity, Rainbow, MonochromeGradient, GravityGradient, Custom};
@@ -286,8 +290,7 @@ public class Game implements ActionListener{
 			render.addLayer(ammoLabel);
 			
 			//notification messages configuration
-			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),gameFont.deriveFont(baseFontSize + 12F),200);
-			render.addLayer(smallMessage);
+			
 			
 			messageBox = new MessageLayer ((int)gameSize.getWidth(), (int)gameSize.getHeight(), 40, gameFont.deriveFont(baseFontSize + 20F), 230);
 			render.addLayer(messageBox);
@@ -309,6 +312,10 @@ public class Game implements ActionListener{
 			
 			initializeMenu();
 			
+			initializePauseMenu();
+			
+			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),gameFont.deriveFont(baseFontSize + 12F),200);
+			render.addLayer(smallMessage);
 		}
 		
 		timer2 = new Timer(1500,this);
@@ -362,6 +369,7 @@ public class Game implements ActionListener{
         gravityColor.setTimerDelay(50);
         timer.setDelay(500);
         timer.start();
+        
         smallMessage.show("New game started", Color.green, 1500, 500);//TODO: what with simoultaneous message shows? ---> add a queue
         fadeOutMenus();
         fadeInGui();
@@ -383,7 +391,7 @@ public class Game implements ActionListener{
             timer.stop();
             smallMessage.show("Paused", Color.yellow, 1500, 500);
         } else {
-        	fadeOutMenus();
+        	closePausedMenu();
             timer.start();
             smallMessage.show("Resumed", Color.cyan, 1500, 500);
             //statusbar.setText(String.valueOf(numLinesRemoved));
@@ -442,17 +450,35 @@ public class Game implements ActionListener{
         thirdMessage.show("Press Y to change power.", Color.green, -1, 500);
         fourthMessage.show("Press T to change theme.", Color.red, -1, 500);
         */
+        //fadeOutMenus();
         fadeOutGui();
+        //menuLayer.setBackFilterEnabled(true);
         mainMenu.show(); //new menu
         inMenu = true;
 	}
 	
 	public void showPausedMenu() {
-		messageBox.show("Paused", Color.white, -1, 300);
-		secondMessage.show("Press P or Esc to resume", Color.green, -1, 300);
-		thirdMessage.show("Press T to change theme", Color.orange, -1, 300);
-		fourthMessage.show("Press Q to exit to main menu", Color.red, -1, 300);
-		//inMenu = true;
+		//messageBox.show("Paused", Color.white, -1, 300);
+		//secondMessage.show("Press P or Esc to resume", Color.green, -1, 300);
+		//thirdMessage.show("Press T to change theme", Color.orange, -1, 300);
+		//fourthMessage.show("Press Q to exit to main menu", Color.red, -1, 300);
+		this.resumeOnEsc =true;
+		menuLayer.setBackFilterEnabled(true);
+	
+		mainMenu.show();
+		mainMenu.enterChildMenu(pauseMenu);
+		
+		inMenu = true;
+	}
+	
+	public void closePausedMenu()
+	{
+		this.resumeOnEsc = false;
+		menuLayer.setBackFilterEnabled(false);
+		mainMenu.resetRootEntries();
+		mainMenu.close();
+	
+		inMenu = false;
 	}
 	
 	private void fadeOutMenus() {
@@ -462,7 +488,9 @@ public class Game implements ActionListener{
 		fourthMessage.fadeOut();
 		
 		mainMenu.close();
+		menuLayer.setBackFilterEnabled(false);
 		mainMenu.resetRootEntries();
+
 		
 		inMenu = false;
 	}
@@ -1105,6 +1133,11 @@ public class Game implements ActionListener{
 	}
 	
 	public void menuNavBack() {
+		if (resumeOnEsc)
+		{
+			this.pause();
+			return;
+		}
 		mainMenu.performBack();
 		
 	}
@@ -1431,6 +1464,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		mainMenu = new PetrisMenu(gameSize,"Petris",gameFont.deriveFont(baseFontSize + 34F), 
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
 		menuLayer.setCurrentMenu(mainMenu);
+		menuLayer.setBackFilter(new BlurFilter2());
 		render.addLayer(menuLayer);
 			
 					//New Game menu configuration   ----------------------------
@@ -1490,7 +1524,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		
 		
 					//Settings menu configuration-----------------------
-					PetrisChildMenu settingsMenuEntry = new PetrisChildMenu("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+					settingsMenuEntry = new PetrisChildMenu("Settings", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 					
 					previewGrid = new TetrisGrid(this,new Dimension(125,125),5,5);
@@ -1565,7 +1599,6 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 							
 								TextFieldMenuEntry textFieldTest = new TextFieldMenuEntry("Text Field:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 70, 
 										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.yellow, 230), "write text here...(press Enter)");
-							
 								scrollTestMenuEntry.addEntry(textFieldTest);
 								
 								ProgressIndicatorMenuEntry indicatorTest = new ProgressIndicatorMenuEntry("Progress Indicator:", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 40, 
@@ -1650,6 +1683,37 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 			}
 		});
 		mainMenu.addEntry(quitMenuEntry);
+	}
+	
+	private void initializePauseMenu()
+	{
+		
+		pauseMenu = new PetrisChildMenu("Paused", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+		pauseMenu.setRootMenu(mainMenu);
+		
+		PetrisMenuEntry resumeMenuEntry = new PetrisMenuEntry("Resume", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+		resumeMenuEntry.setAction(new Action(){
+			@Override
+			public void run() {
+				Game.this.pause();
+			}
+		});
+		pauseMenu.addEntry(resumeMenuEntry);
+		pauseMenu.addEntry(settingsMenuEntry);
+		
+		PetrisMenuEntry backToMainEntry = new PetrisMenuEntry("Return to Main Menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+		backToMainEntry.setAction(new Action() {
+			@Override
+			public void run() {
+				Game.this.closePausedMenu();
+				Game.this.showMainMenu();
+			}
+		});
+		pauseMenu.addEntry(backToMainEntry);
+		
 	}
 
 

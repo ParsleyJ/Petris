@@ -58,6 +58,8 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	private boolean ignoreNextEnter;
 	private int currentFrame = 0;
 	
+
+	
 	private PetrisFakeTimer frameAnimationTimer = new PetrisFakeTimer(20, this);
 	
 	
@@ -109,6 +111,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 		{
 			e.close();
 		}
+		
 	}
 
 
@@ -162,7 +165,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 			currY += e.getHeight() + spaceHeight;
 		}
 		
-		if (!isVisible && titleColor.getAlpha()==0 && bgColor.getAlpha()==0) ; //return;
+		if (!isVisible && bgColor.getAlpha()==0) ; //return;
 		else {
 			//draw title
 			graphics.setColor(bgColor.getStaticColor());
@@ -436,6 +439,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 			}			
 		}
 		curChild.performEntered();
+		curChild.setRootMenu(this);
 		
 	}
 
@@ -472,6 +476,7 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		currentFrame =(currentFrame+1)%500;
+		//if (!isVisible) titleColor.fadeOut(); //TODO: remove
 		
 	}
 
@@ -480,6 +485,8 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 		return currentFrame;
 	}
 
+
+	
 
 	/*public void setCurrentFrame(int currentFrame) {
 		this.currentFrame = currentFrame;

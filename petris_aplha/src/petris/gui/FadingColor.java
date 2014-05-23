@@ -2,6 +2,8 @@ package petris.gui;
 
 import java.awt.Color;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 public class FadingColor extends DynamicColor {
 
 	private int renderDelay = 20;
@@ -100,6 +102,7 @@ public class FadingColor extends DynamicColor {
 		currentAlpha = alphaMax;
 		fadeOutTicks = fTime/renderDelay;
 		
+		
 	}
 	
 	public void fadeIn(int maxAlphaTime, int fadeTime)
@@ -120,5 +123,15 @@ public class FadingColor extends DynamicColor {
 		
 	}
 	*/
+	
+	public int getMaxApha()
+	{
+		return alphaMax;
+	}
+	
+	public int getCurrentAlpha()
+	{
+		return currentAlpha;
+	}
 
 }

@@ -29,13 +29,14 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 	
 	private Filter filter = null;
 	
+	
 	private boolean freeze = false;
 	
 	private BufferedImage bufferedImage;
 	private Filters curFilter = Filters.noFilter;
 	
 	public enum Filters {Blur1, Blur2, Invert, Sharp, Posterize, Tilt, BrightUp, BrightDown, 
-						JustEdges, GrayScale, noFilter,};
+						JustEdges, GrayScale, Antialiasing, noFilter, };
 	
 	public Render(Color bgCol, Dimension size)
 	{
@@ -47,6 +48,7 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 		dimension = size;
 		bufferedImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		setFilter(curFilter);
+		
 	}
 
 	public void actionPerformed(ActionEvent e)
@@ -69,6 +71,7 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 	
 	public void paintComponent(Graphics g)
 	{
+		/*
 		if(filter==null)
 		{
 			
@@ -83,10 +86,6 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 					l.paint();
 				}
 			}
-			//if (filter != null && printFilter) applyFilter(filter);
-			//if (printFilter) System.out.println("b");
-		
-		
 		
 		
 		}
@@ -94,7 +93,7 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 		else
 		{
 			
-			Graphics2D g2D = bufferedImage.createGraphics();
+			Graphics2D g2D  = bufferedImage.createGraphics();
 			g2D.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
 			g2D.setColor(Color.black);
 			g2D.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
@@ -115,8 +114,30 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 			//freeze=true;
 		    
 		    //((Graphics2D)getGraphics()).drawImage(bufferedImage, blurFilter, this.getLocation().x, this.getLocation().x);
+		}*/
+		Graphics2D g2D  = bufferedImage.createGraphics();
+		g2D.clearRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+		g2D.setColor(Color.black);
+		g2D.fillRect(0, 0, (int)dimension.getWidth(), (int)dimension.getHeight());
+		for(Layer l : layers)
+		{
+			if (l.isEnabled())
+			{
+				if (l.getBackFilter() !=null && l.isBackFilterEnabled()) bufferedImage = l.getBackFilter().processImage(bufferedImage);
+				g2D = bufferedImage.createGraphics();
+				l.setGraphics(g2D);
+				l.paint();
+				if (l.getFrontFilter() !=null && l.isFrontFilterEnabled()) bufferedImage = l.getFrontFilter().processImage(bufferedImage);
+				g2D = bufferedImage.createGraphics();
+			}
 		}
+		
+		if(filter!=null)bufferedImage = filter.processImage(bufferedImage);
+			
+		g.drawImage(bufferedImage, 0, 0, null);
+		
 		++frameCounter;
+		
 	}
 	
 	public int getFrameDelay() {
@@ -252,6 +273,9 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 			break;
 		case GrayScale:
 			setFilter(new GrayScaleFilter());
+			break;
+		case Antialiasing:
+			setFilter(new AntialiasingFilter());
 			break;
 			
 		case noFilter:

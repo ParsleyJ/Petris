@@ -133,7 +133,7 @@ public abstract class DynamicColor implements ActionListener {
 	}
 	public void setAlpha(int a)
 	{
-		alpha = a;
+		alpha = Math.max(0, a);
 	}
 	public Color getStaticColor()
 	{
