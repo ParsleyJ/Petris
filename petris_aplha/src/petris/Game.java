@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
@@ -149,6 +151,7 @@ public class Game implements ActionListener{
 	PetrisChildMenu scrollTestMenuEntry;
 	PetrisChildMenu testsMenuEntry;
 	PetrisMenuEntry cloneEntry;
+	PetrisMenuEntry backMenuEntry;
 	private int cloneCounter = 0;
 	
 	BackgroundLayer bgLayer;
@@ -447,7 +450,7 @@ public class Game implements ActionListener{
 		
 		timer.stop();
         isStarted = false;
-        if (points >0)globals.addHighscore(globals.currentProfile.getName(), points);
+        if (points >0)dataLoader.addHighscore(globals);
         messageBox.show("Game Over!", Color.red, -1, 500);
         secondMessage.show("Press N to start a new game.", Color.white, -1, 500);
         thirdMessage.show("Press Y to change power.", Color.green, -1, 500);
@@ -1185,11 +1188,37 @@ public class Game implements ActionListener{
 	public void addHighscoresToMenu(PetrisChildMenu x)
 	{
 		x.clearEntries();
-		for (int i = globals.highscores.size() - 1; i >= 0; --i)
+		ResultSet rs = dataLoader.getHighscores();
+		int rank = 1;
+		if (rs == null)
+		{
+			x.addEntry(new PetrisMenuEntry("There are no scores yet.",
+							gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 50), new FadingColor(Color.gray, 230)));
+		}
+		else
+		{
+			try{
+				while (rs.next()){
+					x.addEntry(new PetrisMenuEntry("" + rank + ". " + rs.getString("profile_name") + ": " + rs.getInt("match_score"),
+							gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230)));
+					++rank;
+				}
+				mainMenu.updateFocusedEntry();
+			
+			}
+			catch(SQLException | NullPointerException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		x.addEntry(backMenuEntry);
+		/*for (int i = globals.highscores.size() - 1; i >= 0; --i)
 		{
 			x.addEntry(new PetrisMenuEntry("" + (i+1) + ". " + globals.highscoreProfiles.get(i) + ": " +  globals.highscores.get(i), 
 					gameFont.deriveFont(baseFontSize + 14F), gameSize.width));
-		}
+		}*/
 	}
 	
 	public void setFirstLaunch(boolean isFirstLaunch) {
@@ -1210,7 +1239,7 @@ public class Game implements ActionListener{
 		
 		
 		
-		PetrisMenuEntry backMenuEntry = new PetrisMenuEntry("Back", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
+		backMenuEntry = new PetrisMenuEntry("Back", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
 		backMenuEntry.setAction(new Action(){
 			@Override

@@ -3,6 +3,7 @@ package petris;
 public class Profile {
 
 	private String name;
+	private int ID = -1;
 	private boolean guestProfile;
 	private int xp;
 	private int classicGamesCount;
@@ -27,6 +28,16 @@ public class Profile {
 		setXP(0);
 		setClassicGamesCount(0);
 		setBestScore(0);
+	}
+	
+	public Profile(int id, String profilename)
+	{
+		name = profilename;
+		guestProfile = false;
+		setXP(0);
+		setClassicGamesCount(0);
+		setBestScore(0);
+		ID = id;
 	}
 	
 	public void setName(String arg)
@@ -73,6 +84,14 @@ public class Profile {
 
 	public void setTotalLines(int totalLines) {
 		this.totalLines = totalLines;
+	}
+
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
 	}
 	
 	

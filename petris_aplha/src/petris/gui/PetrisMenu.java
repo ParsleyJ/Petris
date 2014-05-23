@@ -444,6 +444,15 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 		curChild.setRootMenu(this);
 		
 	}
+	
+	public void updateFocusedEntry()
+	{
+		for (int i = 0; i < entries.size(); ++ i)
+		{
+			if (i==focusedEntry) entries.get(focusedEntry).setFocused(true);
+			else entries.get(i).setFocused(false);
+		}	
+	}
 
 
 	public void replace() {

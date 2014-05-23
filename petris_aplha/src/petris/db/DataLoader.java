@@ -8,6 +8,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import petris.GlobalVarSet;
 import petris.Profile;
 
 public class DataLoader {
@@ -131,7 +133,7 @@ public class DataLoader {
 			//stat.executeUpdate("drop table if exists colors");
 			stat.executeUpdate("create table profiles ("
 					+ "id integer primary key autoincrement, "
-					+ "name text, "
+					+ "name text unique, "
 					+ "last_logged text not null, "
 					+ "last_modified text"
 					+ ")");
@@ -141,17 +143,18 @@ public class DataLoader {
 					+ ")");
 			stat.executeUpdate("insert into savefile_metadata(id,value)"
 					+ "values('schema_version','" + CURRENT_SCHEMA_VERSION + "')");
-			/*
+			
 			stat.executeUpdate("create table scores ("
 					+ "id integer primary key autoincrement, "
+					+ "profile integer references profiles(id), "
 					+ "petris_version text, "
 					+ "score integer not null, "
 					+ "multiplier integer, "
 					+ "lines integer, "
-					+ "started text, " //not null
+					//+ "started text, " //not null
 					+ "ended text, " //not null
 					+ "power text"
-					+ ")");*/
+					+ ")");
 			/*
 			stat.executeUpdate("create table match_stats ("
 					+ "id integer primary key autoincrement, "
@@ -204,7 +207,9 @@ public class DataLoader {
 				statement.executeUpdate("update profiles "
 						+ "set last_logged = datetime('now')"
 						+ "where name = '" + profile + "'");
-				return new Profile(profile);
+				ResultSet rs2 = statement.executeQuery("select * from profiles where name = '"+profile+"'");
+				int id = rs2.getInt("id");
+				return new Profile(id,profile);
 			}
 			else if (rs.getInt(1) == 0)
 			{
@@ -212,7 +217,9 @@ public class DataLoader {
 						+ "values('" + profile + "', "
 						+ "datetime('now'), "
 						+ "datetime('now'))");
-				return new Profile(profile);
+				ResultSet rs2 = statement.executeQuery("select * from profiles where name = '"+profile+"'");
+				int id = rs2.getInt("id");
+				return new Profile(id,profile);
 			}
 			else return new Profile("Guest"); //TODO: greater than 1? More people with same name?
 		} catch (SQLException e) {
@@ -226,7 +233,7 @@ public class DataLoader {
 	{
 		String result = "ERROR";
 		try {
-			ResultSet rs =  statement.executeQuery("select name from profiles order by name desc");
+			ResultSet rs =  statement.executeQuery("select name from profiles order by last_logged desc");
 			result = rs.getString("name");
 		} catch (SQLException e) {
 			throw new RuntimeException("No profiles yet");
@@ -284,6 +291,43 @@ public class DataLoader {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+
+	public void addHighscore(GlobalVarSet globals) {
+		
+		try {
+			Statement stat = connection.createStatement();
+			stat.executeUpdate("insert into scores(profile,petris_version,score,multiplier,lines,power,ended) "
+					+ "values("+globals.currentProfile.getID()+", "
+							+ "'"+ globals.petrisVersion +"', "
+							+ globals.currentGame.getScore() + ", "
+							+ globals.currentGame.getMultiplier() +", "
+							+ globals.currentGame.getTotalRemovedLines() + ", "
+							+ "'" + globals.currentGame.getPowerName()+ "', "
+							+ "datetime('now'))");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			
+	}
+
+	public ResultSet getHighscores() {
+		try {
+			Statement stat = connection.createStatement();
+			ResultSet rs = stat.executeQuery("select count(*) from scores");
+			if (rs.getInt(1) == 0) return null;
+			else{
+				return stat.executeQuery("select p.name as profile_name, s.score as match_score "
+						+ "from profiles p, scores s "
+						+ "where p.id = s.profile "
+						+ "order by s.score desc");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 
