@@ -29,6 +29,13 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.39
+
+	- Highscores and Profiles save system introduced;
+	- Advanced pause menu;
+	- New filter added: "Antialiasing";
+	- Menu System expanded with 4 new types of entries.
+
 ### pre-Alpha 0.38
 
 	- Advanced customizable background (gradients, solid colors, gradients with rainbows)
@@ -67,6 +74,6 @@ N : start a new game (only in game)
 [Java]: https://www.java.com/it/download/
 
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha038.jar?raw=true
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha039.jar?raw=true
 
 
