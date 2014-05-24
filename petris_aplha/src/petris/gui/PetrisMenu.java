@@ -513,7 +513,18 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 		this.currentFrame = currentFrame;
 	}*/
 
-	
+	public PetrisMenuEntry getEntry(int index)
+	{
+		return entries.get(index);
+	}
+
+	public PetrisMenuEntry getFocusedEntry()
+	{
+		return entries.get(focusedEntry);
+	}
+	public int getFocusedEntryIndex() {
+		return focusedEntry;
+	}
 
 	
 	

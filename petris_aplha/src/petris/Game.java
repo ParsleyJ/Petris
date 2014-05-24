@@ -187,7 +187,8 @@ public class Game implements ActionListener{
 	private DataLoader dataLoader;
 	private boolean resumeOnEsc = false;
 	private PetrisChildMenu firstLaunchDialog;
-
+	private PetrisChildMenu profileChildMenu;
+	
 	
 	
 	public enum BackgroundStyles {JustBlack, FlashingGravity, Rainbow, MonochromeGradient, GravityGradient, Custom};
@@ -320,6 +321,8 @@ public class Game implements ActionListener{
 			initializePauseMenu();
 			
 			initializeFirstLaunchDialog();
+			
+			initializeCreateProfileDialog();
 			
 			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),gameFont.deriveFont(baseFontSize + 12F),200);
 			render.addLayer(smallMessage);
@@ -1221,6 +1224,56 @@ public class Game implements ActionListener{
 		}*/
 	}
 	
+	public void addProfilesToMenu(PetrisChildMenu x)
+	{
+		x.clearEntries();
+		ResultSet rs = dataLoader.getProfiles();
+		Action loginAction = new Action() {			
+			@Override
+			public void run() {
+				String tmpString = mainMenu.getFocusedEntry().getText();
+				Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(tmpString);
+				Game.this.mainMenu.setCanGoBack(true);
+				Game.this.mainMenu.performBack();
+				Game.this.smallMessage.show("Logged in as " + globals.currentProfile.getName() + ", welcome!", Color.green, 2000, 500);
+			}
+		};
+	
+		if (rs == null)
+		{
+			x.addEntry(new PetrisMenuEntry("There are no profiles yet.",
+							gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 50), new FadingColor(Color.gray, 230)));
+		}
+		else
+		{
+			try{
+				while (rs.next()){
+					PetrisMenuEntry tmpEntry = new PetrisMenuEntry("" + rs.getString("name"),
+							gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+					tmpEntry.setAction(loginAction);
+					x.addEntry(tmpEntry);
+					
+				
+				}
+				mainMenu.updateFocusedEntry();
+			
+			}
+			catch(SQLException | NullPointerException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		x.addEntry(createProfileDialog);
+		x.addEntry(backMenuEntry);
+		/*for (int i = globals.highscores.size() - 1; i >= 0; --i)
+		{
+			x.addEntry(new PetrisMenuEntry("" + (i+1) + ". " + globals.highscoreProfiles.get(i) + ": " +  globals.highscores.get(i), 
+					gameFont.deriveFont(baseFontSize + 14F), gameSize.width));
+		}*/
+	}
+	
 	public void setFirstLaunch(boolean isFirstLaunch) {
 		this.isFirstLaunch = isFirstLaunch;
 		
@@ -1566,9 +1619,19 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 				Game.this.addHighscoresToMenu(leaderboardsChildMenu);
 			}
 		});
+		
 		mainMenu.addEntry(leaderboardsChildMenu);
-		mainMenu.addEntry(new PetrisMenuEntry("Profile", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,
-				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230), false));
+		
+		profileChildMenu = new PetrisChildMenu("Profiles", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.magenta, 230));
+		profileChildMenu.setOnEntered(new Action(){
+			@Override
+			public void run() {
+				Game.this.addProfilesToMenu(profileChildMenu);
+			}
+		});
+		
+		mainMenu.addEntry(profileChildMenu);
 		
 		
 		
@@ -1835,6 +1898,54 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 			}
 		});
 
+	}
+	
+	private PetrisMenuEntry accept2NameEntry;
+	private TextFieldMenuEntry name2TextEntry;
+	private PetrisChildMenu createProfileDialog;
+	private void initializeCreateProfileDialog() {
+		createProfileDialog = new PetrisChildMenu("Create new profile", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
+		
+		name2TextEntry = new TextFieldMenuEntry("Insert your profile name:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 70, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230), "press Enter and type");
+		name2TextEntry.setOnExitingEdit(new Action(){
+			@Override
+			public void run() {
+				if (name2TextEntry.getFieldText() == "" || name2TextEntry.getFieldText() == null 
+						|| name2TextEntry.getFieldText().length() == 0) accept2NameEntry.setEnabled(false);
+				else accept2NameEntry.setEnabled(true);
+			}
+		});
+		createProfileDialog.addEntry(name2TextEntry);
+		
+		accept2NameEntry = new PetrisMenuEntry("Done", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230), false);
+		accept2NameEntry.setAction(new Action() {
+			@Override
+			public void run() {
+				Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(name2TextEntry.getFieldText());
+				Game.this.mainMenu.setCanGoBack(true);
+				//Game.this.mainMenu.resetRootEntries();
+				Game.this.addProfilesToMenu(profileChildMenu);
+				Game.this.mainMenu.performBack();
+				Game.this.mainMenu.performBack();
+				Game.this.smallMessage.show("Welcome, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+			}
+		});
+		createProfileDialog.addEntry(accept2NameEntry);
+		createProfileDialog.setOnEntered(new Action(){
+			@Override
+			public void run() {
+				mainMenu.setCanGoBack(true);
+			}
+		});
+		createProfileDialog.setOnExiting(new Action(){
+			@Override
+			public void run() {
+				Game.this.addProfilesToMenu(profileChildMenu);
+			}
+		});
 	}
 
 

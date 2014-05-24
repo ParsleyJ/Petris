@@ -162,14 +162,15 @@ public class DataLoader {
 					+ "event text, "
 					+ "timestamp text"
 					+ ")");*/
-			/*
-			stat.executeUpdate("create table prefs("
-					+ "id integer primary key autoincrement , "
-					+ "profile integer references profiles(id), "
-					+ "background text, "
-					+ "power text, "
-					+ "custom_color integer "
-					+ ")");*/
+			
+			stat.executeUpdate("create table preferences("
+					+ "id text not null, "
+					+ "profile integer not null references profiles(id), "
+					+ "str_value text, "
+					+ "int_value int, "
+					+ "primary key(id, profile), "
+					+ "check(not(int_value is null and str_value is null)) "
+					+ ")");
 			/*
 			stat.executeUpdate("create table colors("
 					+ "id integer primary key autoincrement, "
@@ -329,6 +330,58 @@ public class DataLoader {
 		}
 		
 		return null;
+	}
+	
+	public ResultSet getProfiles() {
+		try {
+			Statement stat = connection.createStatement();
+			ResultSet rs = stat.executeQuery("select count(*) from profiles");
+			if (rs.getInt(1) == 0) return null;
+			else{
+				return stat.executeQuery("select * "
+										+ "from profiles "
+										+ "order by last_logged desc");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public Integer getIntPref(String key, int profileID)
+	{
+		ResultSet rs = null;
+		try {
+			rs = statement.executeQuery("select int_value from preferences "
+					+ "where id = '" + key + "' and profile = " + profileID + "");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getStrPref(String key, int profileID)
+	{
+		ResultSet rs = null;
+		try {
+			rs = statement.executeQuery("select str_value from preferences "
+					+ "where id = '" + key + "' and profile = " + profileID + " ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			return rs.getString(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 
