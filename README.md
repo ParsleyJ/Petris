@@ -29,6 +29,11 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.40
+
+	- Preferences save system introduced;
+	- Various menu system improvements;
+
 ### pre-Alpha 0.39
 
 	- Highscores and Profiles save system introduced;
@@ -74,6 +79,6 @@ N : start a new game (only in game)
 [Java]: https://www.java.com/it/download/
 
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha039.jar?raw=true
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha040.jar?raw=true
 
 
