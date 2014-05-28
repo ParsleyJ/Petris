@@ -22,8 +22,7 @@ public class PetrisMenuEntry {
 	protected int width;
 	protected Font textFont;
 	protected boolean isVisible;
-	protected boolean hasAction = false;
-	protected Action action;
+	protected Action onOk;
 	protected PetrisMenu root;
 	private boolean enabled = true;
 	private final int fadeTime = 300;
@@ -81,8 +80,7 @@ public class PetrisMenuEntry {
 		bgColor = new FadingColor(x.bgColor.getStaticColor());
 		textColor = new FadingColor(x.textColor.getStaticColor());
 		focusColor = new FadingColor(textColor.getStaticColor().darker().darker().darker());
-		action = x.action;
-		hasAction = x.hasAction;
+		onOk = x.onOk;
 		setFocused(false);
 		focusColor.setAlpha(0);
 		bgColor.setAlpha(230);
@@ -156,8 +154,7 @@ public class PetrisMenuEntry {
 	}
 	
 	public void performOk() {
-		if(!hasAction) return;
-		action.run();
+		if (onOk!=null)	onOk.run();
 	}
 	
 	public void performBack() {
@@ -215,10 +212,9 @@ public class PetrisMenuEntry {
 		return isVisible;
 	}
 	
-	public void setAction(Action a)
+	public void setOnOk(Action a)
 	{
-		hasAction  = true;
-		action = a;
+		onOk = a;
 	}
 
 	public PetrisMenu getRootMenu() {

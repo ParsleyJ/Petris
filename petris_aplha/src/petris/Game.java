@@ -1432,7 +1432,7 @@ public class Game implements ActionListener{
 					PetrisMenuEntry tmpEntry = new PetrisMenuEntry("" + rs.getString("name"),
 							gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,	
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-					tmpEntry.setAction(loginAction);
+					tmpEntry.setOnOk(loginAction);
 					x.addEntry(tmpEntry);
 					
 				
@@ -1474,7 +1474,7 @@ public class Game implements ActionListener{
 		
 		backMenuEntry = new PetrisMenuEntry("Back", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
-		backMenuEntry.setAction(new Action(){
+		backMenuEntry.setOnOk(new Action(){
 			@Override
 			public void run() {
 				Game.this.menuNavBack();					
@@ -1570,7 +1570,7 @@ public class Game implements ActionListener{
 		colorDialogMenu.addEntry(blueSlider2);
 		PetrisMenuEntry previewEntry = new PetrisMenuEntry("Show preview", gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
-		previewEntry.setAction(new Action(){
+		previewEntry.setOnOk(new Action(){
 			@Override
 			public void run() {
 				mainMenu.close();
@@ -1624,7 +1624,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 					
 					PetrisMenuEntry startGameMenuEntry = new PetrisMenuEntry("Start!", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-					startGameMenuEntry.setAction(new Action(){
+					startGameMenuEntry.setOnOk(new Action(){
 						@Override
 						public void run() {
 							Game.this.start();					
@@ -1733,7 +1733,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 						renderModeEntry = new ToggleMenuEntry("Menus background blur", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 								new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230));
 						renderModeEntry.setChecked(true);
-						renderModeEntry.setAction(new Action() {
+						renderModeEntry.setOnOk(new Action() {
 							@Override
 							public void run() {
 								Game.this.render.setLayerBasedFiltersDisabled(Game.this.renderModeEntry.isChecked());
@@ -1779,7 +1779,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 								
 								cloneEntry = new PetrisMenuEntry("0.Clone this entry", gameFont.deriveFont(baseFontSize + 16F), gameSize.width, 35, 
 										new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-								cloneEntry.setAction(new Action() {
+								cloneEntry.setOnOk(new Action() {
 									@Override
 									public void run() {
 										PetrisMenuEntry newClone = new PetrisMenuEntry(cloneEntry);
@@ -1828,7 +1828,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		
 		PetrisMenuEntry quitMenuEntry = new PetrisMenuEntry("Quit", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
-		quitMenuEntry.setAction(new Action() {
+		quitMenuEntry.setOnOk(new Action() {
 			@Override
 			public void run() {
 				System.exit(0);
@@ -1846,7 +1846,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		
 		PetrisMenuEntry resumeMenuEntry = new PetrisMenuEntry("Resume", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,  
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-		resumeMenuEntry.setAction(new Action(){
+		resumeMenuEntry.setOnOk(new Action(){
 			@Override
 			public void run() {
 				Game.this.pause();
@@ -1855,6 +1855,12 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		pauseMenu.addEntry(resumeMenuEntry);
 		pauseMenu.addEntry(settingsMenuEntry);
 		pauseMenu.setOnEntered(new Action(){
+			@Override
+			public void run() {
+				Game.this.resumeOnEsc = true;
+			}
+		});
+		pauseMenu.setOnReturnedFromChild(new Action(){
 			@Override
 			public void run() {
 				Game.this.resumeOnEsc = true;
@@ -1873,16 +1879,29 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 			}
 		});
 		
-		PetrisMenuEntry backToMainEntry = new PetrisMenuEntry("Return to Main Menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+		PetrisChildMenu confirmReturnToMain = new PetrisChildMenu("Return to Main Menu", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
-		backToMainEntry.setAction(new Action() {
+		
+		PetrisMenuEntry backToMainEntry = new PetrisMenuEntry("Confirm", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+		backToMainEntry.setOnOk(new Action() {
 			@Override
 			public void run() {
 				Game.this.closePausedMenu();
 				Game.this.showMainMenu();
 			}
 		});
-		pauseMenu.addEntry(backToMainEntry);
+		PetrisMenuEntry cancelReturnToMain = new PetrisMenuEntry("Cancel", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.yellow, 230));
+		cancelReturnToMain.setOnOk(new Action(){
+			@Override
+			public void run() {
+				Game.this.mainMenu.performBack();
+			}
+		});
+		confirmReturnToMain.addEntry(backToMainEntry);
+		confirmReturnToMain.addEntry(cancelReturnToMain);
+		pauseMenu.addEntry(confirmReturnToMain);
 		
 	}
 
@@ -1907,7 +1926,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		
 		acceptNameEntry = new PetrisMenuEntry("Done", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230), false);
-		acceptNameEntry.setAction(new Action() {
+		acceptNameEntry.setOnOk(new Action() {
 			@Override
 			public void run() {
 				Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(nameTextEntry.getFieldText());
@@ -1949,7 +1968,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		
 		accept2NameEntry = new PetrisMenuEntry("Done", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230), false);
-		accept2NameEntry.setAction(new Action() {
+		accept2NameEntry.setOnOk(new Action() {
 			@Override
 			public void run() {
 				Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(name2TextEntry.getFieldText());

@@ -13,6 +13,7 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	private Action onEntered;
 	private Action onExiting;
 	private Action onEnteringChild;
+	private Action onReturnedFromChild;
 	
 	public PetrisChildMenu(String entryText, Font font, int parentWidth,
 			int entryHeight, FadingColor background, FadingColor foreColor) {
@@ -115,5 +116,19 @@ public class PetrisChildMenu extends PetrisMenuEntry {
 	public void performOnEnteringChild() {
 		if (onEnteringChild!=null)onEnteringChild.run();
 		
+	}
+
+
+	public Action getOnReturnedFromChild() {
+		return onReturnedFromChild;
+	}
+
+
+	public void setOnReturnedFromChild(Action onReturnedFromChild) {
+		this.onReturnedFromChild = onReturnedFromChild;
+	}
+	
+	public void performOnReturnedFromChild(){
+		if(onReturnedFromChild!=null)onReturnedFromChild.run();
 	}
 }

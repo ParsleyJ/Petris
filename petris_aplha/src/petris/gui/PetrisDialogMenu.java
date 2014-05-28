@@ -18,7 +18,7 @@ public class PetrisDialogMenu extends PetrisChildMenu {
 		confirmEntry = new PetrisMenuEntry("Ok", font, parentSize.width, 40, new FadingColor(new Color(50,50,50,230), 230), foreColor, true);
 		super.addEntry(confirmEntry);
 		confirmAction = action;
-		confirmEntry.setAction(new Action()
+		confirmEntry.setOnOk(new Action()
 		{
 			@Override
 			public void run() {
