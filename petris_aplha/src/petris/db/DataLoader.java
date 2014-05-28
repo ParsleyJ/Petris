@@ -383,6 +383,30 @@ public class DataLoader {
 			return null;
 		}
 	}
-
+	
+	public void setPref(String key, String value, int profileID){
+		try{
+			statement.executeUpdate("insert or ignore into preferences (id,profile,str_value) "
+					+ "values( '" + key + "', "+ profileID + ", '" + value + "') ");
+			statement.executeUpdate("update preferences "
+					+ "set str_value = '" + value + "' "
+					+ "where id = '" + key + "' and profile = '" + profileID + "' ");
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void setPref(String key, int value, int profileID){
+		try{
+			statement.executeUpdate("insert or ignore into preferences (id,profile,int_value) "
+					+ "values( '" + key + "', "+ profileID + ", " + value + ") ");
+			statement.executeUpdate("update preferences "
+					+ "set int_value = " + value + " "
+					+ "where id = '" + key + "' and profile = " + profileID + " ");
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
 
 }

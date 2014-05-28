@@ -56,6 +56,7 @@ public class PetrisSliderEntry extends PetrisOptionMenuEntry {
 
 	public void setValue(int value) {
 		this.value = value;
+		super.setOptionText(""+value);
 	}
 
 	public int getStep() {

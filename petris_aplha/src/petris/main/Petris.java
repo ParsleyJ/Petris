@@ -83,7 +83,7 @@ public class Petris {
 		}
 		else firstLaunch();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.39");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.40");
 		game.setGlobals(globals);
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		

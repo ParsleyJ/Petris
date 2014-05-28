@@ -228,15 +228,28 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	public void performGoUp() 
 	{
 		if (textInputMode) return;
-		if (focusedEntry > 0)
+		
+		boolean allDisabled = true;
+		int cont = focusedEntry;
+		while(cont != 0)
+		{
+			--cont;
+			if (entries.get(cont).isEnabled()) {
+				allDisabled = false;
+				break;
+			}
+		}
+		
+		if (focusedEntry > 0 && !allDisabled)
 		{
 			entries.get(focusedEntry).setFocused(false);
 			while(true)
 			{
+				//if (focusedEntry > 0 && !entries.get(focusedEntry-1).isEnabled()) break;
 				if(entries.get(focusedEntry-1).isEnabled() || focusedEntry == 0) break;//TODO: what if first entry is disabled?
 				else --focusedEntry;
 			}
-			if (focusedEntry != 0)--focusedEntry;
+			if (focusedEntry!=0)--focusedEntry;
 			entries.get(focusedEntry).setFocused(true);			
 		}			
 	}
@@ -244,14 +257,28 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	@Override
 	public void performGoDown() {
 		if (textInputMode) return;
-		if (focusedEntry < entries.size() - 1)
+		
+		boolean allDisabled = true;
+		int cont = focusedEntry;
+		while(cont+1 != entries.size())
+		{
+			++cont;
+			if (entries.get(cont).isEnabled()) {
+				allDisabled = false;
+				break;
+			}
+		}		
+		
+		if (focusedEntry < entries.size() - 1 && !allDisabled)
 		{
 			entries.get(focusedEntry).setFocused(false);
 			while (true)
 			{
-				if(entries.get(focusedEntry+1).isEnabled() || focusedEntry == entries.size()-1 )break; 
+				//if (focusedEntry < entries.size()-1 && !entries.get(focusedEntry+1).isEnabled()) break;
+				if(entries.get(focusedEntry+1).isEnabled() || focusedEntry == entries.size()-1) break; 
 				else ++focusedEntry;
 			}
+			
 			if (focusedEntry != entries.size() - 1)++focusedEntry;
 			entries.get(focusedEntry).setFocused(true);
 		}

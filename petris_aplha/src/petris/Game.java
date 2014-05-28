@@ -364,7 +364,11 @@ public class Game implements ActionListener{
 		{
 			mainMenu.enterChildMenu(firstLaunchDialog);
 		}
-		else smallMessage.show("Welcome, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+		else 
+		{
+			smallMessage.show("Welcome back, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+			loadAllPrefs();
+		}
 		showMainMenu();
 		
 		
@@ -918,6 +922,7 @@ public class Game implements ActionListener{
 		if (curStyle.ordinal() + 1 >= allv.length) curStyle = allv[0];
 		else curStyle = allv[curStyle.ordinal() + 1];
 		updateSquareStyle();
+		savePref("square_style");
 		if(!inMenu)smallMessage.show("Style selected: " + curStyle.toString(), Color.yellow, 1500, 500);
 	}
 	
@@ -926,6 +931,7 @@ public class Game implements ActionListener{
 		if (curStyle.ordinal() - 1 < 0) curStyle = allv[allv.length-1];
 		else curStyle = allv[curStyle.ordinal() - 1];
 		updateSquareStyle();
+		savePref("square_style");
 		if(!inMenu)smallMessage.show("Style selected: " + curStyle.toString(), Color.yellow, 1500, 500);	
 	}
 	
@@ -946,6 +952,7 @@ public class Game implements ActionListener{
 		if (curBackgroundStyle.ordinal() + 1 >= allv.length) curBackgroundStyle = allv[0];
 		else curBackgroundStyle = allv[curBackgroundStyle.ordinal()+1];
 		updateBackground();
+		savePref("bg_style");
 		if(!inMenu)smallMessage.show("Background selected: " + curBackgroundStyle.toString(), Color.magenta, 1500, 500);
 	}
 	
@@ -955,6 +962,7 @@ public class Game implements ActionListener{
 		if (curBackgroundStyle.ordinal() - 1 < 0) curBackgroundStyle = allv[allv.length-1];
 		else curBackgroundStyle = allv[curBackgroundStyle.ordinal()-1];
 		updateBackground();
+		savePref("bg_style");
 		if(!inMenu)smallMessage.show("Background selected: " + curBackgroundStyle.toString(), Color.magenta, 1500, 500);
 	}
 	
@@ -1097,6 +1105,177 @@ public class Game implements ActionListener{
 		}
 	}
 	
+	public void updateCustomBackground(){
+		Painter p;
+		switch(backgroundPaintMode.getSelected())
+		{
+		case "Vertical Gradient":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
+				}
+			};
+			break;
+		}
+		case "Horizontal Gradient":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
+				}
+			};
+			break;
+		}
+		case "Solid Color":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
+				}
+			};
+			break;
+		}
+		case "Rainbow Up":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, customRainbow.getStaticColor(), 
+							new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
+				}
+			};
+			break;
+		}
+		case "Rainbow Down":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							customRainbow.getStaticColor(),	0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
+				}
+			};
+			break;
+		}
+		default:
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
+				}
+			};
+			break;
+		}
+		}
+		customPainter = p;
+		bgLayer.setCustomPaint(customPainter);
+	}
+	
+	public void updatePrevievBackground()
+	{
+		if (backgroundPaintMode.getSelected() == "Solid Color" || backgroundPaintMode.getSelected() ==  "Rainbow Up")
+		{
+			redSlider2.setEnabled(false);
+			greenSlider2.setEnabled(false);
+			blueSlider2.setEnabled(false);
+		}else{
+			redSlider2.setEnabled(true);
+			greenSlider2.setEnabled(true);
+			blueSlider2.setEnabled(true);
+		}
+		Painter p;
+		switch(backgroundPaintMode.getSelected())
+		{
+		case "Vertical Gradient":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
+				}
+			};
+			break;
+		}
+		case "Horizontal Gradient":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
+				}
+			};
+			break;
+		}
+		case "Solid Color":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
+				}
+			};
+			break;
+		}
+		case "Rainbow Up":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, customRainbow.getStaticColor(), 
+							new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
+				}
+			};
+			break;
+		}
+		case "Rainbow Down":
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							customRainbow.getStaticColor(),	0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
+				}
+			};
+			break;
+		}
+		default:
+		{
+			p = new Painter(){
+				@Override
+				public void paint(Graphics g) {
+					GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
+							0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
+				}
+			};
+			break;
+		}
+		}
+		
+		colorPreviewLayer.setCustomPaint(p);
+	}
+	
 	public boolean isInGame() {
 		return isStarted;
 	}
@@ -1236,6 +1415,7 @@ public class Game implements ActionListener{
 				Game.this.mainMenu.setCanGoBack(true);
 				Game.this.mainMenu.performBack();
 				Game.this.smallMessage.show("Logged in as " + globals.currentProfile.getName() + ", welcome!", Color.green, 2000, 500);
+				Game.this.loadAllPrefs();
 			}
 		};
 	
@@ -1317,83 +1497,14 @@ public class Game implements ActionListener{
 						int blue2 = ((PetrisSliderEntry)entries.get(6)).getValue();
 						Game.this.customColor1.setColor(new Color(red1,green1,blue1));
 						Game.this.customColor2.setColor(new Color(red2,green2,blue2));
-						Painter p;
-						switch(mode)
-						{
-						case "Vertical Gradient":
-						{
-							p = new Painter(){
-								@Override
-								public void paint(Graphics g) {
-									GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
-											0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
-								}
-							};
-							break;
-						}
-						case "Horizontal Gradient":
-						{
-							p = new Painter(){
-								@Override
-								public void paint(Graphics g) {
-									GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
-											0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
-								}
-							};
-							break;
-						}
-						case "Solid Color":
-						{
-							p = new Painter(){
-								@Override
-								public void paint(Graphics g) {
-									GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
-								}
-							};
-							break;
-						}
-						case "Rainbow Up":
-						{
-							p = new Painter(){
-								@Override
-								public void paint(Graphics g) {
-									GraphicsUtils.fillGradientRect(g, customRainbow.getStaticColor(), 
-											new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
-								}
-							};
-							break;
-						}
-						case "Rainbow Down":
-						{
-							p = new Painter(){
-								@Override
-								public void paint(Graphics g) {
-									GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											customRainbow.getStaticColor(),	0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
-								}
-							};
-							break;
-						}
-						default:
-						{
-							p = new Painter(){
-								@Override
-								public void paint(Graphics g) {
-									GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-											0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
-								}
-							};
-							break;
-						}
-						}
-						customPainter = p;
-						bgLayer.setCustomPaint(customPainter);
+						Game.this.updateCustomBackground();
+						Game.this.savePref("custom1_red");
+						Game.this.savePref("custom1_green");
+						Game.this.savePref("custom1_blue");
+						Game.this.savePref("custom2_red");
+						Game.this.savePref("custom2_green");
+						Game.this.savePref("custom2_blue");
+						Game.this.savePref("bg_custom_mode");
 						Game.this.menuNavBack();
 					}
 				
@@ -1401,6 +1512,7 @@ public class Game implements ActionListener{
 		colorDialogMenu.setOnEntered(new Action(){
 			public void run() {
 				Game.this.setPreviewMode(true);
+				Game.this.updatePrevievBackground();
 			}//TODO: save current entries status
 		});
 		colorDialogMenu.setOnExiting(new Action(){
@@ -1412,93 +1524,7 @@ public class Game implements ActionListener{
 		Action updatePC= new Action() {				
 			@Override
 			public void run() {
-				if (backgroundPaintMode.getSelected() == "Solid Color" || backgroundPaintMode.getSelected() ==  "Rainbow Up")
-				{
-					redSlider2.setEnabled(false);
-					greenSlider2.setEnabled(false);
-					blueSlider2.setEnabled(false);
-				}else{
-					redSlider2.setEnabled(true);
-					greenSlider2.setEnabled(true);
-					blueSlider2.setEnabled(true);
-				}
-				Painter p;
-				switch(backgroundPaintMode.getSelected())
-				{
-				case "Vertical Gradient":
-				{
-					p = new Painter(){
-						@Override
-						public void paint(Graphics g) {
-							GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
-									0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
-						}
-					};
-					break;
-				}
-				case "Horizontal Gradient":
-				{
-					p = new Painter(){
-						@Override
-						public void paint(Graphics g) {
-							GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									new Color(redSlider2.getValue(),greenSlider2.getValue(),blueSlider2.getValue()), 
-									0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
-						}
-					};
-					break;
-				}
-				case "Solid Color":
-				{
-					p = new Painter(){
-						@Override
-						public void paint(Graphics g) {
-							GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
-						}
-					};
-					break;
-				}
-				case "Rainbow Up":
-				{
-					p = new Painter(){
-						@Override
-						public void paint(Graphics g) {
-							GraphicsUtils.fillGradientRect(g, customRainbow.getStaticColor(), 
-									new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
-						}
-					};
-					break;
-				}
-				case "Rainbow Down":
-				{
-					p = new Painter(){
-						@Override
-						public void paint(Graphics g) {
-							GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									customRainbow.getStaticColor(),	0, 0, gameSize.width, gameSize.height, GradientMode.VERTICAL);
-						}
-					};
-					break;
-				}
-				default:
-				{
-					p = new Painter(){
-						@Override
-						public void paint(Graphics g) {
-							GraphicsUtils.fillGradientRect(g, new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									new Color(redSlider1.getValue(),greenSlider1.getValue(),blueSlider1.getValue()), 
-									0, 0, gameSize.width, gameSize.height, GradientMode.HORIZONTAL);
-						}
-					};
-					break;
-				}
-				}
-				
-				colorPreviewLayer.setCustomPaint(p);
+				Game.this.updatePrevievBackground();
 			}
 		};	
 		redSlider1 = new PetrisSliderEntry("", gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 50, 
@@ -1524,7 +1550,7 @@ public class Game implements ActionListener{
 		greenSlider2.setOnLeft(updatePC);
 		greenSlider2.setOnRight(updatePC);
 		blueSlider2.setOnLeft(updatePC);
-		blueSlider2.setOnRight(updatePC);
+		blueSlider2.setOnRight(updatePC); //TODO: numbers are 0 on loading
 		backgroundPaintMode = new PetrisOptionMenuEntry("Select paint mode:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 70,
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 		backgroundPaintMode.addOption("Vertical Gradient");
@@ -1888,6 +1914,8 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 				Game.this.mainMenu.setCanGoBack(true);
 				Game.this.mainMenu.performBack();
 				Game.this.smallMessage.show("Welcome, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+				Game.this.setDefaults();
+				
 			}
 		});
 		firstLaunchDialog.addEntry(acceptNameEntry);
@@ -1931,6 +1959,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 				Game.this.mainMenu.performBack();
 				Game.this.mainMenu.performBack();
 				Game.this.smallMessage.show("Welcome, " + globals.currentProfile.getName() + "!", Color.green, 2000, 500);
+				Game.this.setDefaults();
 			}
 		});
 		createProfileDialog.addEntry(accept2NameEntry);
@@ -1954,9 +1983,161 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		mainMenu.performGeneralizedKeyboardInput(keyCode);
 	}
 
+	public void saveAllPrefs()
+	{
+		savePref("bg_style");
+		savePref("square_style");
+		savePref("custom1_red");
+		savePref("custom1_green");
+		savePref("custom1_blue");
+		savePref("custom2_red");
+		savePref("custom2_green");
+		savePref("custom2_blue");
+		savePref("bg_custom_mode");
+	}
+	
+	public void loadAllPrefs()
+	{
+		loadPref("bg_style");
+		loadPref("square_style");
+		loadPref("custom1_red");
+		loadPref("custom1_green");
+		loadPref("custom1_blue");
+		loadPref("custom2_red");
+		loadPref("custom2_green");
+		loadPref("custom2_blue");
+		loadPref("bg_custom_mode");
+	}
+	
+	public void setDefaults()
+	{
+		curBackgroundStyle = BackgroundStyles.FlashingGravity;
+		curStyle = SquareStyle.noBorder;
+		redSlider1.setValue(0);
+		greenSlider1.setValue(0);
+		blueSlider1.setValue(0);
+		redSlider2.setValue(0);
+		greenSlider2.setValue(0);
+		blueSlider2.setValue(0);
+		backgroundPaintMode.setSelected("Vertical Gradient");
+		saveAllPrefs();
+		loadAllPrefs();
+	}
 
-
-
+	public void savePref(String pref)
+	{
+		
+		switch(pref)
+		{
+		case "bg_style":
+		{
+			dataLoader.setPref(pref, curBackgroundStyle.ordinal(), globals.currentProfile.getID());
+			break;
+		}
+		case "square_style":
+		{
+			dataLoader.setPref(pref, curStyle.ordinal(), globals.currentProfile.getID());
+			break;
+		}
+		case "custom1_red":
+		{
+			dataLoader.setPref(pref, redSlider1.getValue(), globals.currentProfile.getID());
+			break;
+		}
+		case "custom1_green":
+		{
+			dataLoader.setPref(pref, greenSlider1.getValue(), globals.currentProfile.getID());
+			break;
+		}
+		case "custom1_blue":
+		{
+			dataLoader.setPref(pref, blueSlider1.getValue(), globals.currentProfile.getID());
+			break;
+		}
+		case "custom2_red":
+		{
+			dataLoader.setPref(pref, redSlider2.getValue(), globals.currentProfile.getID());
+			break;
+		}
+		case "custom2_green":
+		{
+			dataLoader.setPref(pref, greenSlider2.getValue(), globals.currentProfile.getID());
+			break;
+		}
+		case "custom2_blue":
+		{
+			dataLoader.setPref(pref, blueSlider2.getValue(), globals.currentProfile.getID());
+			break;
+		}
+		case "bg_custom_mode":
+		{
+			dataLoader.setPref(pref, backgroundPaintMode.getSelected(), globals.currentProfile.getID());
+			break;
+		}
+		}
+	}
+	
+	public void loadPref(String pref)
+	{
+		switch(pref)
+		{
+		case "bg_style":
+		{
+			int mode = dataLoader.getIntPref(pref, globals.currentProfile.getID());
+			curBackgroundStyle = BackgroundStyles.values()[mode];
+			updateBackground();
+		}
+		case "square_style":
+		{
+			int style = dataLoader.getIntPref(pref, globals.currentProfile.getID());
+			curStyle = SquareStyle.values()[style];
+			updateSquareStyle();
+			break;
+		}
+		case "custom1_red":
+		{
+			redSlider1.setValue(dataLoader.getIntPref(pref, globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		case "custom1_green":
+		{
+			greenSlider1.setValue(dataLoader.getIntPref(pref, globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		case "custom1_blue":
+		{
+			blueSlider1.setValue(dataLoader.getIntPref(pref, globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		case "custom2_red":
+		{
+			redSlider2.setValue(dataLoader.getIntPref(pref, globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		case "custom2_green":
+		{
+			greenSlider2.setValue(dataLoader.getIntPref(pref, globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		case "custom2_blue":
+		{
+			blueSlider2.setValue(dataLoader.getIntPref(pref, globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		case "bg_custom_mode":
+		{
+			backgroundPaintMode.setSelected(dataLoader.getStrPref(pref,  globals.currentProfile.getID()));
+			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
+			break;
+		}
+		}
+	}
 	
 
 		

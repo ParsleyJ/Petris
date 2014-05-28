@@ -101,6 +101,13 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 		return options.get(selectedOption);
 	}
 	
+	public void setSelected(String s)
+	{
+		if (options.isEmpty()) return;
+		selectedOption = options.indexOf(s);
+		selectedText = getSelected();
+	}
+	
 	public void setOptionText(String text)
 	{
 		selectedText = text;
