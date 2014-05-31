@@ -71,6 +71,10 @@ public class Petris {
 		if(dataLoader.schemaExists())
 		{
 			dataLoader.openConnection();
+			if (dataLoader.isSchemaOutOfDate())
+			{
+				dataLoader.updateSchema();
+			}
 			String lastLogged = null;
 			try{
 				lastLogged = dataLoader.getLastLogged();
@@ -113,7 +117,6 @@ public class Petris {
 	public static void firstLaunch()
 	{
 		dataLoader.createNewSchema(false);
-		//currentProfile = dataLoader.loginAs("Guest");
 		isFirstLaunch = true;
 	}
 	

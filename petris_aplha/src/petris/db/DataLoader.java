@@ -15,8 +15,8 @@ import petris.Profile;
 public class DataLoader {
 	Connection connection = null;
 	Statement statement;
-	public final String CURRENT_SCHEMA_VERSION = "0.1";
-	private boolean schemaOutOfDate = true;
+	public final String CURRENT_SCHEMA_VERSION = "0.2";
+	private boolean schemaOutOfDate = false;
 	
 
 	public static void copyFile(File source, File dest)
@@ -128,8 +128,8 @@ public class DataLoader {
 			stat.executeUpdate("drop table if exists profiles");
 			stat.executeUpdate("drop table if exists savefile_metadata");
 			//stat.executeUpdate("drop table if exists match_stats");
-			//stat.executeUpdate("drop table if exists scores");
-			//stat.executeUpdate("drop table if exists prefs");
+			stat.executeUpdate("drop table if exists scores");
+			stat.executeUpdate("drop table if exists preferences");
 			//stat.executeUpdate("drop table if exists colors");
 			stat.executeUpdate("create table profiles ("
 					+ "id integer primary key autoincrement, "
@@ -396,7 +396,6 @@ public class DataLoader {
 		}
 	}
 	
-	
 	public void setPref(String key, int value, int profileID){
 		try{
 			statement.executeUpdate("insert or ignore into preferences (id,profile,int_value) "
@@ -409,4 +408,32 @@ public class DataLoader {
 		}
 	}
 
+	public void updateSchema(){
+		String schemaVersion = getMetadata("schema_version");
+		try{
+			switch(schemaVersion)
+			{
+			case "0.1":
+			{
+				ResultSet rs = connection.createStatement().executeQuery("select id from profiles ");
+				while(rs.next())
+				{
+					setPref("menu_blur_bg", 1, rs.getInt("id"));
+				}
+			}
+			default:
+			{
+				connection.createStatement().executeUpdate("update savefile_metadata "
+						+ "set value = '" + CURRENT_SCHEMA_VERSION + "' "
+						+ "where id = 'schema_version' ");
+			}
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	
 }

@@ -1410,9 +1410,10 @@ public class Game implements ActionListener{
 		Action loginAction = new Action() {			
 			@Override
 			public void run() {
-				String tmpString = mainMenu.getFocusedEntry().getText();
+				String tmpString = mainMenu.getTitle();
 				Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(tmpString);
 				Game.this.mainMenu.setCanGoBack(true);
+				Game.this.mainMenu.performBack();
 				Game.this.mainMenu.performBack();
 				Game.this.smallMessage.show("Logged in as " + globals.currentProfile.getName() + ", welcome!", Color.green, 2000, 500);
 				Game.this.loadAllPrefs();
@@ -1429,11 +1430,46 @@ public class Game implements ActionListener{
 		{
 			try{
 				while (rs.next()){
-					PetrisMenuEntry tmpEntry = new PetrisMenuEntry("" + rs.getString("name"),
+					PetrisChildMenu profileEntry = new PetrisChildMenu("" + rs.getString("name"),
 							gameFont.deriveFont(baseFontSize + 14F), (int)gameSize.getWidth(), 40,	
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
-					tmpEntry.setOnOk(loginAction);
-					x.addEntry(tmpEntry);
+					PetrisMenuEntry loginEntry =new PetrisMenuEntry("Log in",
+							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230));
+					loginEntry.setOnOk(loginAction);
+					profileEntry.addEntry(loginEntry);
+		
+					profileEntry.addEntry(new PetrisMenuEntry("Stats",
+							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
+					profileEntry.addEntry(new PetrisMenuEntry("Saved customizations",
+							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
+					profileEntry.addEntry(new PetrisMenuEntry("Export profile",
+							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
+					profileEntry.addEntry(new PetrisMenuEntry("Rename profile",
+							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
+					PetrisMenuEntry deleteProfileEntry = new PetrisMenuEntry("Delete profile",
+							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
+					
+					if (rs.getString("name").equals(globals.currentProfile.getName())) deleteProfileEntry.setEnabled(false);
+					else deleteProfileEntry.setEnabled(true);
+					
+					deleteProfileEntry.setOnOk(new Action() {
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							
+						}
+					});
+					profileEntry.addEntry(deleteProfileEntry);
+					
+					profileEntry.addEntry(backMenuEntry);
+					
+					x.addEntry(profileEntry);
 					
 				
 				}
@@ -1446,6 +1482,9 @@ public class Game implements ActionListener{
 			}
 		}
 		x.addEntry(createProfileDialog);
+		x.addEntry(new PetrisMenuEntry("Import profile",
+				gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
 		x.addEntry(backMenuEntry);
 		/*for (int i = globals.highscores.size() - 1; i >= 0; --i)
 		{
@@ -1477,7 +1516,8 @@ public class Game implements ActionListener{
 		backMenuEntry.setOnOk(new Action(){
 			@Override
 			public void run() {
-				Game.this.menuNavBack();					
+				Game.this.menuNavBack();	
+				Game.this.backMenuEntry.setFocused(false);
 			}
 		});
 		
@@ -1737,9 +1777,11 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 							@Override
 							public void run() {
 								Game.this.render.setLayerBasedFiltersDisabled(Game.this.renderModeEntry.isChecked());
+								Game.this.savePref("menu_blur_bg");
 							}
 						});
 						graphicsSettingsMenuEntry.addEntry(renderModeEntry);
+						graphicsSettingsMenuEntry.addEntry(backMenuEntry);
 					
 					settingsMenuEntry.addEntry(graphicsSettingsMenuEntry);
 					
@@ -2013,6 +2055,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		savePref("custom2_green");
 		savePref("custom2_blue");
 		savePref("bg_custom_mode");
+		savePref("menu_blur_bg");
 	}
 	
 	public void loadAllPrefs()
@@ -2026,6 +2069,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		loadPref("custom2_green");
 		loadPref("custom2_blue");
 		loadPref("bg_custom_mode");
+		loadPref("menu_blur_bg");
 	}
 	
 	public void setDefaults()
@@ -2039,6 +2083,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		greenSlider2.setValue(0);
 		blueSlider2.setValue(0);
 		backgroundPaintMode.setSelected("Vertical Gradient");
+		renderModeEntry.setChecked(true);
 		saveAllPrefs();
 		loadAllPrefs();
 	}
@@ -2091,6 +2136,13 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		case "bg_custom_mode":
 		{
 			dataLoader.setPref(pref, backgroundPaintMode.getSelected(), globals.currentProfile.getID());
+			break;
+		}
+		case "menu_blur_bg":
+		{
+			int tmp = 0;
+			if (!this.renderModeEntry.isChecked()) tmp = 1;
+			dataLoader.setPref(pref, tmp, globals.currentProfile.getID());
 			break;
 		}
 		}
@@ -2155,11 +2207,17 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 			if(curBackgroundStyle == BackgroundStyles.Custom)updateCustomBackground();
 			break;
 		}
+		case "menu_blur_bg":
+		{
+			boolean tmp = false;
+			if (dataLoader.getIntPref(pref, globals.currentProfile.getID()) != 0) tmp = true;
+			renderModeEntry.setChecked(tmp);
+			render.setLayerBasedFiltersDisabled(!tmp);
+			break;
+		}
 		}
 	}
 	
 
-		
-	
-	
+
 }
