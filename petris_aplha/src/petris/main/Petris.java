@@ -37,7 +37,6 @@ public class Petris {
 		gameFrame = new JFrame("Petris");
 		gameFrame.setLocation(new Point(450,100));
 		
-		
 		int y = 689; 
 		int x = 300;
 		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0)
@@ -87,7 +86,7 @@ public class Petris {
 		}
 		else firstLaunch();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.40");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.41");
 		game.setGlobals(globals);
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		
@@ -121,4 +120,7 @@ public class Petris {
 	}
 	
 	
+	
+	
 }
+

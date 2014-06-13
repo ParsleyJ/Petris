@@ -1461,8 +1461,12 @@ public class Game implements ActionListener{
 					deleteProfileEntry.setOnOk(new Action() {
 						@Override
 						public void run() {
-							// TODO Auto-generated method stub
-							
+							String tmpstring = Game.this.mainMenu.getTitle();
+							Game.this.dataLoader.removeProfile(tmpstring);
+							Game.this.mainMenu.setCanGoBack(true);
+							Game.this.mainMenu.performBack();
+							Game.this.mainMenu.performBack();
+							Game.this.smallMessage.show("Profile '"+tmpstring+"' removed.", Color.green, 2000, 500);
 						}
 					});
 					profileEntry.addEntry(deleteProfileEntry);

@@ -434,6 +434,34 @@ public class DataLoader {
 			e.printStackTrace();
 		}
 	}
+	
+	public void removeProfile(String profile)
+	{
+		String schemaVersion = getMetadata("schema_version");
+		try{
+			switch(schemaVersion)
+			{
+			//case...
+			
+			default:
+			{
+				connection.createStatement().executeUpdate(""
+						+ "delete from preferences "
+						+ "where profile = (select id from profiles where name = '"+profile+"') ");
+				connection.createStatement().executeUpdate(""
+						+ "delete from scores "
+						+ "where profile = (select id from profiles where name = '"+profile+"') ");
+				connection.createStatement().executeUpdate(""
+						+ "delete from profiles "
+						+ "where name = '"+profile+"' ");
+			}
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	
 }
