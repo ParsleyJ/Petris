@@ -29,6 +29,11 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.41
+
+	- "Delete profile" introduced
+	- Bug fixes
+
 ### pre-Alpha 0.40
 
 	- Preferences save system introduced;
