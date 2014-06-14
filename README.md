@@ -29,15 +29,20 @@ N : start a new game (only in game)
 
 ## Changelog (since pre-Alpha 0.33)
 
+### pre-Alpha 0.42
+
+	- Resizable game screen;
+	- Debug window now can be showed any time with F3 key.
+
 ### pre-Alpha 0.41
 
-	- "Delete profile" introduced
-	- Bug fixes
+	- "Delete profile" introduced;
+	- Bug fixes.
 
 ### pre-Alpha 0.40
 
 	- Preferences save system introduced;
-	- Various menu system improvements;
+	- Various menu system improvements.
 
 ### pre-Alpha 0.39
 
@@ -84,6 +89,6 @@ N : start a new game (only in game)
 [Java]: https://www.java.com/it/download/
 
 
-[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha040.jar?raw=true
+[jar]: https://github.com/ParsleyJ/Petris/blob/master/jars/Petris-preAlpha042.jar?raw=true
 
 
