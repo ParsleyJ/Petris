@@ -25,7 +25,7 @@ public class TAdapter extends KeyAdapter {
 
 	public void keyPressed(KeyEvent e) {
 		
-	
+		if (e.getKeyCode() == KeyEvent.VK_F3) console.toggleShow();
 		
 		game.menuGeneralizedKeyboardInput(e);
 		
@@ -63,7 +63,6 @@ public class TAdapter extends KeyAdapter {
 			if (e.getKeyCode() == 'N' || e.getKeyCode() == 'n')	game.start();
 			else if (e.getKeyCode() == 'T' || e.getKeyCode() == 't') game.nextSquareStyle();
 			else if (e.getKeyCode() == 'Y' || e.getKeyCode() == 'Y') game.nextPower();
-			else if (e.getKeyCode() == 'C' || e.getKeyCode() == 'c') console.toggleShow();
 			else if (e.getKeyCode() == 'Q' || e.getKeyCode() == 'q') game.showMainMenu();
 			return;
         }
@@ -85,7 +84,6 @@ public class TAdapter extends KeyAdapter {
         	if (e.getKeyCode() == 'N' || e.getKeyCode() == 'n')	game.start();
 			else if (e.getKeyCode() == 'T' || e.getKeyCode() == 't') game.nextSquareStyle();
 			else if (e.getKeyCode() == 'Q' || e.getKeyCode() == 'q') game.showMainMenu();
-			else if (e.getKeyCode() == 'C' || e.getKeyCode() == 'c') console.toggleShow();
     		return;
         }
 

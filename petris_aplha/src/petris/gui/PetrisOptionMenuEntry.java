@@ -153,47 +153,48 @@ public class PetrisOptionMenuEntry extends PetrisMenuEntry {
 
 	public void paint(Graphics graphics, int y)
 	{
-			graphics.setColor(bgColor.getStaticColor());
-			if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
-			else graphics.fillRect(0,y,width ,height);
-			graphics.setColor(focusColor.getStaticColor());
-			if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, focusColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
-			else graphics.fillRect(0,y,width ,height);
+		width = root.parentWidth;
+		graphics.setColor(bgColor.getStaticColor());
+		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
+		else graphics.fillRect(0,y,width ,height);
+		graphics.setColor(focusColor.getStaticColor());
+		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, focusColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
+		else graphics.fillRect(0,y,width ,height);
+		if (isEnabled()) graphics.setColor(textColor.getStaticColor());
+		else graphics.setColor(disabledColor.getStaticColor());		
+		graphics.setFont(textFont);
+		int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
+		int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
+		graphics.setFont(textFont.deriveFont(textFont.getSize() - 6F));
+		int w2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getWidth();
+		int h2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getHeight();
+
+		Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w, h -5 -h2));
+		graphics.setFont(textFont);
+		graphics.drawString(text, titleCoords.x, titleCoords.y);
+
+		Point optionCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w2, h2));
+		graphics.setFont(textFont.deriveFont(textFont.getSize() - 6F));
+		graphics.drawString(selectedText, optionCoords.x, titleCoords.y + h + 5);
+
+		if (drawTriangles)
+		{
 			if (isEnabled()) graphics.setColor(textColor.getStaticColor());
 			else graphics.setColor(disabledColor.getStaticColor());		
-			graphics.setFont(textFont);
-			int w = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getWidth();
-			int h = (int) graphics.getFontMetrics().getStringBounds(text,graphics).getHeight();
-			graphics.setFont(textFont.deriveFont(textFont.getSize() - 6F));
-			int w2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getWidth();
-			int h2 = (int) graphics.getFontMetrics().getStringBounds(selectedText,graphics).getHeight();
-			
-			Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w, h -5 -h2));
-			graphics.setFont(textFont);
-			graphics.drawString(text, titleCoords.x, titleCoords.y);
-			
-			Point optionCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w2, h2));
-			graphics.setFont(textFont.deriveFont(textFont.getSize() - 6F));
-			graphics.drawString(selectedText, optionCoords.x, titleCoords.y + h + 5);
-			
-			if (drawTriangles)
-			{
-				if (isEnabled()) graphics.setColor(textColor.getStaticColor());
-				else graphics.setColor(disabledColor.getStaticColor());		
-				//draw left triangle
-				int lsX = 0 + triangleBorderDistance;
-				int lsY = y + (height/2 - triangleHeight/2);
-				int[] lX = { lsX, lsX + triangleWidth, lsX + triangleWidth };
-				int[] lY = { lsY + triangleHeight/2, lsY, lsY + triangleHeight};
-				graphics.fillPolygon(lX, lY, 3);
-				
-				//draw right triangle
-				int rsX = width - (triangleBorderDistance + triangleWidth);
-				int rsY = lsY;
-				int[] rX = { rsX, rsX + triangleWidth, rsX};
-				int[] rY = { rsY, rsY + triangleHeight/2, rsY + triangleHeight};
-				graphics.fillPolygon(rX, rY, 3);
-			}
+			//draw left triangle
+			int lsX = 0 + triangleBorderDistance;
+			int lsY = y + (height/2 - triangleHeight/2);
+			int[] lX = { lsX, lsX + triangleWidth, lsX + triangleWidth };
+			int[] lY = { lsY + triangleHeight/2, lsY, lsY + triangleHeight};
+			graphics.fillPolygon(lX, lY, 3);
+
+			//draw right triangle
+			int rsX = width - (triangleBorderDistance + triangleWidth);
+			int rsY = lsY;
+			int[] rX = { rsX, rsX + triangleWidth, rsX};
+			int[] rY = { rsY, rsY + triangleHeight/2, rsY + triangleHeight};
+			graphics.fillPolygon(rX, rY, 3);
+		}
 			
 	}
 

@@ -40,6 +40,7 @@ public class DebugConsole extends JFrame implements ActionListener {
 	public JLabel labelClassicShape;
 	public JLabel labelCurPieceCoords;
 	public JLabel labelSpawnPoint;
+	public JLabel labelSquareSize;
 	
 	private GlobalVarSet globals;
 	
@@ -178,6 +179,12 @@ public class DebugConsole extends JFrame implements ActionListener {
 		labelSpawnPoint = new JLabel("null");
 		panel.add(labelSpawnPoint);
 		
+		JLabel lblSquareSize= new JLabel("Square Size");
+		panel.add(lblSquareSize);
+		
+		labelSquareSize = new JLabel("null");
+		panel.add(labelSquareSize);
+		
 		timer = new Timer(1000,this);
 	}
 	
@@ -216,6 +223,7 @@ public class DebugConsole extends JFrame implements ActionListener {
 		labelClassicShape.setText(globals.currentGame.getCurrentPiece().getShape().toString());
 		labelCurPieceCoords.setText("(" + globals.currentGame.getCurrentPiece().x() +
 									", " + globals.currentGame.getCurrentPiece().y() + ")" );
+		labelSquareSize.setText(""+ globals.currentGame.getTetrisGrid().squareWidth() + " x " + globals.currentGame.getTetrisGrid().squareHeight());
 	}
 
 	public void toggleShow() {

@@ -1,6 +1,7 @@
 package petris.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 
 import parsleyj.utils.GraphicsUtils;
@@ -162,6 +163,12 @@ public class MessageLayer extends Layer {
 		permanent = false;
 		showTime = 0;
 		fadeInTicks = 0;
+		
+	}
+	
+	public void setParentSize(Dimension ssize) {
+		parentWidth = ssize.width;
+		parentHeight = ssize.height;
 		
 	}
 

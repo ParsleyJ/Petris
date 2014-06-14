@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -17,6 +18,7 @@ import javax.swing.plaf.ProgressBarUI;
 
 import parsleyj.utils.GlobalUtils;
 import parsleyj.utils.GraphicsUtils;
+import parsleyj.utils.GuiUtils;
 import parsleyj.utils.GraphicsUtils.GradientMode;
 import petris.ClassicPiece.TetrominoesId;
 import petris.db.DataLoader;
@@ -28,6 +30,7 @@ import petris.gui.ColorFlash;
 import petris.gui.DialogConfirmAction;
 import petris.gui.FadingColor;
 import petris.gui.FlashingGravityColor;
+import petris.gui.LabelLayer.DockSide;
 import petris.gui.LineAnimationLayer;
 import petris.gui.MenuLayer;
 import petris.gui.MessageLayer;
@@ -155,6 +158,7 @@ public class Game implements ActionListener{
 	private int cloneCounter = 0;
 	
 	BackgroundLayer bgLayer;
+	BackgroundLayer bgLayer2;
 	PetrisColor customColor1 = new PetrisColor(new Color(0,0,0,255));
 	PetrisColor customColor2 = new PetrisColor(new Color(0,0,0,255));
 	BackgroundLayer colorPreviewLayer;
@@ -194,6 +198,8 @@ public class Game implements ActionListener{
 	public enum BackgroundStyles {JustBlack, FlashingGravity, Rainbow, MonochromeGradient, GravityGradient, Custom};
 	public static RainbowColor rainbowDark = new RainbowColor(2,Phase.GREEN,100);
 	public static RainbowColor customRainbow = new RainbowColor(2,Phase.BLUE);
+	
+	public boolean resizeEnabled = true;
     
     public Game(Dimension d, Render r, Render g)
 	{
@@ -213,7 +219,7 @@ public class Game implements ActionListener{
 		bgLayer = new BackgroundLayer(new PetrisColor(gravityColor),gameSize);
 		
 		flashColor = new ColorFlash(new Color(0,0,0,0),20);
-		BackgroundLayer bgLayer2 = new BackgroundLayer(new PetrisColor(flashColor),gameSize);
+		bgLayer2 = new BackgroundLayer(new PetrisColor(flashColor),gameSize);
 		
 		colorPreviewLayer = new BackgroundLayer(customColor1, gameSize);
 		colorPreviewLayer.setEnabled(false);
@@ -252,6 +258,8 @@ public class Game implements ActionListener{
 		}
 		
 		nextTextLabel = new LabelLayer("NEXT",gameFont.deriveFont(baseFontSize + 16F),(int)gameSize.getWidth()-70, 25, new Color(255,255,255), 80);
+		nextTextLabel.setOriginalPosition(new Point((int)gameSize.getWidth()-70, 25), gameSize, LabelLayer.DockSide.Right);
+		
 		scoreTextLabel = new LabelLayer("SCORE",gameFont.deriveFont(baseFontSize + 12F),15, 20, new Color(255,255,255), 80);
 		multiplierTextLabel = new LabelLayer("MULTIPLIER",gameFont.deriveFont(baseFontSize + 10F),15, 60, new Color(255,255,255), 80);
 		linesTextLabel = new LabelLayer("LINES",gameFont.deriveFont(baseFontSize + 10F),15, 94, new Color(255,255,255), 80);
@@ -278,6 +286,7 @@ public class Game implements ActionListener{
 			leftGuiPanel = new PanelLayer(new Dimension(80,200), 5, 5);
 			render.addLayer(leftGuiPanel);
 			rightGuiPanel = new PanelLayer(new Dimension(80,120), (int)gameSize.getWidth()-85, 5);
+			rightGuiPanel.setOriginalPosition(new Point((int)gameSize.getWidth()-85, 5), gameSize, PanelLayer.DockSide.Right);
 			render.addLayer(rightGuiPanel);
 			
 			render.addLayer(nextTextLabel);
@@ -312,6 +321,7 @@ public class Game implements ActionListener{
 			
 			nextGrid = new TetrisGrid(this,new Dimension(150,334), 10, 22);
 			nextLayer = new PieceLayer(nextGrid,nextPiece,215,-15,3,100);
+			nextLayer.setOriginalPosition(215,-15, gameSize, PieceLayer.DockSide.Right);
 			render.addLayer(nextLayer);
 			
 			//MENUS	---------------------------------------
@@ -1451,12 +1461,15 @@ public class Game implements ActionListener{
 					profileEntry.addEntry(new PetrisMenuEntry("Rename profile",
 							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
+					
 					PetrisMenuEntry deleteProfileEntry = new PetrisMenuEntry("Delete profile",
 							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.red, 230));
 					
+					
 					if (rs.getString("name").equals(globals.currentProfile.getName())) deleteProfileEntry.setEnabled(false);
 					else deleteProfileEntry.setEnabled(true);
+					
 					
 					deleteProfileEntry.setOnOk(new Action() {
 						@Override
@@ -1469,6 +1482,8 @@ public class Game implements ActionListener{
 							Game.this.smallMessage.show("Profile '"+tmpstring+"' removed.", Color.green, 2000, 500);
 						}
 					});
+						
+						
 					profileEntry.addEntry(deleteProfileEntry);
 					
 					profileEntry.addEntry(backMenuEntry);
@@ -2220,6 +2235,57 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 			break;
 		}
 		}
+	}
+
+
+
+
+
+
+
+	public void resize(Dimension size) {
+		
+		if (resizeEnabled) 
+		{
+			Dimension ssize = GuiUtils.getScaledDimension(new Dimension(300,667), size);
+			System.out.println(""+size.width+" - "+size.height+" --> "+ssize.width+" - "+ssize.height);
+			gameSize=ssize;
+			render.setSize(ssize);
+			bgLayer.setSize(ssize);
+			bgLayer2.setSize(ssize);
+			tetriGrid.setSize(ssize);
+			colorPreviewLayer.setSize(ssize);
+			ghostGrid.setSize(ssize);
+			removeLineAnimation.setSize(ssize);
+			nextTextLabel.updatePosition(ssize);
+			rightGuiPanel.updatePosition(ssize);
+			nextLayer.updatePosition(ssize);
+			smallMessage.setParentSize(ssize);
+			messageBox.setParentSize(ssize);
+			secondMessage.setParentSize(ssize);
+			thirdMessage.setParentSize(ssize);
+			fourthMessage.setParentSize(ssize);
+			
+			mainMenu.setSize(ssize);
+			Point centeredGame = GuiUtils.getCenteredChildRectCoords2(new Point(0,0), size, ssize);
+			render.setLocation(centeredGame);
+			System.out.println("(" + centeredGame.x+", "+centeredGame.y+")");
+		}
+		else{
+			Point centeredGame = GuiUtils.getCenteredChildRectCoords2(new Point(0,0), size, gameSize);
+			render.setLocation(centeredGame);
+		}
+		
+	}
+
+
+
+
+
+
+
+	public TetrisGrid getTetrisGrid() {
+		return tetriGrid;
 	}
 	
 

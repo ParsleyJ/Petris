@@ -128,6 +128,7 @@ public class PetrisMenuEntry {
 	
 	public void paint(Graphics graphics, int y)
 	{
+		width = root.parentWidth;
 		if (!isVisible && textColor.getAlpha()==0 && bgColor.getAlpha()==0 && focusColor.getAlpha()==0) return;
 		graphics.setColor(bgColor.getStaticColor());		
 		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
@@ -144,6 +145,8 @@ public class PetrisMenuEntry {
 		Point titleCoords = GuiUtils.getCenteredChildRectCoords(new Point(0,y), new Dimension(width,height), new Dimension(w,h));
 		graphics.drawString(text, titleCoords.x, titleCoords.y);
 	}
+	
+	
 	
 	public void performLeft() {
 		

@@ -1,7 +1,7 @@
 package petris.gui;
 
 import java.awt.Color;
-
+import java.awt.Dimension;
 
 import petris.TetrisGrid;
 
@@ -40,6 +40,12 @@ public class LineAnimationLayer extends Layer {
 		//messages = new PriorityQueue<Msg>();
 	}
 	
+	
+	public void setSize(Dimension size)
+	{
+		parentWidth= size.width;
+		parentHeight= size.height;
+	}
 	
 	public void fadeInStep()
 	{

@@ -6,6 +6,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -51,9 +53,15 @@ public class Petris {
 		}
 		System.out.println(System.getProperty("os.name") + " --> Frame Size = (" + x + ", " + y + ").");
 		
-		if (sidegui)gameFrame.setSize(x + 150,y);
-		else gameFrame.setSize(x,y);
-		gameFrame.setResizable(false);		
+		if (sidegui){
+			gameFrame.setSize(x + 150,y);
+			gameFrame.setMinimumSize(new Dimension(x+150,y));
+		}
+		else {
+			gameFrame.setSize(x,y);
+			gameFrame.setMinimumSize(new Dimension(x,y));
+		}
+		//gameFrame.setResizable(false);		
 		
 		gameFrame.getContentPane().setBackground(new Color(0,0,0));		
 		
@@ -86,7 +94,7 @@ public class Petris {
 		}
 		else firstLaunch();
 		
-		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.41");
+		globals = new GlobalVarSet(game,(RenderInterface)gameRender,currentProfile,"pre-Alpha 0.42");
 		game.setGlobals(globals);
 		gameFrame.setTitle("Petris (" + globals.petrisVersion + ")");
 		
@@ -108,6 +116,14 @@ public class Petris {
 				dataLoader.closeConnection();
 				System.exit(0);
 			}
+		});
+		
+		gameFrame.addComponentListener(new ComponentAdapter() 
+		{
+			 public void componentResized(ComponentEvent e) 
+			 {
+				 game.resize(new Dimension(gameFrame.getSize().width,gameFrame.getSize().height-22));
+			 }
 		});
 		
 		game.init(isFirstLaunch);

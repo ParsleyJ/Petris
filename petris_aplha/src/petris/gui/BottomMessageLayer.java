@@ -2,6 +2,7 @@ package petris.gui;
 
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 
 public class BottomMessageLayer extends Layer {
@@ -141,5 +142,11 @@ public class BottomMessageLayer extends Layer {
 		}
 	}
 	*/
+
+	public void setParentSize(Dimension ssize) {
+		parentWidth = ssize.width;
+		parentHeight = ssize.height;
+		
+	}
 
 }

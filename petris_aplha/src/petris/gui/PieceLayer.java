@@ -2,10 +2,12 @@ package petris.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 
 import petris.ClassicPiece;
 import petris.gui.GraphicSquare;
 import petris.gui.GraphicSquare.SquareStyle;
+import petris.gui.PanelLayer.DockSide;
 import petris.TetrisGrid;
 
 public class PieceLayer extends Layer {
@@ -16,6 +18,37 @@ public class PieceLayer extends Layer {
 	private int border = 5;
 	private int alpha = 255;
 	private SquareStyle style = SquareStyle.Border3d;
+	
+	public enum DockSide{Left, Right}	
+	private int oox;
+	private int ooy;
+	private Dimension originalParentSize;
+	private DockSide side;
+	
+	public void setOriginalPosition(int offsetX, int offsetY, Dimension siz, DockSide side)
+	{
+		oox = offsetX;
+		ooy = offsetY;
+		originalParentSize = siz;
+		this.side = side;
+	}
+	
+	public void updatePosition(Dimension newParentSize)
+	{
+		if (originalParentSize == null) return;
+		switch(side)
+		{
+		case Left:
+		{
+			
+		}
+		case Right:
+		{
+			ox = oox - (originalParentSize.width - newParentSize.width);
+		}
+		}
+	}
+	
 	public PieceLayer(TetrisGrid gr, ClassicPiece p)
 	{
 		super();

@@ -98,6 +98,7 @@ public class PetrisSliderEntry extends PetrisOptionMenuEntry {
 	
 	public void paint(Graphics graphics, int y)
 	{
+		width = root.parentWidth;
 		graphics.setColor(bgColor.getStaticColor());
 		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);
 		else graphics.fillRect(0,y,width ,height);

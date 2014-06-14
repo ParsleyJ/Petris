@@ -378,6 +378,13 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 		curChild = nullChild;
 	}
 	
+	public void setSize(Dimension size)
+	{
+		parentHeight = size.height;
+		parentWidth = size.width;
+		startingY = getStartingListY();
+	}
+	
 	public void resetRootEntries() { //it will be resetted before the next show()
 		needToReset  = true;
 	}

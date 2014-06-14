@@ -2,6 +2,9 @@ package petris.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
+
+import petris.gui.LabelLayer.DockSide;
 
 public class PanelLayer extends Layer {
 
@@ -10,6 +13,35 @@ public class PanelLayer extends Layer {
 	private int coordY =0;
 	private FadingColor layerColor = new FadingColor(new Color(50,50,50,0), 100);
 	private int angleSquare = 10;
+	
+	public enum DockSide{Left, Right}	
+	private Point originalLocation;
+	private Dimension originalParentSize;
+	private DockSide side;
+	
+	public void setOriginalPosition(Point loc, Dimension siz, DockSide side)
+	{
+		originalLocation = loc;
+		originalParentSize = siz;
+		this.side = side;
+	}
+	
+	public void updatePosition(Dimension newParentSize)
+	{
+		if (originalLocation == null || originalParentSize == null) return;
+		switch(side)
+		{
+		case Left:
+		{
+			
+		}
+		case Right:
+		{
+			int dist=originalParentSize.width-originalLocation.x;
+			coordX = newParentSize.width - dist;
+		}
+		}
+	}
 	
 	
 	public PanelLayer(Dimension l) 

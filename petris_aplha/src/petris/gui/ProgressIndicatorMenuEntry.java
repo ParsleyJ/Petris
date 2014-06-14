@@ -20,6 +20,7 @@ public class ProgressIndicatorMenuEntry extends PetrisMenuEntry {
 	@Override
 	public void paint(Graphics graphics, int y)
 	{
+		width = root.parentWidth;
 		if (!isVisible && textColor.getAlpha()==0 && bgColor.getAlpha()==0 && focusColor.getAlpha()==0) return;
 		graphics.setColor(bgColor.getStaticColor());		
 		if(style == "Blurred")GraphicsUtils.fillBlurredBorderRect(graphics, bgColor.getStaticColor(), 0, y+borderSize, width, height-borderSize*2, borderSize, borderSize);

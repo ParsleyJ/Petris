@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -50,6 +51,20 @@ public class Render extends JPanel implements ActionListener, RenderInterface {
 		bufferedImage = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
 		setFilter(curFilter);
 		
+	}
+	
+	public Dimension getSize()
+	{
+		return dimension;
+	}
+	
+	public void setSize(Dimension s)
+	{
+		super.setSize(s);
+		super.setPreferredSize(s);
+		bufferedImage = new BufferedImage(s.width, s.height, BufferedImage.TYPE_INT_RGB);
+		
+		dimension = s;
 	}
 
 	public void actionPerformed(ActionEvent e)

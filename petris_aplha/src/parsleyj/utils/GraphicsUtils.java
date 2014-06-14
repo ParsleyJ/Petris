@@ -91,55 +91,55 @@ public class GraphicsUtils {
 		}
 		case DOWNLEFT:
 		{
-			if (height == width)
+			if (height == width || (height == width-1 || height == width +1))
 			{
-				int [] step = getColorSteppers(c1,c2,width*2);
+				int [] step = getColorSteppers(c1,c2,height*2);
 				Color halfColor = new Color(c2.getRGB());
-				for(int i = 0; i < width-1; ++i)
+				for(int i = 0; i < height-1; ++i)
 				{
 					halfColor = new Color(c1.getRed()+step[0]*i, c1.getGreen()+step[1]*i, c1.getBlue()+step[2]*i, c1.getAlpha()+step[3]*i);
 					g.setColor(halfColor);
-					g.drawLine(x+width-1-i, y, x+width-1, y+i);
+					g.drawLine(x+height-1-i, y, x+height-1, y+i);
 				}
-				step = getColorSteppers(halfColor,c2,width);
-				for(int i = 0; i < width; ++i)
+				step = getColorSteppers(halfColor,c2,height);
+				for(int i = 0; i < height; ++i)
 				{ 
 					g.setColor(new Color(halfColor.getRed()+step[0]*i, halfColor.getGreen()+step[1]*i, halfColor.getBlue()+step[2]*i, halfColor.getAlpha()+step[3]*i));
-					g.drawLine(x+width-1-i, y+height-1, x, y+i);
+					g.drawLine(x+height-1-i, y+height-1, x, y+i);
 				}
 			}
 			break;
 		}
 		case DOWNRIGHT:
 		{
-			if (height == width)
+			if (height == width || (height == width-1 || height == width +1))
 			{
-				int [] step = getColorSteppers(c1,c2,width*2);
+				int [] step = getColorSteppers(c1,c2,height*2);
 				Color halfColor = new Color(c2.getRGB());
-				for(int i = 0; i < width-1; ++i)
+				for(int i = 0; i < height-1; ++i)
 				{
 					halfColor = new Color(c1.getRed()+step[0]*i, c1.getGreen()+step[1]*i, c1.getBlue()+step[2]*i, c1.getAlpha()+step[3]*i);
 					g.setColor(halfColor);
 					g.drawLine(x+i, y, x, y+i);
 				}
-				step = getColorSteppers(halfColor,c2,width);
-				for(int i = 0; i < width; ++i)
+				step = getColorSteppers(halfColor,c2,height);
+				for(int i = 0; i < height; ++i)
 				{ 
 					g.setColor(new Color(halfColor.getRed()+step[0]*i, halfColor.getGreen()+step[1]*i, halfColor.getBlue()+step[2]*i, halfColor.getAlpha()+step[3]*i));
-					g.drawLine(x+width-1, y+i, x+i, y+height-1);
+					g.drawLine(x+height-1, y+i, x+i, y+height-1);
 				}
 			}
 			break;
 		}
 		case CENTER:
 		{
-			if (height == width)
+			if (height == width || (height == width-1 || height == width +1))
 			{
-				int [] step = getColorSteppers(c1,c2,width/2);
-				for(int i = 0; i <= width/2; ++i)
+				int [] step = getColorSteppers(c1,c2,height/2);
+				for(int i = 0; i <= height/2; ++i)
 				{
 					g.setColor(new Color(c1.getRed()+step[0]*i, c1.getGreen()+step[1]*i, c1.getBlue()+step[2]*i, c1.getAlpha()+step[3]*i));
-					g.drawRect(x+width/2-i, y+height/2-i, i*2, i*2);
+					g.drawRect(x+height/2-i, y+height/2-i, i*2, i*2);
 				}
 			}
 			break;
