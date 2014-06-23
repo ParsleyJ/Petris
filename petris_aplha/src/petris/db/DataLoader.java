@@ -17,7 +17,7 @@ public class DataLoader {
 	Statement statement;
 	public final String CURRENT_SCHEMA_VERSION = "0.2";
 	private boolean schemaOutOfDate = false;
-	
+
 
 	public static void copyFile(File source, File dest)
 
@@ -26,7 +26,7 @@ public class DataLoader {
 		Files.copy(source.toPath(), dest.toPath());
 
 	}
-	
+
 	public void openConnection()
 	{
 		try
@@ -54,7 +54,7 @@ public class DataLoader {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public boolean schemaExists()
 	{
 		Connection tmpConn = null;
@@ -121,10 +121,10 @@ public class DataLoader {
 			}
 		}
 		try {
-			
+
 			stat = connection.createStatement();
 			stat.setQueryTimeout(30);  // set timeout to 30 sec.
-			
+
 			stat.executeUpdate("drop table if exists profiles");
 			stat.executeUpdate("drop table if exists savefile_metadata");
 			//stat.executeUpdate("drop table if exists match_stats");
@@ -143,7 +143,7 @@ public class DataLoader {
 					+ ")");
 			stat.executeUpdate("insert into savefile_metadata(id,value)"
 					+ "values('schema_version','" + CURRENT_SCHEMA_VERSION + "')");
-			
+
 			stat.executeUpdate("create table scores ("
 					+ "id integer primary key autoincrement, "
 					+ "profile integer references profiles(id), "
@@ -162,7 +162,7 @@ public class DataLoader {
 					+ "event text, "
 					+ "timestamp text"
 					+ ")");*/
-			
+
 			stat.executeUpdate("create table preferences("
 					+ "id text not null, "
 					+ "profile integer not null references profiles(id), "
@@ -259,7 +259,7 @@ public class DataLoader {
 	public boolean isSchemaOutOfDate() {
 		return schemaOutOfDate;
 	}
-	
+
 	public String getMetadata(String key)
 	{
 		ResultSet rs = null;
@@ -276,7 +276,7 @@ public class DataLoader {
 			return "entry_not_found";
 		}
 	}
-	
+
 	public String getMetadata(String key, Connection conn)
 	{
 		ResultSet rs = null;
@@ -296,21 +296,21 @@ public class DataLoader {
 	}
 
 	public void addHighscore(GlobalVarSet globals) {
-		
+
 		try {
 			Statement stat = connection.createStatement();
 			stat.executeUpdate("insert into scores(profile,petris_version,score,multiplier,lines,power,ended) "
 					+ "values("+globals.currentProfile.getID()+", "
-							+ "'"+ globals.petrisVersion +"', "
-							+ globals.currentGame.getScore() + ", "
-							+ globals.currentGame.getMultiplier() +", "
-							+ globals.currentGame.getTotalRemovedLines() + ", "
-							+ "'" + globals.currentGame.getPowerName()+ "', "
-							+ "datetime('now'))");
+					+ "'"+ globals.petrisVersion +"', "
+					+ globals.currentGame.getScore() + ", "
+					+ globals.currentGame.getMultiplier() +", "
+					+ globals.currentGame.getTotalRemovedLines() + ", "
+					+ "'" + globals.currentGame.getPowerName()+ "', "
+					+ "datetime('now'))");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-			
+
 	}
 
 	public ResultSet getHighscores() {
@@ -328,10 +328,10 @@ public class DataLoader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	public ResultSet getProfiles() {
 		try {
 			Statement stat = connection.createStatement();
@@ -339,17 +339,17 @@ public class DataLoader {
 			if (rs.getInt(1) == 0) return null;
 			else{
 				return stat.executeQuery("select * "
-										+ "from profiles "
-										+ "order by last_logged desc");
+						+ "from profiles "
+						+ "order by last_logged desc");
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	public Integer getIntPref(String key, int profileID)
 	{
 		ResultSet rs = null;
@@ -366,7 +366,7 @@ public class DataLoader {
 			return null;
 		}
 	}
-	
+
 	public String getStrPref(String key, int profileID)
 	{
 		ResultSet rs = null;
@@ -383,7 +383,7 @@ public class DataLoader {
 			return null;
 		}
 	}
-	
+
 	public void setPref(String key, String value, int profileID){
 		try{
 			statement.executeUpdate("insert or ignore into preferences (id,profile,str_value) "
@@ -395,7 +395,7 @@ public class DataLoader {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void setPref(String key, int value, int profileID){
 		try{
 			statement.executeUpdate("insert or ignore into preferences (id,profile,int_value) "
@@ -434,7 +434,7 @@ public class DataLoader {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void removeProfile(String profile)
 	{
 		String schemaVersion = getMetadata("schema_version");
@@ -442,7 +442,7 @@ public class DataLoader {
 			switch(schemaVersion)
 			{
 			//case...
-			
+
 			default:
 			{
 				connection.createStatement().executeUpdate(""
@@ -463,5 +463,28 @@ public class DataLoader {
 		}
 	}
 
-	
+	public void renameProfile(String profile, String newname)
+	{
+		String schemaVersion = getMetadata("schema_version");
+		try{
+			switch(schemaVersion)
+			{
+			//case...
+
+			default:
+			{
+				connection.createStatement().executeUpdate(""
+						+ "update profiles "
+						+ "set name = '"+newname+"' "
+						+ "where name = '"+profile+"' ");
+			}
+			}
+		}
+		catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+
 }

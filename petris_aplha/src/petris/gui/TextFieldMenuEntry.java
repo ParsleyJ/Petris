@@ -49,6 +49,7 @@ public class TextFieldMenuEntry extends PetrisMenuEntry {
 
 	public void setFieldText(String fieldText) {
 		this.fieldText = fieldText;
+		this.cursorPosition = fieldText.length();
 	}
 
 	public int getBorderSpace() {

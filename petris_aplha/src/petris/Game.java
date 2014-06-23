@@ -334,6 +334,8 @@ public class Game implements ActionListener{
 			
 			initializeCreateProfileDialog();
 			
+			initializeRenameProfileDialog();
+			
 			smallMessage = new BottomMessageLayer((int)gameSize.getWidth(),(int)gameSize.getHeight(),gameFont.deriveFont(baseFontSize + 12F),200);
 			render.addLayer(smallMessage);
 		}
@@ -1458,9 +1460,18 @@ public class Game implements ActionListener{
 					profileEntry.addEntry(new PetrisMenuEntry("Export profile",
 							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
 							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
-					profileEntry.addEntry(new PetrisMenuEntry("Rename profile",
-							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
-							new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230),false));
+					renameProfileDialog.setText("Rename profile");
+					
+					profileEntry.addEntry(renameProfileDialog);
+					
+					
+					renameProfileDialog.setOnEntered(new Action() {
+						@Override
+						public void run() {
+							Game.this.mainMenu.setTitle(Game.this.mainMenu.getPreviousTitle());
+						}
+					});
+					
 					
 					PetrisMenuEntry deleteProfileEntry = new PetrisMenuEntry("Delete profile",
 							gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.getWidth(), 40,	
@@ -1759,7 +1770,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 						public void run() {
 							Game.this.previousBackground();
 							if(Game.this.curBackgroundStyle==BackgroundStyles.Custom)
-								selectBackgroundMenuEntry.setOptionText("Custom color (press Enter)...");
+								selectBackgroundMenuEntry.setOptionText("Custom (press Enter)...");
 						}
 					});
 					selectBackgroundMenuEntry.setOnRight(new Action(){
@@ -2052,6 +2063,60 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 		createProfileDialog.setOnExiting(new Action(){
 			@Override
 			public void run() {
+				Game.this.addProfilesToMenu(profileChildMenu);
+			}
+		});
+	}
+	
+	private PetrisMenuEntry accept3NameEntry;
+	private TextFieldMenuEntry name3TextEntry;
+	private PetrisChildMenu renameProfileDialog;
+	private void initializeRenameProfileDialog() {//TODO: what happens eith a used new name
+		renameProfileDialog = new PetrisChildMenu("Rename profile", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
+		
+		name3TextEntry = new TextFieldMenuEntry("Insert the new name:", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 70, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.orange, 230), "press Enter and type");
+		name3TextEntry.setOnExitingEdit(new Action(){
+			@Override
+			public void run() {
+				if (name3TextEntry.getFieldText() == "" || name3TextEntry.getFieldText() == null 
+						|| name3TextEntry.getFieldText().length() == 0) accept3NameEntry.setEnabled(false);
+				else accept3NameEntry.setEnabled(true);
+			}
+		});
+		renameProfileDialog.addEntry(name3TextEntry);
+		
+		accept3NameEntry = new PetrisMenuEntry("Done", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
+				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.green, 230), false);
+		accept3NameEntry.setOnOk(new Action() {
+			@Override
+			public void run() {
+				String tmp = name3TextEntry.getFieldText();
+				Game.this.dataLoader.renameProfile(Game.this.mainMenu.getTitle(), tmp);
+				//Game.this.globals.currentProfile = Game.this.dataLoader.loginAs(name3TextEntry.getFieldText());
+				//WHY RESETS EVERYTHING???
+				Game.this.mainMenu.setCanGoBack(true);
+				//Game.this.mainMenu.resetRootEntries();
+				Game.this.addProfilesToMenu(profileChildMenu);
+				Game.this.mainMenu.performBack();
+				Game.this.mainMenu.performBack();
+				Game.this.mainMenu.performBack();
+				Game.this.smallMessage.show("Profile renamed to: " + tmp, Color.green, 2000, 500);
+				//Game.this.setDefaults();
+			}
+		});
+		renameProfileDialog.addEntry(accept3NameEntry);
+		renameProfileDialog.setOnEntered(new Action(){
+			@Override
+			public void run() {
+				mainMenu.setCanGoBack(true);
+			}
+		});
+		renameProfileDialog.setOnExiting(new Action(){
+			@Override
+			public void run() {
+				name3TextEntry.setFieldText("");
 				Game.this.addProfilesToMenu(profileChildMenu);
 			}
 		});

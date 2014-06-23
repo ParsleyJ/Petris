@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 import parsleyj.utils.GlobalUtils;
@@ -559,6 +560,20 @@ public class PetrisMenu implements MenuInterface, ActionListener {
 	}
 	public int getFocusedEntryIndex() {
 		return focusedEntry;
+	}
+	
+	public String getPreviousTitle()
+	{
+		String tmp;
+		try{
+			tmp = titlesTraceback.lastElement();
+		}
+		catch(NoSuchElementException e)
+		{
+			return null;
+		}
+		return tmp;	
+		
 	}
 
 	
