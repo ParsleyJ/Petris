@@ -2071,7 +2071,7 @@ colorDialogMenu.addEntry(colorModeDialogEntry);*/
 	private PetrisMenuEntry accept3NameEntry;
 	private TextFieldMenuEntry name3TextEntry;
 	private PetrisChildMenu renameProfileDialog;
-	private void initializeRenameProfileDialog() {//TODO: what happens eith a used new name
+	private void initializeRenameProfileDialog() {//TODO: what happens eith a used new name?
 		renameProfileDialog = new PetrisChildMenu("Rename profile", gameFont.deriveFont(baseFontSize + 16F), (int)gameSize.width, 40, 
 				new FadingColor(new Color(50,50,50,230), 230), new FadingColor(Color.cyan, 230));
 		

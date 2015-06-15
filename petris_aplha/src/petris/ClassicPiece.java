@@ -107,7 +107,7 @@ public class ClassicPiece extends Item {
     	
         int x = Math.abs(random.nextInt()) % 7 + 1;
         TetrominoesId[] values = TetrominoesId.values(); 
-        setShape(values[x]);
+        setShape(values[3]);
         fillWithColor(values[x]);
         
     }
